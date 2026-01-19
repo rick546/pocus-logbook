@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>My Scans</h1>
+
+  <p><a href="{% url 'scan_create' %}">Add a new scan</a></p>
+
+  <h2>Counts by exam type</h2>
+  {% if counts %}
+    <ul>
+      {% for row in counts %}
+        <li>{{ row.exam_type }}: {{ row.total }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No scans yet.</p>
+  {% endif %}
+
+  <h2>Scan log</h2>
+  {% if scans %}
+    <ul>
+      {% for scan in scans %}
+        <li>
+          <strong>{{ scan.performed_at }}</strong> —
+          {{ scan.exam_type }} —
+          {{ scan.finding }}
+          {% if scan.supervisor_name %} (Supervisor: {{ scan.supervisor_name }}){% endif %}
+
+          | <a href="{% url 'scan_edit' scan.pk %}">Edit</a>
+          | <a href="{% url 'scan_delete' scan.pk %}">Delete</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No scans yet.</p>
+  {% endif %}
+{% endblock %}

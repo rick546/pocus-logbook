@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Delete Scan</h1>
+
+  <p>
+    Are you sure you want to delete this scan?
+  </p>
+
+  <ul>
+    <li><strong>Date:</strong> {{ scan.performed_at }}</li>
+    <li><strong>Exam:</strong> {{ scan.exam_type }}</li>
+    <li><strong>Finding:</strong> {{ scan.finding }}</li>
+    {% if scan.supervisor_name %}
+      <li><strong>Supervisor:</strong> {{ scan.supervisor_name }}</li>
+    {% endif %}
+  </ul>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+    <a href="{% url 'my_scans' %}">Cancel</a>
+  </form>
+{% endblock %}

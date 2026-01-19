@@ -1,0 +1,21 @@
+<h1>POCUS Scan Totals</h1>
+
+<p><strong>Total scans:</strong> {{ total_scans }}</p>
+
+<hr>
+
+<h2>By user</h2>
+<ul>
+  {% for row in totals_by_user %}
+    <li>{{ row.user__username }} — {{ row.total }}</li>
+  {% endfor %}
+</ul>
+
+<hr>
+
+<h2>By exam type</h2>
+<ul>
+  {% for row in totals_by_exam %}
+    <li>{{ row.exam_type }} — {{ row.total }}</li>
+  {% endfor %}
+</ul>

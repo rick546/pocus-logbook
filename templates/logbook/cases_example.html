@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <h1 class="mt-4">Clinical Case: Dyspnea — Lung Ultrasound (LUS)</h1>
+  <p class="text-muted">
+    Review the ultrasound clip and answer the question below.
+  </p>
+
+  <!-- VIDEO (YouTube/Vimeo embed example) -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="fas fa-video me-1"></i> Lung Ultrasound Clip
+    </div>
+    <div class="card-body">
+      <div class="ratio ratio-16x9">
+        <iframe
+          src="https://www.youtube.com/watch?v=m9s5AD_lBkY"
+          title="LUS Clip"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <small class="text-muted d-block mt-2">
+        Replace <code>VIDEO_ID_HERE</code> with your actual YouTube video ID.
+      </small>
+    </div>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="fas fa-question-circle me-1"></i> Question #1
+    </div>
+    <div class="card-body">
+      <p class="fw-semibold">
+        What do the LUS images reveal, and what is the most likely etiology of the patient’s dyspnea?
+      </p>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="answer" id="a" value="A" required>
+          <label class="form-check-label" for="a">
+            A) Patchy B-lines and asymmetrical consolidation, suggestive of possible pneumonia
+          </label>
+        </div>
+
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="answer" id="b" value="B" required>
+          <label class="form-check-label" for="b">
+            B) Bilateral diffuse B-lines, smooth pleural line, and bilateral pleural effusions, suggestive of pulmonary edema
+          </label>
+        </div>
+
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="answer" id="c" value="C" required>
+          <label class="form-check-label" for="c">
+            C) Right-sided pneumothorax
+          </label>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="answer" id="d" value="D" required>
+          <label class="form-check-label" for="d">
+            D) Diffuse B-lines with ragged pleural line and bilateral consolidations, suggestive of possible ARDS
+          </label>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </form>
+
+      {% if feedback %}
+        <div class="alert alert-info mt-3">
+          {{ feedback }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
