@@ -7,9 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Dashboard - SB Admin</title>
+        <title>POCUS Portal - University of Manitoba</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+        <link href="{% static 'css/custom-medical.css' %}" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
@@ -126,49 +127,59 @@
 
             <div id="layoutSidenav_content">
     			<main>
-      			  <div class="container-fluid px-4">  
-         			   <div class="row">
+      			  <div class="container-fluid px-4">
+         			   <div class="row mt-4">
 
-							  <div class="col-xl-3 col-md-6">
-							    <div class="card bg-primary text-white mb-4">
-							      <div class="card-body">Log a Scan</div>
-							      <div class="card-footer d-flex align-items-center justify-content-between">
-							        <a class="small text-white stretched-link" href="{% url 'scan_create' %}">Open</a>
-							        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+							  <div class="col-xl-3 col-md-6 mb-4">
+							    <div class="dashboard-card">
+							      <div class="dashboard-card-icon icon-primary">
+							        <i class="fas fa-plus-circle"></i>
 							      </div>
+							      <div class="dashboard-card-title">Log a Scan</div>
+							      <p class="text-muted mb-3" style="font-size: 0.875rem;">Record your latest ultrasound examination</p>
+							      <a class="dashboard-card-link" href="{% url 'scan_create' %}">
+							        Get Started <i class="fas fa-arrow-right"></i>
+							      </a>
 							    </div>
 							  </div>
 
-							  <div class="col-xl-3 col-md-6">
-							    <div class="card bg-success text-white mb-4">
-							      <div class="card-body">My Scans</div>
-							      <div class="card-footer d-flex align-items-center justify-content-between">
-							        <a class="small text-white stretched-link" href="{% url 'my_scans' %}">View</a>
-							        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+							  <div class="col-xl-3 col-md-6 mb-4">
+							    <div class="dashboard-card">
+							      <div class="dashboard-card-icon icon-secondary">
+							        <i class="fas fa-list-alt"></i>
 							      </div>
+							      <div class="dashboard-card-title">My Scans</div>
+							      <p class="text-muted mb-3" style="font-size: 0.875rem;">View and manage your scan history</p>
+							      <a class="dashboard-card-link" href="{% url 'my_scans' %}">
+							        View All <i class="fas fa-arrow-right"></i>
+							      </a>
 							    </div>
 							  </div>
 
-							  <div class="col-xl-3 col-md-6">
-							    <div class="card bg-warning text-white mb-4">
-								  <div class="card-body">Clinical Cases</div>
-								  <div class="card-footer d-flex align-items-center justify-content-between">
-								    <a class="small text-white stretched-link" href="{% url 'cases_list' %}">
-								      Browse
-								    </a>
-								    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-								  </div>
-								</div>
+							  <div class="col-xl-3 col-md-6 mb-4">
+							    <div class="dashboard-card">
+							      <div class="dashboard-card-icon icon-success">
+							        <i class="fas fa-notes-medical"></i>
+							      </div>
+							      <div class="dashboard-card-title">Clinical Cases</div>
+							      <p class="text-muted mb-3" style="font-size: 0.875rem;">Interactive case-based learning</p>
+							      <a class="dashboard-card-link" href="{% url 'cases_list' %}">
+							        Browse Cases <i class="fas fa-arrow-right"></i>
+							      </a>
+							    </div>
 							  </div>
 
 							  {% if user.is_staff %}
-							  <div class="col-xl-3 col-md-6">
-							    <div class="card bg-danger text-white mb-4">
-							      <div class="card-body">Program Totals</div>
-							      <div class="card-footer d-flex align-items-center justify-content-between">
-							        <a class="small text-white stretched-link" href="{% url 'scan_totals' %}">View</a>
-							        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+							  <div class="col-xl-3 col-md-6 mb-4">
+							    <div class="dashboard-card">
+							      <div class="dashboard-card-icon icon-accent">
+							        <i class="fas fa-chart-bar"></i>
 							      </div>
+							      <div class="dashboard-card-title">Program Totals</div>
+							      <p class="text-muted mb-3" style="font-size: 0.875rem;">View analytics and statistics</p>
+							      <a class="dashboard-card-link" href="{% url 'scan_totals' %}">
+							        View Report <i class="fas fa-arrow-right"></i>
+							      </a>
 							    </div>
 							  </div>
 							  {% endif %}
@@ -184,13 +195,37 @@
 		>
 </div>
 
-<h1 class="mt-4 text-center">
-    Welcome to the University of Manitoba POCUS website
+<h1 class="mt-4 text-center" style="color: var(--medical-primary);">
+    Welcome to the University of Manitoba POCUS Portal
 </h1>
 
-<p class="text-muted mb-4 text-center">
-   This platform supports the advancement of Point-of-Care Ultrasound education across Emergency Medicine and related specialties. Explore hands-on scanning tutorials, interactive clinical cases, a growing image library, and more. We’re glad you’re here — happy scanning.
+<p class="text-muted mb-4 text-center" style="max-width: 800px; margin: 0 auto 2rem; font-size: 1.0625rem; line-height: 1.7;">
+   This platform supports the advancement of Point-of-Care Ultrasound education across Emergency Medicine and related specialties. Explore hands-on scanning tutorials, interactive clinical cases, a growing image library, and more. We're glad you're here — happy scanning.
 </p>
+
+<!-- Learning Progress Section -->
+{% if user.is_authenticated %}
+<div class="card mb-4">
+  <div class="card-header">
+    <i class="fas fa-graduation-cap me-2"></i>
+    Your Learning Progress
+  </div>
+  <div class="card-body">
+    <div class="row align-items-center mb-3">
+      <div class="col-md-8">
+        <h6 class="mb-2" style="color: var(--text-secondary); font-weight: 600;">POCUS Curriculum Completion</h6>
+        <div class="progress" style="height: 12px;">
+          <div class="progress-bar" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemax="100"></div>
+        </div>
+        <small class="text-muted mt-1 d-block">35% Complete - Keep going!</small>
+      </div>
+      <div class="col-md-4 text-end">
+        <span class="competency-badge competency-intermediate">Intermediate Level</span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 
   <!-- Leaderboard card -->
   <div class="card mb-4">
@@ -256,14 +291,16 @@
   </div>
 </div>
                 </main>
-                <footer class="py-4 bg-light mt-auto">
+                <footer class="py-4 mt-auto" style="background-color: var(--bg-main); border-top: 1px solid var(--border-color);">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                            <div class="text-muted">
+                              &copy; 2026 University of Manitoba - Rady Faculty of Health Sciences
+                            </div>
                             <div>
-                                <a href="#">Privacy Policy</a>
+                                <a href="#" style="color: var(--medical-primary); text-decoration: none;">Privacy Policy</a>
                                 &middot;
-                                <a href="#">Terms &amp; Conditions</a>
+                                <a href="#" style="color: var(--medical-primary); text-decoration: none;">Terms &amp; Conditions</a>
                             </div>
                         </div>
                     </div>
