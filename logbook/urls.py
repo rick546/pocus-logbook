@@ -12,7 +12,8 @@ def case_step(request, case_id, step_order):
 urlpatterns = [
     path("", views.home, name="home"),
     path("calendar/", views.pocus_calendar, name="pocus_calendar"),
-    path("quizzes/", views.quizzes_list, name="quizzes_list"),
+    path("quizzes/", views.quizzes_home, name="quizzes_list"),
+    path("quizzes/<int:quiz_id>/", views.quiz_detail, name="quiz_detail"),
     path("resources/", views.resources, name="resources"),
     path("bundles/<slug:bundle>/add/", views.add_scan_bundle, name="add_scan_bundle"),
     path("logbook/new/", views.scan_create, name="scan_create"),

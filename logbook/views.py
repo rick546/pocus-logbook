@@ -24,9 +24,18 @@ QUIZ_1 = {
     }
 }
 
-
+# Quiz home page showing all available quizzes
 @login_required
-def quizzes_list(request):
+def quizzes_home(request):
+    return render(request, "logbook/quizzes_home.html")
+
+# Individual quiz detail page
+@login_required
+def quiz_detail(request, quiz_id):
+    # For now, only quiz 1 is available
+    if quiz_id != 1:
+        return render(request, "logbook/quiz_unavailable.html", {"quiz_id": quiz_id})
+
     answer_key = QUIZ_1["questions"]
     total = len(answer_key)
 

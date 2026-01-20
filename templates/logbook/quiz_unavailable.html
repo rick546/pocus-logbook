@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Quiz Coming Soon - POCUS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center">
+      <div class="card">
+        <div class="card-body py-5">
+          <div class="mb-4">
+            <i class="fas fa-lock" style="font-size: 4rem; color: var(--text-muted);"></i>
+          </div>
+          <h2 class="mb-3" style="color: var(--medical-primary);">Quiz {{ quiz_id }} Coming Soon</h2>
+          <p class="text-muted mb-4" style="font-size: 1.125rem;">
+            This quiz is currently under development. Check back soon for new content!
+          </p>
+          <a href="{% url 'quizzes_list' %}" class="btn btn-primary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Quizzes
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
