@@ -204,7 +204,7 @@
 </p>
 
 <!-- Learning Progress Section -->
-{% if user.is_authenticated %}
+{% if user.is_authenticated and quiz_progress %}
 <div class="card mb-4">
   <div class="card-header">
     <i class="fas fa-graduation-cap me-2"></i>
@@ -213,15 +213,39 @@
   <div class="card-body">
     <div class="row align-items-center mb-3">
       <div class="col-md-8">
-        <h6 class="mb-2" style="color: var(--text-secondary); font-weight: 600;">POCUS Curriculum Completion</h6>
+        <h6 class="mb-2" style="color: var(--text-secondary); font-weight: 600;">POCUS Quiz Completion</h6>
         <div class="progress" style="height: 12px;">
-          <div class="progress-bar" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemax="100"></div>
+          <div class="progress-bar" role="progressbar" style="width: {{ quiz_progress.percentage }}%" aria-valuenow="{{ quiz_progress.percentage }}" aria-valuemax="100"></div>
         </div>
-        <small class="text-muted mt-1 d-block">35% Complete - Keep going!</small>
+        <small class="text-muted mt-1 d-block">
+          {{ quiz_progress.completed }} of {{ quiz_progress.total }} quizzes passed ({{ quiz_progress.percentage }}%)
+          {% if quiz_progress.percentage == 0 %}
+            - Start your first quiz!
+          {% elif quiz_progress.percentage < 50 %}
+            - Keep going!
+          {% elif quiz_progress.percentage < 100 %}
+            - Almost there!
+          {% else %}
+            - Congratulations!
+          {% endif %}
+        </small>
       </div>
       <div class="col-md-4 text-end">
-        <span class="competency-badge competency-intermediate">Intermediate Level</span>
+        {% if quiz_progress.percentage == 0 %}
+          <span class="competency-badge competency-novice">Novice</span>
+        {% elif quiz_progress.percentage < 50 %}
+          <span class="competency-badge competency-intermediate">Intermediate</span>
+        {% elif quiz_progress.percentage < 100 %}
+          <span class="competency-badge competency-advanced">Advanced</span>
+        {% else %}
+          <span class="competency-badge competency-expert">Expert</span>
+        {% endif %}
       </div>
+    </div>
+    <div class="text-center mt-3">
+      <a href="{% url 'quizzes_list' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-clipboard-check me-1"></i> Go to Quizzes
+      </a>
     </div>
   </div>
 </div>

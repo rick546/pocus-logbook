@@ -1,57 +1,127 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Count
+from django.db.models import Count, Avg, F
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from .models import ClinicalCase, CaseStep
-from .models import QuizAttempt
+from .models import QuizAttempt, QuizBestScore
 from .forms import ScanForm
 from .models import Scan
 
 User = get_user_model()
 
-dUser = get_user_model()
+# Total number of quizzes available in the curriculum
+TOTAL_QUIZZES = 3
 
-
-QUIZ_1 = {
-    "title": "E-FAST + US-Guided CVC Basics",
-    "questions": {
-        "q1": "C",
-        "q2": "B",
-        "q3": "C",
-        "q4": "B",
-        "q5": "B",
-    }
+# Quiz data
+QUIZZES = {
+    1: {
+        "title": "E-FAST + US-Guided CVC Basics",
+        "questions": {
+            "q1": "C",
+            "q2": "B",
+            "q3": "C",
+            "q4": "B",
+            "q5": "B",
+        }
+    },
+    # Future quizzes will be added here
+    # 2: { "title": "Cardiac POCUS Fundamentals", "questions": {...} },
+    # 3: { "title": "Lung & Pleural Ultrasound", "questions": {...} },
 }
+
+# Keep QUIZ_1 for backward compatibility
+QUIZ_1 = QUIZZES[1]
 
 # Quiz home page showing all available quizzes
 @login_required
 def quizzes_home(request):
-    return render(request, "logbook/quizzes_home.html")
+    # Get user's best scores for all quizzes
+    user_best_scores = {
+        score.quiz_id: score
+        for score in QuizBestScore.objects.filter(user=request.user)
+    }
+
+    # Calculate statistics
+    quizzes_completed = len(user_best_scores)
+    quizzes_passed = sum(1 for score in user_best_scores.values() if score.passed)
+
+    # Calculate average score
+    if user_best_scores:
+        avg_score = sum(score.percentage for score in user_best_scores.values()) / len(user_best_scores)
+    else:
+        avg_score = None
+
+    return render(request, "logbook/quizzes_home.html", {
+        "user_best_scores": user_best_scores,
+        "quizzes_completed": quizzes_completed,
+        "quizzes_passed": quizzes_passed,
+        "avg_score": avg_score,
+        "total_quizzes": TOTAL_QUIZZES,
+    })
 
 # Individual quiz detail page
 @login_required
 def quiz_detail(request, quiz_id):
-    # For now, only quiz 1 is available
-    if quiz_id != 1:
+    # Check if quiz exists and is available
+    if quiz_id not in QUIZZES:
         return render(request, "logbook/quiz_unavailable.html", {"quiz_id": quiz_id})
 
-    answer_key = QUIZ_1["questions"]
+    quiz = QUIZZES[quiz_id]
+    answer_key = quiz["questions"]
     total = len(answer_key)
 
     submitted_answers = {}
     score = None
+    is_new_best = False
+
+    # Get user's previous best score for this quiz
+    previous_best = QuizBestScore.objects.filter(user=request.user, quiz_id=quiz_id).first()
 
     if request.method == "POST":
         submitted_answers = {q: request.POST.get(q) for q in answer_key.keys()}
         score = sum(1 for q, correct in answer_key.items() if submitted_answers.get(q) == correct)
 
+        # Save the quiz attempt
+        QuizAttempt.objects.create(
+            user=request.user,
+            quiz_id=quiz_id,
+            quiz_title=quiz["title"],
+            answers=submitted_answers,
+            score=score,
+            total=total,
+        )
+
+        # Update or create best score
+        best_score, created = QuizBestScore.objects.get_or_create(
+            user=request.user,
+            quiz_id=quiz_id,
+            defaults={
+                "quiz_title": quiz["title"],
+                "best_score": score,
+                "total": total,
+                "attempts": 1,
+            }
+        )
+
+        if not created:
+            best_score.attempts += 1
+            if score > best_score.best_score:
+                best_score.best_score = score
+                is_new_best = True
+            best_score.save()
+        else:
+            is_new_best = True
+
     return render(request, "logbook/quizzes_list.html", {
-        "quiz": QUIZ_1,
+        "quiz": quiz,
+        "quiz_id": quiz_id,
         "answer_key": answer_key,
         "submitted_answers": submitted_answers,
         "score": score,
         "total": total,
+        "previous_best": previous_best,
+        "is_new_best": is_new_best,
     })
 
 
@@ -68,11 +138,36 @@ def case_step(request, case_id, step_order):
 def home(request):
     leaderboard = (
         User.objects
-        .filter(scans__isnull=False)          # ✅ correct related_name
+        .filter(scans__isnull=False)
         .annotate(total=Count("scans"))
         .order_by("-total", "username")[:10]
     )
-    return render(request, "home.html", {"leaderboard": leaderboard})
+
+    # Quiz progress for authenticated users
+    quiz_progress = None
+    quizzes_completed = 0
+    quiz_percentage = 0
+
+    if request.user.is_authenticated:
+        # Count quizzes where user has passed (70% or higher)
+        user_best_scores = QuizBestScore.objects.filter(user=request.user)
+        quizzes_completed = user_best_scores.filter(best_score__gte=models.F('total') * 0.7).count()
+
+        # Alternative: count any quiz attempted (regardless of score)
+        # quizzes_completed = user_best_scores.count()
+
+        quiz_percentage = round((quizzes_completed / TOTAL_QUIZZES) * 100) if TOTAL_QUIZZES > 0 else 0
+
+        quiz_progress = {
+            "completed": quizzes_completed,
+            "total": TOTAL_QUIZZES,
+            "percentage": quiz_percentage,
+        }
+
+    return render(request, "home.html", {
+        "leaderboard": leaderboard,
+        "quiz_progress": quiz_progress,
+    })
 
 
 @login_required

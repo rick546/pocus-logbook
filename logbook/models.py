@@ -3,15 +3,54 @@ from django.db import models
 
 
 class QuizAttempt(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    quiz_slug = models.CharField(max_length=100)  # e.g. "efast-cvc-001"
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="quiz_attempts")
+    quiz_id = models.PositiveIntegerField(default=1)  # Quiz number (1, 2, 3, etc.)
+    quiz_title = models.CharField(max_length=200, blank=True, default="")
     answers = models.JSONField(default=dict)      # {"q1": "C", "q2": "A", ...}
     score = models.PositiveIntegerField(default=0)
     total = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
-        return f"{self.user} {self.quiz_slug} {self.score}/{self.total} @ {self.created_at}"
+        return f"{self.user} - Quiz {self.quiz_id}: {self.score}/{self.total} @ {self.created_at}"
+
+    @property
+    def percentage(self):
+        if self.total == 0:
+            return 0
+        return round((self.score / self.total) * 100)
+
+
+class QuizBestScore(models.Model):
+    """Tracks the best score for each user on each quiz"""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="quiz_best_scores")
+    quiz_id = models.PositiveIntegerField()
+    quiz_title = models.CharField(max_length=200, blank=True)
+    best_score = models.PositiveIntegerField(default=0)
+    total = models.PositiveIntegerField(default=0)
+    attempts = models.PositiveIntegerField(default=0)
+    last_attempt = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ['user', 'quiz_id']
+        ordering = ['quiz_id']
+
+    def __str__(self):
+        return f"{self.user} - Quiz {self.quiz_id} Best: {self.best_score}/{self.total}"
+
+    @property
+    def percentage(self):
+        if self.total == 0:
+            return 0
+        return round((self.best_score / self.total) * 100)
+
+    @property
+    def passed(self):
+        """Consider 70% or higher as passed"""
+        return self.percentage >= 70
 
 class Scan(models.Model):
     EXAM_CHOICES = [
