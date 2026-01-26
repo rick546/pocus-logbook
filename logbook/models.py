@@ -54,14 +54,14 @@ class QuizBestScore(models.Model):
 
 class Scan(models.Model):
     EXAM_CHOICES = [
-        ("FAST", "FAST"),
-        ("CARDIAC", "Cardiac"),
-        ("LUNG", "Lung"),
+        ("RUQ", "RUQ Abdomen"),
+        ("LUQ", "LUQ Abdomen"),
         ("AORTA", "Aorta"),
+        ("SUBXIPHOID", "Subxiphoid (Cardiac)"),
+        ("PLAX", "Parasternal Long Axis (Cardiac)"),
+        ("PSAX", "Parasternal Short Axis (Cardiac)"),
         ("IVC", "IVC"),
-        ("MSK", "MSK"),
-        ("OB", "Obstetrics"),
-        ("OTHER", "Other"),
+        ("OB_FIRST", "First-Trimester (Obstetrics)"),
     ]
 
     FINDING_CHOICES = [

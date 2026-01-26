@@ -196,14 +196,14 @@ def home(request):
         # Calculate weak areas (exam types with low volume)
         # Define minimum target for each exam type
         exam_targets = {
-            "FAST": 25,
-            "CARDIAC": 25,
-            "LUNG": 25,
+            "RUQ": 25,
+            "LUQ": 25,
             "AORTA": 15,
+            "SUBXIPHOID": 25,
+            "PLAX": 25,
+            "PSAX": 25,
             "IVC": 15,
-            "MSK": 10,
-            "OB": 10,
-            "OTHER": 5,
+            "OB_FIRST": 10,
         }
 
         # Get counts per exam type
@@ -427,25 +427,30 @@ from django.views.decorators.http import require_POST
 @login_required
 @require_POST
 def add_scan_bundle(request, bundle):
-    bundles = {
-        "core_pocus": ["Cardiac", "Lung", "eFAST", "Aorta", "IVC"],
-        "trauma_pack": ["eFAST", "Cardiac", "Lung"],
-        "shock_pack": ["Cardiac", "IVC", "Aorta"],
-        "resp_pack": ["Lung", "Pleura"],
+    # Map bundle slugs to exam types
+    scan_types = {
+        "ruq": "RUQ",
+        "luq": "LUQ",
+        "aorta": "AORTA",
+        "subxiphoid": "SUBXIPHOID",
+        "plax": "PLAX",
+        "psax": "PSAX",
+        "ivc": "IVC",
+        "ob_first": "OB_FIRST",
     }
 
-    exam_types = bundles.get(bundle)
-    if not exam_types:
+    exam_type = scan_types.get(bundle)
+    if not exam_type:
         return redirect("home")
 
     today = timezone.localdate()
 
-    for exam in exam_types:
-        Scan.objects.get_or_create(
-            user=request.user,
-            exam_type=exam,
-            performed_at=today,
-        )
+    Scan.objects.create(
+        user=request.user,
+        exam_type=exam_type,
+        performed_at=today,
+        finding="NORMAL",
+    )
 
     return redirect("my_scans")
 

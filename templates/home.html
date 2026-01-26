@@ -251,28 +251,48 @@
   <div class="card mb-4">
   <div class="card-header">
     <i class="fas fa-bolt me-1"></i>
-    Quick Add Scan Bundles
+    Quick Add Scan
   </div>
   <div class="card-body d-flex flex-wrap gap-2">
 
-    <form method="post" action="{% url 'add_scan_bundle' 'core_pocus' %}">
+    <form method="post" action="{% url 'add_scan_bundle' 'ruq' %}">
       {% csrf_token %}
-      <button class="btn btn-primary btn-sm" type="submit">Add Core POCUS (5)</button>
+      <button class="btn btn-primary btn-sm" type="submit">RUQ Abdomen</button>
     </form>
 
-    <form method="post" action="{% url 'add_scan_bundle' 'trauma_pack' %}">
+    <form method="post" action="{% url 'add_scan_bundle' 'luq' %}">
       {% csrf_token %}
-      <button class="btn btn-danger btn-sm" type="submit">Add Trauma Pack (3)</button>
+      <button class="btn btn-primary btn-sm" type="submit">LUQ Abdomen</button>
     </form>
 
-    <form method="post" action="{% url 'add_scan_bundle' 'shock_pack' %}">
+    <form method="post" action="{% url 'add_scan_bundle' 'aorta' %}">
       {% csrf_token %}
-      <button class="btn btn-warning btn-sm" type="submit">Add Shock Pack (3)</button>
+      <button class="btn btn-info btn-sm" type="submit">Aorta</button>
     </form>
 
-    <form method="post" action="{% url 'add_scan_bundle' 'resp_pack' %}">
+    <form method="post" action="{% url 'add_scan_bundle' 'subxiphoid' %}">
       {% csrf_token %}
-      <button class="btn btn-success btn-sm" type="submit">Add Resp Pack (2)</button>
+      <button class="btn btn-danger btn-sm" type="submit">Subxiphoid</button>
+    </form>
+
+    <form method="post" action="{% url 'add_scan_bundle' 'plax' %}">
+      {% csrf_token %}
+      <button class="btn btn-danger btn-sm" type="submit">PLAX</button>
+    </form>
+
+    <form method="post" action="{% url 'add_scan_bundle' 'psax' %}">
+      {% csrf_token %}
+      <button class="btn btn-danger btn-sm" type="submit">PSAX</button>
+    </form>
+
+    <form method="post" action="{% url 'add_scan_bundle' 'ivc' %}">
+      {% csrf_token %}
+      <button class="btn btn-warning btn-sm" type="submit">IVC</button>
+    </form>
+
+    <form method="post" action="{% url 'add_scan_bundle' 'ob_first' %}">
+      {% csrf_token %}
+      <button class="btn btn-success btn-sm" type="submit">First-Trimester OB</button>
     </form>
 
   </div>
