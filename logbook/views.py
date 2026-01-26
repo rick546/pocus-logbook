@@ -179,7 +179,7 @@ def home(request):
     if request.user.is_authenticated:
         # Count quizzes where user has passed (70% or higher)
         user_best_scores = QuizBestScore.objects.filter(user=request.user)
-        quizzes_completed = user_best_scores.filter(best_score__gte=models.F('total') * 0.7).count()
+        quizzes_completed = user_best_scores.filter(best_score__gte=F('total') * 0.7).count()
 
         # Alternative: count any quiz attempted (regardless of score)
         # quizzes_completed = user_best_scores.count()
