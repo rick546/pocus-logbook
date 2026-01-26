@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}Search Results - POCUS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <h1 class="mt-4" style="color: var(--medical-primary);">
+    <i class="fas fa-search me-2"></i>Search Results
+  </h1>
+
+  {% if query %}
+  <p class="text-muted mb-4">
+    Found <strong>{{ total_results }}</strong> result{{ total_results|pluralize }} for "<strong>{{ query }}</strong>"
+  </p>
+  {% else %}
+  <p class="text-muted mb-4">Enter a search term to find scans, quizzes, cases, and protocols.</p>
+  {% endif %}
+
+  <!-- Search Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" action="{% url 'search' %}">
+        <div class="input-group">
+          <input type="text" class="form-control" name="q" value="{{ query }}" placeholder="Search for scans, quizzes, protocols..." autofocus>
+          <button class="btn btn-primary" type="submit">
+            <i class="fas fa-search me-1"></i> Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if query %}
+
+  <!-- Protocols Results -->
+  {% if results.protocols %}
+  <div class="card mb-4">
+    <div class="card-header" style="background-color: var(--medical-primary); color: white;">
+      <i class="fas fa-file-medical-alt me-2"></i>Protocols ({{ results.protocols|length }})
+    </div>
+    <div class="card-body">
+      <div class="row">
+        {% for protocol in results.protocols %}
+        <div class="col-md-4 mb-3">
+          <div class="p-3" style="background-color: var(--bg-main); border-radius: 8px; border-left: 4px solid var(--medical-primary);">
+            <h6 class="mb-2" style="color: var(--text-primary);">
+              <i class="fas fa-file-medical me-2"></i>{{ protocol.name }}
+            </h6>
+            <a href="{% url 'protocols' %}#{{ protocol.tab }}" class="btn btn-sm btn-outline-primary">
+              View Protocol <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Quizzes Results -->
+  {% if results.quizzes %}
+  <div class="card mb-4">
+    <div class="card-header" style="background-color: var(--medical-secondary); color: white;">
+      <i class="fas fa-clipboard-check me-2"></i>Quizzes ({{ results.quizzes|length }})
+    </div>
+    <div class="card-body">
+      <div class="row">
+        {% for quiz in results.quizzes %}
+        <div class="col-md-4 mb-3">
+          <div class="p-3" style="background-color: var(--bg-main); border-radius: 8px; border-left: 4px solid var(--medical-secondary);">
+            <h6 class="mb-2" style="color: var(--text-primary);">
+              <i class="fas fa-clipboard-check me-2"></i>Quiz {{ quiz.id }}: {{ quiz.title }}
+            </h6>
+            <a href="{% url 'quiz_detail' quiz.id %}" class="btn btn-sm btn-outline-primary">
+              Take Quiz <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Scans Results -->
+  {% if results.scans %}
+  <div class="card mb-4">
+    <div class="card-header" style="background-color: var(--medical-accent); color: white;">
+      <i class="fas fa-wave-square me-2"></i>Your Scans ({{ results.scans|length }})
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Exam Type</th>
+              <th>Indication</th>
+              <th>Finding</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for scan in results.scans %}
+            <tr>
+              <td>{{ scan.performed_at|date:"M d, Y" }}</td>
+              <td>
+                <span class="badge" style="background-color: var(--medical-primary);">{{ scan.exam_type }}</span>
+              </td>
+              <td>{{ scan.indication|default:"-"|truncatewords:5 }}</td>
+              <td>
+                {% if scan.finding == "NORMAL" %}
+                  <span class="badge bg-success">Normal</span>
+                {% elif scan.finding == "ABNORMAL" %}
+                  <span class="badge bg-danger">Abnormal</span>
+                {% else %}
+                  <span class="badge bg-secondary">{{ scan.finding }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'scan_edit' scan.pk %}" class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <a href="{% url 'my_scans' %}" class="btn btn-outline-secondary btn-sm">
+        View All Scans <i class="fas fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Cases Results -->
+  {% if results.cases %}
+  <div class="card mb-4">
+    <div class="card-header" style="background-color: var(--medical-success); color: white;">
+      <i class="fas fa-notes-medical me-2"></i>Clinical Cases ({{ results.cases|length }})
+    </div>
+    <div class="card-body">
+      <div class="row">
+        {% for case in results.cases %}
+        <div class="col-md-6 mb-3">
+          <div class="p-3" style="background-color: var(--bg-main); border-radius: 8px; border-left: 4px solid var(--medical-success);">
+            <h6 class="mb-2" style="color: var(--text-primary);">
+              <i class="fas fa-notes-medical me-2"></i>{{ case.title }}
+            </h6>
+            {% if case.description %}
+            <p class="text-muted small mb-2">{{ case.description|truncatewords:20 }}</p>
+            {% endif %}
+            <a href="{% url 'cases_list' %}" class="btn btn-sm btn-outline-primary">
+              View Case <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- No Results -->
+  {% if total_results == 0 %}
+  <div class="card mb-4">
+    <div class="card-body text-center py-5">
+      <i class="fas fa-search fa-3x text-muted mb-3"></i>
+      <h5 class="text-muted">No results found for "{{ query }}"</h5>
+      <p class="text-muted mb-4">Try a different search term or browse our content:</p>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <a href="{% url 'protocols' %}" class="btn btn-outline-primary">
+          <i class="fas fa-file-medical-alt me-1"></i> Browse Protocols
+        </a>
+        <a href="{% url 'quizzes_list' %}" class="btn btn-outline-primary">
+          <i class="fas fa-clipboard-check me-1"></i> View Quizzes
+        </a>
+        <a href="{% url 'my_scans' %}" class="btn btn-outline-primary">
+          <i class="fas fa-wave-square me-1"></i> My Scans
+        </a>
+        <a href="{% url 'cases_list' %}" class="btn btn-outline-primary">
+          <i class="fas fa-notes-medical me-1"></i> Clinical Cases
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% else %}
+
+  <!-- Search Suggestions -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="mb-3">Popular Searches</h5>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'search' %}?q=FAST" class="btn btn-outline-secondary btn-sm">FAST</a>
+        <a href="{% url 'search' %}?q=cardiac" class="btn btn-outline-secondary btn-sm">Cardiac</a>
+        <a href="{% url 'search' %}?q=lung" class="btn btn-outline-secondary btn-sm">Lung</a>
+        <a href="{% url 'search' %}?q=pneumothorax" class="btn btn-outline-secondary btn-sm">Pneumothorax</a>
+        <a href="{% url 'search' %}?q=echo" class="btn btn-outline-secondary btn-sm">Echo</a>
+        <a href="{% url 'search' %}?q=trauma" class="btn btn-outline-secondary btn-sm">Trauma</a>
+        <a href="{% url 'search' %}?q=effusion" class="btn btn-outline-secondary btn-sm">Effusion</a>
+        <a href="{% url 'search' %}?q=IVC" class="btn btn-outline-secondary btn-sm">IVC</a>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

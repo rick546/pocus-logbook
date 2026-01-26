@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Count, Avg, F
+from django.db import models
+from django.db.models import Count, Avg, F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from .models import ClinicalCase, CaseStep
@@ -351,6 +352,74 @@ def resources(request):
 
 def protocols(request):
     return render(request, "logbook/protocols.html")
+
+
+def search(request):
+    query = request.GET.get("q", "").strip()
+    results = {
+        "scans": [],
+        "quizzes": [],
+        "cases": [],
+        "protocols": [],
+    }
+
+    if query and request.user.is_authenticated:
+        # Search user's scans
+        results["scans"] = Scan.objects.filter(
+            user=request.user
+        ).filter(
+            Q(exam_type__icontains=query) |
+            Q(indication__icontains=query) |
+            Q(notes__icontains=query) |
+            Q(finding__icontains=query)
+        ).order_by("-performed_at")[:10]
+
+        # Search quizzes
+        matching_quizzes = []
+        for quiz_id, quiz_data in QUIZZES.items():
+            if query.lower() in quiz_data["title"].lower():
+                matching_quizzes.append({
+                    "id": quiz_id,
+                    "title": quiz_data["title"],
+                })
+        results["quizzes"] = matching_quizzes
+
+        # Search clinical cases
+        results["cases"] = ClinicalCase.objects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query),
+            is_published=True
+        )[:10]
+
+        # Search protocols (static content matching)
+        protocol_keywords = {
+            "fast": {"name": "FAST Scan", "tab": "fast", "keywords": ["fast", "trauma", "morrison", "hepatorenal", "splenorenal", "pericardial", "hemoperitoneum", "free fluid"]},
+            "lung": {"name": "Lung Ultrasound", "tab": "lung", "keywords": ["lung", "pneumothorax", "b-lines", "pleural", "consolidation", "effusion", "sliding", "barcode"]},
+            "cardiac": {"name": "Cardiac POCUS", "tab": "cardiac", "keywords": ["cardiac", "heart", "echo", "plax", "psax", "apical", "subxiphoid", "ivc", "pericardial", "tamponade", "lv", "rv"]},
+        }
+
+        matching_protocols = []
+        for protocol_id, protocol_data in protocol_keywords.items():
+            if any(query.lower() in kw for kw in protocol_data["keywords"]) or query.lower() in protocol_data["name"].lower():
+                matching_protocols.append({
+                    "id": protocol_id,
+                    "name": protocol_data["name"],
+                    "tab": protocol_data["tab"],
+                })
+        results["protocols"] = matching_protocols
+
+    total_results = (
+        len(results["scans"]) +
+        len(results["quizzes"]) +
+        len(results["cases"]) +
+        len(results["protocols"])
+    )
+
+    return render(request, "logbook/search_results.html", {
+        "query": query,
+        "results": results,
+        "total_results": total_results,
+    })
 
 from django.utils import timezone
 from django.views.decorators.http import require_POST
