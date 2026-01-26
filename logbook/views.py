@@ -164,26 +164,26 @@ def case_step(request, case_id, step_order):
     )
 
 def home(request):
-    leaderboard = (
-        User.objects
-        .filter(scans__isnull=False)
-        .annotate(total=Count("scans"))
-        .order_by("-total", "username")[:10]
-    )
-
-    # Quiz progress for authenticated users
-    quiz_progress = None
-    quizzes_completed = 0
-    quiz_percentage = 0
+    context = {}
 
     if request.user.is_authenticated:
-        # Count quizzes where user has passed (70% or higher)
+        # Get user's scans
+        user_scans = Scan.objects.filter(user=request.user)
+
+        # Total scans by type
+        scans_by_type = (
+            user_scans
+            .values("exam_type")
+            .annotate(total=Count("id"))
+            .order_by("-total")
+        )
+
+        # Total scan count
+        total_scans = user_scans.count()
+
+        # Quiz progress
         user_best_scores = QuizBestScore.objects.filter(user=request.user)
         quizzes_completed = user_best_scores.filter(best_score__gte=F('total') * 0.7).count()
-
-        # Alternative: count any quiz attempted (regardless of score)
-        # quizzes_completed = user_best_scores.count()
-
         quiz_percentage = round((quizzes_completed / TOTAL_QUIZZES) * 100) if TOTAL_QUIZZES > 0 else 0
 
         quiz_progress = {
@@ -192,10 +192,52 @@ def home(request):
             "percentage": quiz_percentage,
         }
 
-    return render(request, "home.html", {
-        "leaderboard": leaderboard,
-        "quiz_progress": quiz_progress,
-    })
+        # Calculate weak areas (exam types with low volume)
+        # Define minimum target for each exam type
+        exam_targets = {
+            "FAST": 25,
+            "CARDIAC": 25,
+            "LUNG": 25,
+            "AORTA": 15,
+            "IVC": 15,
+            "MSK": 10,
+            "OB": 10,
+            "OTHER": 5,
+        }
+
+        # Get counts per exam type
+        scan_counts = {item["exam_type"]: item["total"] for item in scans_by_type}
+
+        # Find weak areas (less than 50% of target)
+        weak_areas = []
+        for exam_type, target in exam_targets.items():
+            current = scan_counts.get(exam_type, 0)
+            if current < target * 0.5:  # Less than 50% of target
+                weak_areas.append({
+                    "exam_type": exam_type,
+                    "current": current,
+                    "target": target,
+                    "percentage": round((current / target) * 100) if target > 0 else 0,
+                })
+
+        # Sort weak areas by percentage (lowest first)
+        weak_areas.sort(key=lambda x: x["percentage"])
+
+        # QA feedback pending (placeholder - can be expanded later)
+        # For now, count scans without supervisor present as "needs QA"
+        qa_pending = user_scans.filter(supervisor_present=False).count()
+
+        context = {
+            "quiz_progress": quiz_progress,
+            "scans_by_type": scans_by_type,
+            "total_scans": total_scans,
+            "weak_areas": weak_areas[:4],  # Show top 4 weak areas
+            "qa_pending": qa_pending,
+            "exam_targets": exam_targets,
+            "scan_counts": scan_counts,
+        }
+
+    return render(request, "home.html", context)
 
 
 @login_required

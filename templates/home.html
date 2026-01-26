@@ -282,37 +282,127 @@
   </div>
 </div>
 
-  <div class="card mb-4">
-    <div class="card-header">
-      <i class="fas fa-trophy me-1"></i>
-      Leaderboard (Top Users by POCUS Scans)
-    </div>
-
-    <div class="card-body">
-      <table class="table table-striped" id="leaderboardTable">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>User</th>
-            <th>Total Scans</th>
-          </tr>
-        </thead>
-        <tbody>
-			  {% for u in leaderboard %}
-			    <tr>
-			      <td>{{ forloop.counter }}</td>
-			      <td>{{ u.username }}</td>
-			      <td>{{ u.total }}</td>
-			    </tr>
-			  {% empty %}
-			    <tr>
-			      <td colspan="3" class="text-muted">No scans logged yet.</td>
-			    </tr>
-			  {% endfor %}
-			</tbody>
-      </table>
+{% if user.is_authenticated %}
+<!-- Personal Dashboard Stats -->
+<div class="row">
+  <!-- Total Scans Summary -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card h-100" style="border-left: 4px solid var(--medical-primary);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem;">Total Scans</h6>
+            <h2 class="mb-0" style="color: var(--medical-primary); font-weight: 700;">{{ total_scans|default:0 }}</h2>
+          </div>
+          <div class="text-muted"><i class="fas fa-wave-square fa-2x"></i></div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Quiz Progress -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card h-100" style="border-left: 4px solid var(--medical-secondary);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem;">Quizzes Passed</h6>
+            <h2 class="mb-0" style="color: var(--medical-secondary); font-weight: 700;">{{ quiz_progress.completed|default:0 }}/{{ quiz_progress.total|default:3 }}</h2>
+          </div>
+          <div class="text-muted"><i class="fas fa-clipboard-check fa-2x"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QA Pending -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card h-100" style="border-left: 4px solid var(--medical-accent);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem;">QA Pending</h6>
+            <h2 class="mb-0" style="color: var(--medical-accent); font-weight: 700;">{{ qa_pending|default:0 }}</h2>
+            <small class="text-muted">Scans without supervisor</small>
+          </div>
+          <div class="text-muted"><i class="fas fa-user-md fa-2x"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SonoClipShare Link -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card h-100" style="border-left: 4px solid var(--medical-success);">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem;">Upload Images</h6>
+            <a href="https://www.sonoclipshare.com/" target="_blank" class="btn btn-outline-primary btn-sm mt-2">
+              <i class="fas fa-external-link-alt me-1"></i> SonoClipShare
+            </a>
+          </div>
+          <div class="text-muted"><i class="fas fa-cloud-upload-alt fa-2x"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scans by Type -->
+<div class="card mb-4">
+  <div class="card-header">
+    <i class="fas fa-chart-pie me-1"></i>
+    Your Scans by Type
+  </div>
+  <div class="card-body">
+    {% if scans_by_type %}
+    <div class="row">
+      {% for scan in scans_by_type %}
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="p-3 text-center" style="background-color: var(--bg-main); border-radius: 8px;">
+          <h4 class="mb-1" style="color: var(--medical-primary); font-weight: 700;">{{ scan.total }}</h4>
+          <span class="text-muted" style="font-size: 0.875rem;">{{ scan.exam_type }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted text-center mb-0">No scans logged yet. <a href="{% url 'scan_create' %}">Log your first scan!</a></p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Weak Areas -->
+{% if weak_areas %}
+<div class="card mb-4">
+  <div class="card-header" style="background-color: #FEF3C7;">
+    <i class="fas fa-exclamation-triangle me-1" style="color: var(--medical-accent);"></i>
+    Areas to Focus On
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-3" style="font-size: 0.875rem;">These exam types are below 50% of your target volume. Consider focusing on these areas:</p>
+    <div class="row">
+      {% for area in weak_areas %}
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="p-3" style="background-color: #FEF3C7; border-radius: 8px; border: 1px solid #FCD34D;">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong style="color: var(--text-primary);">{{ area.exam_type }}</strong>
+            <span class="badge" style="background-color: var(--medical-accent); color: white;">{{ area.percentage }}%</span>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar" role="progressbar" style="width: {{ area.percentage }}%; background-color: var(--medical-accent);" aria-valuenow="{{ area.percentage }}" aria-valuemax="100"></div>
+          </div>
+          <small class="text-muted d-block mt-1">{{ area.current }}/{{ area.target }} scans</small>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endif %}
+
 </div>
                 </main>
                 <footer class="py-4 mt-auto" style="background-color: var(--bg-main); border-top: 1px solid var(--border-color);">
