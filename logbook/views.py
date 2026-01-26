@@ -348,6 +348,10 @@ def pocus_calendar(request):
 def resources(request):
     return render(request, "logbook/resources.html")
 
+
+def protocols(request):
+    return render(request, "logbook/protocols.html")
+
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 

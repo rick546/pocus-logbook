@@ -15,6 +15,7 @@ urlpatterns = [
     path("quizzes/", views.quizzes_home, name="quizzes_list"),
     path("quizzes/<int:quiz_id>/", views.quiz_detail, name="quiz_detail"),
     path("resources/", views.resources, name="resources"),
+    path("protocols/", views.protocols, name="protocols"),
     path("bundles/<slug:bundle>/add/", views.add_scan_bundle, name="add_scan_bundle"),
     path("logbook/new/", views.scan_create, name="scan_create"),
     path("logbook/", views.my_scans, name="my_scans"),
