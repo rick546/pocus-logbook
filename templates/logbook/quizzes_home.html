@@ -62,65 +62,109 @@
       </div>
     </div>
 
-    <!-- Quiz 2 - Cardiac POCUS Fundamentals (Coming Soon) -->
+    <!-- Quiz 2 - POCUS Session #1 Pre-Session Quiz -->
     <div class="col-xl-4 col-md-6 mb-4">
-      <div class="dashboard-card" style="opacity: 0.7;">
+      <div class="dashboard-card">
         <div class="d-flex justify-content-between align-items-start mb-3">
-          <div class="dashboard-card-icon" style="background: linear-gradient(135deg, #CBD5E0, #A0AEC0);">
-            <i class="fas fa-heart"></i>
+          <div class="dashboard-card-icon icon-secondary">
+            <i class="fas fa-wave-square"></i>
           </div>
-          <span class="competency-badge" style="background-color: #E2E8F0; color: #4A5568;">Coming Soon</span>
+          {% if 2 in user_best_scores %}
+            {% if user_best_scores.2.passed %}
+              <span class="competency-badge competency-advanced">Passed</span>
+            {% else %}
+              <span class="competency-badge competency-intermediate">Attempted</span>
+            {% endif %}
+          {% else %}
+            <span class="competency-badge" style="background-color: #DBEAFE; color: #1E40AF;">Available</span>
+          {% endif %}
         </div>
 
         <div class="dashboard-card-title">Quiz 2</div>
-        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">Cardiac POCUS Fundamentals</h5>
+        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">POCUS Session #1 Pre-Session</h5>
         <p class="text-muted mb-3" style="font-size: 0.875rem;">
-          Assess your knowledge of basic cardiac views, ventricular function assessment, and pericardial effusion detection.
+          Test your knowledge of ultrasound physics, abdominal aorta assessment, and lung ultrasound basics.
         </p>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted" style="font-size: 0.875rem;">
-            <i class="fas fa-question-circle me-1"></i> 6 Questions
-          </span>
-          <span class="text-muted" style="font-size: 0.875rem;">
-            <i class="fas fa-clock me-1"></i> ~12 min
-          </span>
-        </div>
-
-        <div style="color: var(--text-muted); font-size: 0.875rem; font-weight: 600;">
-          <i class="fas fa-lock me-1"></i> Available Soon
-        </div>
-      </div>
-    </div>
-
-    <!-- Quiz 3 - Lung & Pleural Ultrasound (Coming Soon) -->
-    <div class="col-xl-4 col-md-6 mb-4">
-      <div class="dashboard-card" style="opacity: 0.7;">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <div class="dashboard-card-icon" style="background: linear-gradient(135deg, #CBD5E0, #A0AEC0);">
-            <i class="fas fa-lungs"></i>
+        {% if 2 in user_best_scores %}
+        <div class="mb-3 p-2" style="background-color: var(--bg-main); border-radius: 8px;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">
+              <i class="fas fa-trophy me-1" style="color: var(--medical-secondary);"></i>
+              Best Score: <strong>{{ user_best_scores.2.best_score }}/{{ user_best_scores.2.total }}</strong> ({{ user_best_scores.2.percentage }}%)
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">
+              {{ user_best_scores.2.attempts }} attempt{{ user_best_scores.2.attempts|pluralize }}
+            </span>
           </div>
-          <span class="competency-badge" style="background-color: #E2E8F0; color: #4A5568;">Coming Soon</span>
         </div>
-
-        <div class="dashboard-card-title">Quiz 3</div>
-        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">Lung & Pleural Ultrasound</h5>
-        <p class="text-muted mb-3" style="font-size: 0.875rem;">
-          Master the identification of B-lines, pneumothorax, pleural effusions, and lung consolidation patterns.
-        </p>
+        {% endif %}
 
         <div class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted" style="font-size: 0.875rem;">
-            <i class="fas fa-question-circle me-1"></i> 7 Questions
+            <i class="fas fa-question-circle me-1"></i> 10 Questions
           </span>
           <span class="text-muted" style="font-size: 0.875rem;">
             <i class="fas fa-clock me-1"></i> ~15 min
           </span>
         </div>
 
-        <div style="color: var(--text-muted); font-size: 0.875rem; font-weight: 600;">
-          <i class="fas fa-lock me-1"></i> Available Soon
+        <a class="dashboard-card-link" href="{% url 'quiz_detail' 2 %}">
+          {% if 2 in user_best_scores %}Retake Quiz{% else %}Start Quiz{% endif %} <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quiz 3 - Focused Echo Pre-Session Quiz -->
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="dashboard-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="dashboard-card-icon icon-success">
+            <i class="fas fa-heart"></i>
+          </div>
+          {% if 3 in user_best_scores %}
+            {% if user_best_scores.3.passed %}
+              <span class="competency-badge competency-advanced">Passed</span>
+            {% else %}
+              <span class="competency-badge competency-intermediate">Attempted</span>
+            {% endif %}
+          {% else %}
+            <span class="competency-badge" style="background-color: #DBEAFE; color: #1E40AF;">Available</span>
+          {% endif %}
         </div>
+
+        <div class="dashboard-card-title">Quiz 3</div>
+        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">Focused Echo Pre-Session</h5>
+        <p class="text-muted mb-3" style="font-size: 0.875rem;">
+          Test your knowledge of cardiac ultrasound views, probe positioning, and cardiac anatomy.
+        </p>
+
+        {% if 3 in user_best_scores %}
+        <div class="mb-3 p-2" style="background-color: var(--bg-main); border-radius: 8px;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">
+              <i class="fas fa-trophy me-1" style="color: var(--medical-secondary);"></i>
+              Best Score: <strong>{{ user_best_scores.3.best_score }}/{{ user_best_scores.3.total }}</strong> ({{ user_best_scores.3.percentage }}%)
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">
+              {{ user_best_scores.3.attempts }} attempt{{ user_best_scores.3.attempts|pluralize }}
+            </span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-question-circle me-1"></i> 5 Questions
+          </span>
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-clock me-1"></i> ~10 min
+          </span>
+        </div>
+
+        <a class="dashboard-card-link" href="{% url 'quiz_detail' 3 %}">
+          {% if 3 in user_best_scores %}Retake Quiz{% else %}Start Quiz{% endif %} <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
 
@@ -135,7 +179,7 @@
     <div class="card-body">
       <div class="row">
         <div class="col-md-3 text-center mb-3">
-          <h2 class="mb-1" style="color: var(--medical-primary); font-weight: 700;">1</h2>
+          <h2 class="mb-1" style="color: var(--medical-primary); font-weight: 700;">{{ total_quizzes }}</h2>
           <p class="text-muted mb-0" style="font-size: 0.875rem;">Quizzes Available</p>
         </div>
         <div class="col-md-3 text-center mb-3">

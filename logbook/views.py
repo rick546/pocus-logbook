@@ -17,6 +17,7 @@ TOTAL_QUIZZES = 3
 QUIZZES = {
     1: {
         "title": "E-FAST + US-Guided CVC Basics",
+        "template": "logbook/quiz_1.html",
         "questions": {
             "q1": "C",
             "q2": "B",
@@ -25,9 +26,33 @@ QUIZZES = {
             "q5": "B",
         }
     },
-    # Future quizzes will be added here
-    # 2: { "title": "Cardiac POCUS Fundamentals", "questions": {...} },
-    # 3: { "title": "Lung & Pleural Ultrasound", "questions": {...} },
+    2: {
+        "title": "POCUS Session #1 - Pre-Session Quiz",
+        "template": "logbook/quiz_2.html",
+        "questions": {
+            "q1": "B",
+            "q2": "B",
+            "q3": "B",
+            "q4": "B",
+            "q5": "B",
+            "q6": "A",
+            "q7": "A",
+            "q8": "B",
+            "q9": "B",
+            "q10": "A",
+        }
+    },
+    3: {
+        "title": "Focused Echo Pre-Session Quiz",
+        "template": "logbook/quiz_3.html",
+        "questions": {
+            "q1": "D",
+            "q2": "B",
+            "q3": "B",
+            "q4": "D",
+            "q5": "C",
+        }
+    },
 }
 
 # Keep QUIZ_1 for backward compatibility
@@ -113,7 +138,10 @@ def quiz_detail(request, quiz_id):
         else:
             is_new_best = True
 
-    return render(request, "logbook/quizzes_list.html", {
+    # Use quiz-specific template if available, otherwise default
+    template = quiz.get("template", "logbook/quizzes_list.html")
+
+    return render(request, template, {
         "quiz": quiz,
         "quiz_id": quiz_id,
         "answer_key": answer_key,
