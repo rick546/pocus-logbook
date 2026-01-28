@@ -100,7 +100,108 @@ class Scan(models.Model):
         help_text="Optional: confidence 1–5",
     )
 
+    # POCUS IQ Scale fields (optional survey)
+    IQ_SCALE_CHOICES = [
+        (0, "0 - Inadequate"),
+        (1, "1 - Adequate"),
+        (2, "2 - Ideal/Excellent"),
+    ]
+
+    iq_probe_choice = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        choices=IQ_SCALE_CHOICES,
+        verbose_name="Technical Skill: Probe Choice",
+        help_text="0=Inadequate for visualization, 2=Ideal",
+    )
+
+    iq_depth = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        choices=IQ_SCALE_CHOICES,
+        verbose_name="Technical Skill: Depth",
+        help_text="0=Inadequate for visualization, 2=Ideal",
+    )
+
+    iq_gain_presets = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        choices=IQ_SCALE_CHOICES,
+        verbose_name="Technical Skill: Gain/Presets",
+        help_text="0=Inadequate for visualization, 2=Ideal",
+    )
+
+    iq_probe_control = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        choices=IQ_SCALE_CHOICES,
+        verbose_name="Scanning Skill: Probe Control",
+        help_text="0=Poor probe control, 2=Excellent probe control",
+    )
+
+    iq_anatomy_landmarks = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        choices=IQ_SCALE_CHOICES,
+        verbose_name="Scanning Skill: Anatomy/Landmarks",
+        help_text="0=Poor demonstration, 2=Excellent demonstration",
+    )
+
+    iq_labelling = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        choices=IQ_SCALE_CHOICES,
+        verbose_name="Interpretability: Labelling",
+        help_text="0=Inadequate labeling, 2=Ideal labelling",
+    )
+
+    iq_completeness = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        choices=IQ_SCALE_CHOICES,
+        verbose_name="Interpretability: Completeness",
+        help_text="0=Inadequate views, 2=Ideal views",
+    )
+
+    iq_comments = models.TextField(
+        blank=True,
+        verbose_name="IQ Scale Comments",
+        help_text="Optional comments on image quality",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def iq_total_score(self):
+        """Calculate total POCUS IQ score if any fields are filled"""
+        fields = [
+            self.iq_probe_choice,
+            self.iq_depth,
+            self.iq_gain_presets,
+            self.iq_probe_control,
+            self.iq_anatomy_landmarks,
+            self.iq_labelling,
+            self.iq_completeness,
+        ]
+        filled = [f for f in fields if f is not None]
+        if not filled:
+            return None
+        return sum(filled)
+
+    @property
+    def iq_max_score(self):
+        """Maximum possible score based on filled fields"""
+        fields = [
+            self.iq_probe_choice,
+            self.iq_depth,
+            self.iq_gain_presets,
+            self.iq_probe_control,
+            self.iq_anatomy_landmarks,
+            self.iq_labelling,
+            self.iq_completeness,
+        ]
+        filled = [f for f in fields if f is not None]
+        return len(filled) * 2 if filled else None
 
     def __str__(self):
         return f"{self.user} - {self.exam_type} - {self.performed_at}"
