@@ -30,7 +30,12 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = []
 
-# Add Render hostname
+# Add Railway hostname
+RAILWAY_PUBLIC_DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+if RAILWAY_PUBLIC_DOMAIN:
+    ALLOWED_HOSTS.append(RAILWAY_PUBLIC_DOMAIN)
+
+# Add Render hostname (fallback)
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -38,6 +43,11 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Allow localhost for development
 if DEBUG:
     ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+
+# CSRF trusted origins for Railway
+CSRF_TRUSTED_ORIGINS = []
+if RAILWAY_PUBLIC_DOMAIN:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_PUBLIC_DOMAIN}')
 
 
 # Application definition
