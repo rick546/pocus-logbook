@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% block title %}Faculty Evaluation - POCUS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <h1 class="mt-4" style="color: var(--medical-primary);">
+    <i class="fas fa-user-graduate me-2"></i>Faculty Evaluation
+  </h1>
+  <p class="text-muted mb-4">Please provide feedback on your POCUS instruction experience. Your feedback helps improve our educational program.</p>
+
+  <div class="row">
+    <!-- Dr. Kowal Evaluation -->
+    <div class="col-lg-6 mb-4">
+      <div class="card h-100" style="border-top: 4px solid var(--medical-primary);">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; background-color: var(--medical-primary); color: white;">
+              <i class="fas fa-user-md fa-lg"></i>
+            </div>
+            <div>
+              <h5 class="mb-0">Dr. Kowal</h5>
+              <small class="text-muted">POCUS Faculty</small>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form id="kowal-form">
+            <!-- Overall Rating -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Overall Teaching Effectiveness</label>
+              <div class="d-flex gap-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="kowal-rating" id="kowal-rating-5" value="5">
+                  <label class="form-check-label" for="kowal-rating-5">Excellent</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="kowal-rating" id="kowal-rating-4" value="4">
+                  <label class="form-check-label" for="kowal-rating-4">Very Good</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="kowal-rating" id="kowal-rating-3" value="3">
+                  <label class="form-check-label" for="kowal-rating-3">Good</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="kowal-rating" id="kowal-rating-2" value="2">
+                  <label class="form-check-label" for="kowal-rating-2">Fair</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="kowal-rating" id="kowal-rating-1" value="1">
+                  <label class="form-check-label" for="kowal-rating-1">Poor</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Specific Categories -->
+            <div class="mb-3">
+              <label class="form-label">Knowledge of POCUS</label>
+              <select class="form-select form-select-sm" name="kowal-knowledge">
+                <option value="">Select rating...</option>
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3">Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Hands-on Teaching Skills</label>
+              <select class="form-select form-select-sm" name="kowal-hands-on">
+                <option value="">Select rating...</option>
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3">Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Availability and Accessibility</label>
+              <select class="form-select form-select-sm" name="kowal-availability">
+                <option value="">Select rating...</option>
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3">Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Feedback Quality</label>
+              <select class="form-select form-select-sm" name="kowal-feedback">
+                <option value="">Select rating...</option>
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3">Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
+            </div>
+
+            <!-- Comments -->
+            <div class="mb-3">
+              <label class="form-label">Additional Comments</label>
+              <textarea class="form-control" name="kowal-comments" rows="3" placeholder="Share your experience and suggestions..."></textarea>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="submitEvaluation('kowal')">
+              <i class="fas fa-paper-plane me-1"></i> Submit Evaluation
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dr. Jelic Evaluation -->
+    <div class="col-lg-6 mb-4">
+      <div class="card h-100" style="border-top: 4px solid var(--medical-secondary);">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; background-color: var(--medical-secondary); color: white;">
+              <i class="fas fa-user-md fa-lg"></i>
+            </div>
+            <div>
+              <h5 class="mb-0">Dr. Jelic</h5>
+              <small class="text-muted">POCUS Faculty</small>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form id="jelic-form">
+            <!-- Overall Rating -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Overall Teaching Effectiveness</label>
+              <div class="d-flex gap-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="jelic-rating" id="jelic-rating-5" value="5">
+                  <label class="form-check-label" for="jelic-rating-5">Excellent</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="jelic-rating" id="jelic-rating-4" value="4">
+                  <label class="form-check-label" for="jelic-rating-4">Very Good</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="jelic-rating" id="jelic-rating-3" value="3">
+                  <label class="form-check-label" for="jelic-rating-3">Good</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="jelic-rating" id="jelic-rating-2" value="2">
+                  <label class="form-check-label" for="jelic-rating-2">Fair</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="jelic-rating" id="jelic-rating-1" value="1">
+                  <label class="form-check-label" for="jelic-rating-1">Poor</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Specific Categories -->
+            <div class="mb-3">
+              <label class="form-label">Knowledge of POCUS</label>
+              <select class="form-select form-select-sm" name="jelic-knowledge">
+                <option value="">Select rating...</option>
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3">Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Hands-on Teaching Skills</label>
+              <select class="form-select form-select-sm" name="jelic-hands-on">
+                <option value="">Select rating...</option>
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3">Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Availability and Accessibility</label>
+              <select class="form-select form-select-sm" name="jelic-availability">
+                <option value="">Select rating...</option>
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3">Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Feedback Quality</label>
+              <select class="form-select form-select-sm" name="jelic-feedback">
+                <option value="">Select rating...</option>
+                <option value="5">Excellent</option>
+                <option value="4">Very Good</option>
+                <option value="3">Good</option>
+                <option value="2">Fair</option>
+                <option value="1">Poor</option>
+              </select>
+            </div>
+
+            <!-- Comments -->
+            <div class="mb-3">
+              <label class="form-label">Additional Comments</label>
+              <textarea class="form-control" name="jelic-comments" rows="3" placeholder="Share your experience and suggestions..."></textarea>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="submitEvaluation('jelic')">
+              <i class="fas fa-paper-plane me-1"></i> Submit Evaluation
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evaluation Guidelines -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="fas fa-info-circle me-2"></i>Evaluation Guidelines
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h6>Rating Scale</h6>
+          <ul class="list-unstyled">
+            <li><strong>5 - Excellent:</strong> Exceeds expectations consistently</li>
+            <li><strong>4 - Very Good:</strong> Above average performance</li>
+            <li><strong>3 - Good:</strong> Meets expectations</li>
+            <li><strong>2 - Fair:</strong> Below expectations in some areas</li>
+            <li><strong>1 - Poor:</strong> Needs significant improvement</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h6>Confidentiality</h6>
+          <p class="text-muted mb-0">
+            All evaluations are collected anonymously and used solely for the purpose of improving POCUS education.
+            Your honest feedback is valuable and appreciated.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center py-5">
+        <i class="fas fa-check-circle fa-4x mb-3" style="color: var(--medical-success);"></i>
+        <h4>Thank You!</h4>
+        <p class="text-muted mb-0">Your evaluation has been submitted successfully.</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function submitEvaluation(faculty) {
+  const form = document.getElementById(faculty + '-form');
+  const formData = new FormData(form);
+
+  // Check if overall rating is selected
+  const rating = formData.get(faculty + '-rating');
+  if (!rating) {
+    alert('Please select an overall teaching effectiveness rating.');
+    return;
+  }
+
+  // Show success modal
+  const modal = new bootstrap.Modal(document.getElementById('successModal'));
+  modal.show();
+
+  // Reset the form
+  form.reset();
+}
+</script>
+{% endblock %}

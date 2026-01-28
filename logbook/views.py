@@ -354,6 +354,10 @@ def protocols(request):
     return render(request, "logbook/protocols.html")
 
 
+def faculty_evaluation(request):
+    return render(request, "logbook/faculty_evaluation.html")
+
+
 def search(request):
     query = request.GET.get("q", "").strip()
     results = {
