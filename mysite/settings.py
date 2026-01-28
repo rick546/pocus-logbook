@@ -1,5 +1,5 @@
 import os
-
+import dj_database_url
 
 """
 Django settings for mysite project.
@@ -23,17 +23,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cjplaiw#xf=)yxyhs5h4(l*29$$-zqu%+ibzs=q%!^u-&%(miz'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-cjplaiw#xf=)yxyhs5h4(l*29$$-zqu%+ibzs=q%!^u-&%(miz')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = []
+
+# Add Render hostname
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Allow localhost for development
+if DEBUG:
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
 
 
 # Application definition
 
-INSTALLED_APPS = INSTALLED_APPS = INSTALLED_APPS = [
+INSTALLED_APPS = [
     # Your apps
     "logbook",
 
@@ -49,6 +58,7 @@ INSTALLED_APPS = INSTALLED_APPS = INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Whitenoise for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,10 +93,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600,
+    )
 }
 
 
@@ -130,5 +140,13 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# Static files for production
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Whitenoise storage for compression and caching
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = "my_scans"

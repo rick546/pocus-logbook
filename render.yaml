@@ -1,0 +1,24 @@
+databases:
+  - name: pocus-db
+    databaseName: pocus
+    user: pocus
+    plan: free
+
+services:
+  - type: web
+    name: pocus-portal
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn mysite.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pocus-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
