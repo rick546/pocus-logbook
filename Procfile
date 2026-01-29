@@ -1,2 +1,1 @@
-web: gunicorn mysite.wsgi --log-file -
-release: python manage.py migrate
+web: python manage.py migrate --noinput && python manage.py create_admin && gunicorn mysite.wsgi
