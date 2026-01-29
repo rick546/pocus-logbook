@@ -124,75 +124,74 @@
             <div id="layoutSidenav_content">
     			<main>
       			  <div class="container-fluid px-4">
-         			   <div class="row mt-4">
 
-							  <div class="col-xl-3 col-md-6 mb-4">
-							    <div class="dashboard-card">
-							      <div class="dashboard-card-icon icon-primary">
-							        <i class="fas fa-plus-circle"></i>
-							      </div>
-							      <div class="dashboard-card-title">Log a Scan</div>
-							      <p class="text-muted mb-3" style="font-size: 0.875rem;">Record your latest ultrasound examination</p>
-							      <a class="dashboard-card-link" href="{% url 'scan_create' %}">
-							        Get Started <i class="fas fa-arrow-right"></i>
-							      </a>
-							    </div>
-							  </div>
+<!-- Quick Add Scan - TOP OF PAGE -->
+<div class="card mb-4 mt-4">
+  <div class="card-header">
+    <i class="fas fa-bolt me-1"></i>
+    Quick Add Scan
+  </div>
+  <div class="card-body d-flex flex-wrap gap-3 justify-content-center">
 
-							  <div class="col-xl-3 col-md-6 mb-4">
-							    <div class="dashboard-card">
-							      <div class="dashboard-card-icon icon-secondary">
-							        <i class="fas fa-list-alt"></i>
-							      </div>
-							      <div class="dashboard-card-title">My Scans</div>
-							      <p class="text-muted mb-3" style="font-size: 0.875rem;">View and manage your scan history</p>
-							      <a class="dashboard-card-link" href="{% url 'my_scans' %}">
-							        View All <i class="fas fa-arrow-right"></i>
-							      </a>
-							    </div>
-							  </div>
+    <form method="post" action="{% url 'add_scan_bundle' 'ruq' %}">
+      {% csrf_token %}
+      <button class="btn btn-primary btn-lg px-4 py-3" type="submit" style="font-size: 1.1rem; min-width: 160px;">
+        <i class="fas fa-wave-square me-2"></i>RUQ Abdomen
+      </button>
+    </form>
 
-							  <div class="col-xl-3 col-md-6 mb-4">
-							    <div class="dashboard-card">
-							      <div class="dashboard-card-icon icon-success">
-							        <i class="fas fa-notes-medical"></i>
-							      </div>
-							      <div class="dashboard-card-title">Clinical Cases</div>
-							      <p class="text-muted mb-3" style="font-size: 0.875rem;">Interactive case-based learning</p>
-							      <a class="dashboard-card-link" href="{% url 'cases_list' %}">
-							        Browse Cases <i class="fas fa-arrow-right"></i>
-							      </a>
-							    </div>
-							  </div>
+    <form method="post" action="{% url 'add_scan_bundle' 'luq' %}">
+      {% csrf_token %}
+      <button class="btn btn-primary btn-lg px-4 py-3" type="submit" style="font-size: 1.1rem; min-width: 160px;">
+        <i class="fas fa-wave-square me-2"></i>LUQ Abdomen
+      </button>
+    </form>
 
-							  <div class="col-xl-3 col-md-6 mb-4">
-							    <div class="dashboard-card">
-							      <div class="dashboard-card-icon icon-accent">
-							        <i class="fas fa-user-graduate"></i>
-							      </div>
-							      <div class="dashboard-card-title">Faculty Evaluation</div>
-							      <p class="text-muted mb-3" style="font-size: 0.875rem;">Provide feedback on POCUS instruction</p>
-							      <a class="dashboard-card-link" href="{% url 'faculty_evaluation' %}">
-							        Submit Evaluation <i class="fas fa-arrow-right"></i>
-							      </a>
-							    </div>
-							  </div>
+    <form method="post" action="{% url 'add_scan_bundle' 'aorta' %}">
+      {% csrf_token %}
+      <button class="btn btn-info btn-lg px-4 py-3" type="submit" style="font-size: 1.1rem; min-width: 160px;">
+        <i class="fas fa-wave-square me-2"></i>Aorta
+      </button>
+    </form>
 
-							  {% if user.is_staff %}
-							  <div class="col-xl-3 col-md-6 mb-4">
-							    <div class="dashboard-card">
-							      <div class="dashboard-card-icon icon-accent">
-							        <i class="fas fa-chart-bar"></i>
-							      </div>
-							      <div class="dashboard-card-title">Program Totals</div>
-							      <p class="text-muted mb-3" style="font-size: 0.875rem;">View analytics and statistics</p>
-							      <a class="dashboard-card-link" href="{% url 'scan_totals' %}">
-							        View Report <i class="fas fa-arrow-right"></i>
-							      </a>
-							    </div>
-							  </div>
-							  {% endif %}
-							</div>
+    <form method="post" action="{% url 'add_scan_bundle' 'subxiphoid' %}">
+      {% csrf_token %}
+      <button class="btn btn-danger btn-lg px-4 py-3" type="submit" style="font-size: 1.1rem; min-width: 160px;">
+        <i class="fas fa-heartbeat me-2"></i>Subxiphoid
+      </button>
+    </form>
+
+    <form method="post" action="{% url 'add_scan_bundle' 'plax' %}">
+      {% csrf_token %}
+      <button class="btn btn-danger btn-lg px-4 py-3" type="submit" style="font-size: 1.1rem; min-width: 160px;">
+        <i class="fas fa-heartbeat me-2"></i>PLAX
+      </button>
+    </form>
+
+    <form method="post" action="{% url 'add_scan_bundle' 'psax' %}">
+      {% csrf_token %}
+      <button class="btn btn-danger btn-lg px-4 py-3" type="submit" style="font-size: 1.1rem; min-width: 160px;">
+        <i class="fas fa-heartbeat me-2"></i>PSAX
+      </button>
+    </form>
+
+    <form method="post" action="{% url 'add_scan_bundle' 'ivc' %}">
+      {% csrf_token %}
+      <button class="btn btn-warning btn-lg px-4 py-3" type="submit" style="font-size: 1.1rem; min-width: 160px;">
+        <i class="fas fa-wave-square me-2"></i>IVC
+      </button>
+    </form>
+
+    <form method="post" action="{% url 'add_scan_bundle' 'ob_first' %}">
+      {% csrf_token %}
+      <button class="btn btn-success btn-lg px-4 py-3" type="submit" style="font-size: 1.1rem; min-width: 180px;">
+        <i class="fas fa-baby me-2"></i>First-Trimester OB
+      </button>
+    </form>
+
+  </div>
+</div>
+
                                 <!-- Welcome header -->
 <div class="container-fluid px-4">
   <div class="text-center mb-4">
@@ -260,55 +259,74 @@
 </div>
 {% endif %}
 
-  <!-- Leaderboard card -->
-  <div class="card mb-4">
-  <div class="card-header">
-    <i class="fas fa-bolt me-1"></i>
-    Quick Add Scan
+<!-- Navigation Cards -->
+<div class="row mb-4">
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="dashboard-card">
+      <div class="dashboard-card-icon icon-primary">
+        <i class="fas fa-plus-circle"></i>
+      </div>
+      <div class="dashboard-card-title">Log a Scan</div>
+      <p class="text-muted mb-3" style="font-size: 0.875rem;">Record your latest ultrasound examination</p>
+      <a class="dashboard-card-link" href="{% url 'scan_create' %}">
+        Get Started <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
   </div>
-  <div class="card-body d-flex flex-wrap gap-2">
 
-    <form method="post" action="{% url 'add_scan_bundle' 'ruq' %}">
-      {% csrf_token %}
-      <button class="btn btn-primary btn-sm" type="submit">RUQ Abdomen</button>
-    </form>
-
-    <form method="post" action="{% url 'add_scan_bundle' 'luq' %}">
-      {% csrf_token %}
-      <button class="btn btn-primary btn-sm" type="submit">LUQ Abdomen</button>
-    </form>
-
-    <form method="post" action="{% url 'add_scan_bundle' 'aorta' %}">
-      {% csrf_token %}
-      <button class="btn btn-info btn-sm" type="submit">Aorta</button>
-    </form>
-
-    <form method="post" action="{% url 'add_scan_bundle' 'subxiphoid' %}">
-      {% csrf_token %}
-      <button class="btn btn-danger btn-sm" type="submit">Subxiphoid</button>
-    </form>
-
-    <form method="post" action="{% url 'add_scan_bundle' 'plax' %}">
-      {% csrf_token %}
-      <button class="btn btn-danger btn-sm" type="submit">PLAX</button>
-    </form>
-
-    <form method="post" action="{% url 'add_scan_bundle' 'psax' %}">
-      {% csrf_token %}
-      <button class="btn btn-danger btn-sm" type="submit">PSAX</button>
-    </form>
-
-    <form method="post" action="{% url 'add_scan_bundle' 'ivc' %}">
-      {% csrf_token %}
-      <button class="btn btn-warning btn-sm" type="submit">IVC</button>
-    </form>
-
-    <form method="post" action="{% url 'add_scan_bundle' 'ob_first' %}">
-      {% csrf_token %}
-      <button class="btn btn-success btn-sm" type="submit">First-Trimester OB</button>
-    </form>
-
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="dashboard-card">
+      <div class="dashboard-card-icon icon-secondary">
+        <i class="fas fa-list-alt"></i>
+      </div>
+      <div class="dashboard-card-title">My Scans</div>
+      <p class="text-muted mb-3" style="font-size: 0.875rem;">View and manage your scan history</p>
+      <a class="dashboard-card-link" href="{% url 'my_scans' %}">
+        View All <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
   </div>
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="dashboard-card">
+      <div class="dashboard-card-icon icon-success">
+        <i class="fas fa-notes-medical"></i>
+      </div>
+      <div class="dashboard-card-title">Clinical Cases</div>
+      <p class="text-muted mb-3" style="font-size: 0.875rem;">Interactive case-based learning</p>
+      <a class="dashboard-card-link" href="{% url 'cases_list' %}">
+        Browse Cases <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="dashboard-card">
+      <div class="dashboard-card-icon icon-accent">
+        <i class="fas fa-user-graduate"></i>
+      </div>
+      <div class="dashboard-card-title">Faculty Evaluation</div>
+      <p class="text-muted mb-3" style="font-size: 0.875rem;">Provide feedback on POCUS instruction</p>
+      <a class="dashboard-card-link" href="{% url 'faculty_evaluation' %}">
+        Submit Evaluation <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  {% if user.is_staff %}
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="dashboard-card">
+      <div class="dashboard-card-icon icon-accent">
+        <i class="fas fa-chart-bar"></i>
+      </div>
+      <div class="dashboard-card-title">Program Totals</div>
+      <p class="text-muted mb-3" style="font-size: 0.875rem;">View analytics and statistics</p>
+      <a class="dashboard-card-link" href="{% url 'scan_totals' %}">
+        View Report <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 {% if user.is_authenticated %}
