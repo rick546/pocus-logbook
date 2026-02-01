@@ -482,41 +482,8 @@ def register(request):
 @login_required
 @require_POST
 def batch_add_scans(request):
-    """Add multiple scans of the same type at once."""
-    scan_type = request.POST.get("scan_type")
-    quantity = request.POST.get("quantity", 1)
-
-    # Validate scan type
+    """Add multiple scans of different types at once."""
     valid_types = ["RUQ", "LUQ", "AORTA", "SUBXIPHOID", "PLAX", "PSAX", "IVC", "OB_FIRST"]
-    if scan_type not in valid_types:
-        messages.error(request, "Invalid scan type selected.")
-        return redirect("home")
-
-    # Validate quantity
-    try:
-        quantity = int(quantity)
-        if quantity < 1:
-            quantity = 1
-        elif quantity > 50:
-            quantity = 50
-    except (ValueError, TypeError):
-        quantity = 1
-
-    today = timezone.localdate()
-
-    # Create the scans
-    scans_to_create = [
-        Scan(
-            user=request.user,
-            exam_type=scan_type,
-            performed_at=today,
-            finding="NORMAL",
-        )
-        for _ in range(quantity)
-    ]
-    Scan.objects.bulk_create(scans_to_create)
-
-    # Get display name for scan type
     type_names = {
         "RUQ": "RUQ Abdomen",
         "LUQ": "LUQ Abdomen",
@@ -527,8 +494,44 @@ def batch_add_scans(request):
         "IVC": "IVC",
         "OB_FIRST": "First-Trimester OB",
     }
-    type_name = type_names.get(scan_type, scan_type)
 
-    messages.success(request, f"Successfully added {quantity} {type_name} scan(s)!")
+    today = timezone.localdate()
+    scans_to_create = []
+    added_summary = []
+
+    # Process each scan type
+    for scan_type in valid_types:
+        qty_key = f"qty_{scan_type}"
+        quantity = request.POST.get(qty_key, 0)
+
+        try:
+            quantity = int(quantity)
+            if quantity < 0:
+                quantity = 0
+            elif quantity > 50:
+                quantity = 50
+        except (ValueError, TypeError):
+            quantity = 0
+
+        if quantity > 0:
+            for _ in range(quantity):
+                scans_to_create.append(
+                    Scan(
+                        user=request.user,
+                        exam_type=scan_type,
+                        performed_at=today,
+                        finding="NORMAL",
+                    )
+                )
+            added_summary.append(f"{quantity} {type_names.get(scan_type, scan_type)}")
+
+    if scans_to_create:
+        Scan.objects.bulk_create(scans_to_create)
+        total_added = len(scans_to_create)
+        summary = ", ".join(added_summary)
+        messages.success(request, f"Successfully added {total_added} scan(s): {summary}")
+    else:
+        messages.warning(request, "No scans were added. Please enter at least 1 for any scan type.")
+
     return redirect("my_scans")
 
