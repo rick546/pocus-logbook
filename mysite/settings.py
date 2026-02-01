@@ -107,6 +107,12 @@ DATABASES = {
     )
 }
 
+# Limit database connections to prevent overload
+DATABASES['default']['CONN_MAX_AGE'] = 300
+DATABASES['default']['OPTIONS'] = {
+    'connect_timeout': 10,
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
