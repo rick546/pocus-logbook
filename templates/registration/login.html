@@ -114,7 +114,13 @@
         {% if form.errors %}
         <div class="error-message">
             <i class="fas fa-exclamation-circle me-1"></i>
-            Invalid username or password. Please try again.
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            {% else %}
+                Invalid username or password. Please try again.
+            {% endif %}
         </div>
         {% endif %}
 
@@ -123,7 +129,7 @@
 
             <div class="form-group">
                 <label for="id_username"><i class="fas fa-user me-1"></i> Username</label>
-                <input type="text" name="username" id="id_username" required autofocus placeholder="Enter your username">
+                <input type="text" name="username" id="id_username" required autofocus placeholder="Enter your username" value="{{ form.username.value|default:'' }}">
             </div>
 
             <div class="form-group">
