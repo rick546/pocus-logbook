@@ -1,9 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from django.db import models
 from django.db.models import Count, Avg, F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
+from django.contrib import messages
 from .models import ClinicalCase, CaseStep
 from .models import QuizAttempt, QuizBestScore
 from .forms import ScanForm
@@ -457,4 +460,21 @@ def add_scan_bundle(request, bundle):
     )
 
     return redirect("my_scans")
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f"Welcome to POCUS Portal, {user.username}!")
+            return redirect("home")
+    else:
+        form = UserCreationForm()
+
+    return render(request, "registration/register.html", {"form": form})
 
