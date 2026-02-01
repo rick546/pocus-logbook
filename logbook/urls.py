@@ -27,6 +27,7 @@ urlpatterns = [
     path("logbook/<int:pk>/delete/", views.scan_delete, name="scan_delete"),
     path("cases/", views.cases_list, name="cases_list"),
     path("cases/<int:case_id>/step/<int:step_order>/", views.case_step, name="case_step"),
+    path("badges/", views.badges, name="badges"),
     path("admin/scans/", views.scan_totals, name="scan_totals"),
 ]
 

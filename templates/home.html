@@ -474,16 +474,16 @@
     </div>
   </div>
 
-  {% if user.is_staff %}
+  {% if user.is_authenticated %}
   <div class="col-xl-3 col-md-6 mb-4">
     <div class="dashboard-card">
-      <div class="dashboard-card-icon icon-accent">
-        <i class="fas fa-chart-bar"></i>
+      <div class="dashboard-card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+        <i class="fas fa-trophy"></i>
       </div>
-      <div class="dashboard-card-title">Program Totals</div>
-      <p class="text-muted mb-3" style="font-size: 0.875rem;">View analytics and statistics</p>
-      <a class="dashboard-card-link" href="{% url 'scan_totals' %}">
-        View Report <i class="fas fa-arrow-right"></i>
+      <div class="dashboard-card-title">Badges & Achievements</div>
+      <p class="text-muted mb-3" style="font-size: 0.875rem;">View your accomplishments and milestones</p>
+      <a class="dashboard-card-link" href="{% url 'badges' %}">
+        View Badges <i class="fas fa-arrow-right"></i>
       </a>
     </div>
   </div>

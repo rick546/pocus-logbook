@@ -576,3 +576,140 @@ def batch_add_scans(request):
 
     return redirect("my_scans")
 
+
+@login_required
+def badges(request):
+    """Display user's badges and achievements."""
+    user_scans = Scan.objects.filter(user=request.user)
+    total_scans = user_scans.count()
+
+    # Scan counts by type
+    scan_counts = {}
+    for scan in user_scans.values("exam_type").annotate(total=Count("id")):
+        scan_counts[scan["exam_type"]] = scan["total"]
+
+    # Scan counts by context
+    academic_count = user_scans.filter(scan_context="ACADEMIC").count()
+    self_count = user_scans.filter(scan_context="SELF").count()
+
+    # Quiz progress
+    user_best_scores = QuizBestScore.objects.filter(user=request.user)
+    quizzes_passed = user_best_scores.filter(best_score__gte=F('total') * 0.7).count()
+    quizzes_attempted = user_best_scores.count()
+
+    # Define badges with criteria
+    badges_list = []
+
+    # === SCAN MILESTONE BADGES ===
+    scan_milestones = [
+        (10, "First Steps", "Complete 10 scans", "fas fa-shoe-prints", "#6366f1"),
+        (25, "Getting Started", "Complete 25 scans", "fas fa-seedling", "#22c55e"),
+        (50, "Halfway There", "Complete 50 scans", "fas fa-mountain", "#3b82f6"),
+        (100, "Century Club", "Complete 100 scans", "fas fa-star", "#f59e0b"),
+        (200, "POCUS Pro", "Complete 200 scans", "fas fa-crown", "#ec4899"),
+        (500, "Master Scanner", "Complete 500 scans", "fas fa-gem", "#8b5cf6"),
+    ]
+
+    for threshold, name, description, icon, color in scan_milestones:
+        badges_list.append({
+            "name": name,
+            "description": description,
+            "icon": icon,
+            "color": color,
+            "earned": total_scans >= threshold,
+            "progress": min(100, round((total_scans / threshold) * 100)),
+            "current": total_scans,
+            "target": threshold,
+            "category": "Scan Milestones",
+        })
+
+    # === EXAM TYPE MASTERY BADGES ===
+    exam_badges = [
+        ("RUQ", 25, "RUQ Expert", "Master RUQ examinations", "fas fa-wave-square", "#0d6efd"),
+        ("LUQ", 25, "LUQ Expert", "Master LUQ examinations", "fas fa-wave-square", "#0d6efd"),
+        ("AORTA", 15, "Aorta Specialist", "Master aorta examinations", "fas fa-circle", "#0ea5e9"),
+        ("SUBXIPHOID", 25, "Cardiac View Pro", "Master subxiphoid views", "fas fa-heartbeat", "#dc3545"),
+        ("PLAX", 25, "PLAX Master", "Master PLAX cardiac views", "fas fa-heartbeat", "#dc3545"),
+        ("PSAX", 25, "PSAX Master", "Master PSAX cardiac views", "fas fa-heartbeat", "#dc3545"),
+        ("IVC", 15, "IVC Specialist", "Master IVC examinations", "fas fa-arrows-alt-v", "#f59e0b"),
+        ("OB_FIRST", 10, "OB Certified", "Master first-trimester OB", "fas fa-baby", "#22c55e"),
+    ]
+
+    for exam_type, threshold, name, description, icon, color in exam_badges:
+        current = scan_counts.get(exam_type, 0)
+        badges_list.append({
+            "name": name,
+            "description": description,
+            "icon": icon,
+            "color": color,
+            "earned": current >= threshold,
+            "progress": min(100, round((current / threshold) * 100)),
+            "current": current,
+            "target": threshold,
+            "category": "Exam Mastery",
+        })
+
+    # === QUIZ BADGES ===
+    quiz_badges = [
+        (1, "Quiz Starter", "Pass your first quiz", "fas fa-clipboard-check", "#10b981"),
+        (2, "Quiz Enthusiast", "Pass 2 quizzes", "fas fa-brain", "#3b82f6"),
+        (3, "Quiz Master", "Pass all 3 quizzes", "fas fa-graduation-cap", "#8b5cf6"),
+    ]
+
+    for threshold, name, description, icon, color in quiz_badges:
+        badges_list.append({
+            "name": name,
+            "description": description,
+            "icon": icon,
+            "color": color,
+            "earned": quizzes_passed >= threshold,
+            "progress": min(100, round((quizzes_passed / threshold) * 100)) if threshold > 0 else 0,
+            "current": quizzes_passed,
+            "target": threshold,
+            "category": "Quizzes",
+        })
+
+    # === ACADEMIC HALF DAY BADGES ===
+    academic_badges = [
+        (5, "Academic Participant", "Log 5 Academic Half Day scans", "fas fa-chalkboard-teacher", "#6366f1"),
+        (20, "Academic Achiever", "Log 20 Academic Half Day scans", "fas fa-university", "#8b5cf6"),
+        (50, "Academic Excellence", "Log 50 Academic Half Day scans", "fas fa-award", "#a855f7"),
+    ]
+
+    for threshold, name, description, icon, color in academic_badges:
+        badges_list.append({
+            "name": name,
+            "description": description,
+            "icon": icon,
+            "color": color,
+            "earned": academic_count >= threshold,
+            "progress": min(100, round((academic_count / threshold) * 100)) if threshold > 0 else 0,
+            "current": academic_count,
+            "target": threshold,
+            "category": "Academic Half Day",
+        })
+
+    # Calculate summary stats
+    earned_badges = [b for b in badges_list if b["earned"]]
+    total_badges = len(badges_list)
+    earned_count = len(earned_badges)
+
+    # Group badges by category
+    categories = {}
+    for badge in badges_list:
+        cat = badge["category"]
+        if cat not in categories:
+            categories[cat] = []
+        categories[cat].append(badge)
+
+    return render(request, "logbook/badges.html", {
+        "badges_list": badges_list,
+        "categories": categories,
+        "earned_count": earned_count,
+        "total_badges": total_badges,
+        "total_scans": total_scans,
+        "quizzes_passed": quizzes_passed,
+        "academic_count": academic_count,
+        "self_count": self_count,
+    })
+
