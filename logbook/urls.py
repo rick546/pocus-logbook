@@ -20,6 +20,7 @@ urlpatterns = [
     path("faculty-evaluation/", views.faculty_evaluation, name="faculty_evaluation"),
     path("search/", views.search, name="search"),
     path("bundles/<slug:bundle>/add/", views.add_scan_bundle, name="add_scan_bundle"),
+    path("batch-add/", views.batch_add_scans, name="batch_add_scans"),
     path("logbook/new/", views.scan_create, name="scan_create"),
     path("logbook/", views.my_scans, name="my_scans"),
     path("logbook/<int:pk>/edit/", views.scan_edit, name="scan_edit"),

@@ -127,9 +127,11 @@
 
 <!-- Quick Add Scan - TOP OF PAGE -->
 <div class="card mb-4 mt-4">
-  <div class="card-header">
-    <i class="fas fa-bolt me-1"></i>
-    Quick Add Scan
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span><i class="fas fa-bolt me-1"></i> Quick Add Scan</span>
+    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#batchAddModal">
+      <i class="fas fa-layer-group me-1"></i> Batch Add
+    </button>
   </div>
   <div class="card-body d-flex flex-wrap gap-3 justify-content-center">
 
@@ -189,6 +191,54 @@
       </button>
     </form>
 
+  </div>
+</div>
+
+<!-- Batch Add Modal -->
+<div class="modal fade" id="batchAddModal" tabindex="-1" aria-labelledby="batchAddModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%); color: white;">
+        <h5 class="modal-title" id="batchAddModalLabel">
+          <i class="fas fa-layer-group me-2"></i>Batch Add Scans
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'batch_add_scans' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <p class="text-muted mb-4">Quickly add multiple scans of the same type at once.</p>
+
+          <div class="mb-4">
+            <label for="scan_type" class="form-label fw-bold">Scan Type</label>
+            <select class="form-select form-select-lg" id="scan_type" name="scan_type" required>
+              <option value="">-- Select Scan Type --</option>
+              <option value="RUQ">RUQ Abdomen</option>
+              <option value="LUQ">LUQ Abdomen</option>
+              <option value="AORTA">Aorta</option>
+              <option value="SUBXIPHOID">Subxiphoid (Cardiac)</option>
+              <option value="PLAX">PLAX (Cardiac)</option>
+              <option value="PSAX">PSAX (Cardiac)</option>
+              <option value="IVC">IVC</option>
+              <option value="OB_FIRST">First-Trimester OB</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="quantity" class="form-label fw-bold">Number of Scans</label>
+            <input type="number" class="form-control form-control-lg" id="quantity" name="quantity"
+                   min="1" max="50" value="1" required>
+            <div class="form-text">Enter the number of scans to add (1-50)</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle me-2"></i>Add Scans
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 

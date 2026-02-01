@@ -478,3 +478,57 @@ def register(request):
 
     return render(request, "registration/register.html", {"form": form})
 
+
+@login_required
+@require_POST
+def batch_add_scans(request):
+    """Add multiple scans of the same type at once."""
+    scan_type = request.POST.get("scan_type")
+    quantity = request.POST.get("quantity", 1)
+
+    # Validate scan type
+    valid_types = ["RUQ", "LUQ", "AORTA", "SUBXIPHOID", "PLAX", "PSAX", "IVC", "OB_FIRST"]
+    if scan_type not in valid_types:
+        messages.error(request, "Invalid scan type selected.")
+        return redirect("home")
+
+    # Validate quantity
+    try:
+        quantity = int(quantity)
+        if quantity < 1:
+            quantity = 1
+        elif quantity > 50:
+            quantity = 50
+    except (ValueError, TypeError):
+        quantity = 1
+
+    today = timezone.localdate()
+
+    # Create the scans
+    scans_to_create = [
+        Scan(
+            user=request.user,
+            exam_type=scan_type,
+            performed_at=today,
+            finding="NORMAL",
+        )
+        for _ in range(quantity)
+    ]
+    Scan.objects.bulk_create(scans_to_create)
+
+    # Get display name for scan type
+    type_names = {
+        "RUQ": "RUQ Abdomen",
+        "LUQ": "LUQ Abdomen",
+        "AORTA": "Aorta",
+        "SUBXIPHOID": "Subxiphoid",
+        "PLAX": "PLAX",
+        "PSAX": "PSAX",
+        "IVC": "IVC",
+        "OB_FIRST": "First-Trimester OB",
+    }
+    type_name = type_names.get(scan_type, scan_type)
+
+    messages.success(request, f"Successfully added {quantity} {type_name} scan(s)!")
+    return redirect("my_scans")
+
