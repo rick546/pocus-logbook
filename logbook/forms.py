@@ -30,6 +30,7 @@ class ScanForm(forms.ModelForm):
     class Meta:
         model = Scan
         fields = [
+            "scan_context",
             "performed_at",
             "exam_type",
             "indication",
@@ -49,6 +50,7 @@ class ScanForm(forms.ModelForm):
             "iq_comments",
         ]
         widgets = {
+            "scan_context": forms.RadioSelect(),
             "performed_at": forms.DateInput(attrs={"type": "date"}),
             "notes": forms.Textarea(attrs={"rows": 4}),
             "iq_comments": forms.Textarea(attrs={"rows": 3, "placeholder": "Optional comments on image quality..."}),

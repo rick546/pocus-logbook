@@ -287,16 +287,44 @@ def scan_delete(request, pk):
 
 @login_required
 def my_scans(request):
-    scans = Scan.objects.filter(user=request.user).order_by("-performed_at", "-created_at")
+    user_scans = Scan.objects.filter(user=request.user).order_by("-performed_at", "-created_at")
 
-    counts = (
-        Scan.objects.filter(user=request.user)
+    # Separate scans by context
+    academic_scans = user_scans.filter(scan_context="ACADEMIC")
+    self_scans = user_scans.filter(scan_context="SELF")
+
+    # Counts by exam type for each context
+    academic_counts = (
+        academic_scans
         .values("exam_type")
         .annotate(total=Count("id"))
         .order_by("exam_type")
     )
 
-    return render(request, "logbook/my_scans.html", {"scans": scans, "counts": counts})
+    self_counts = (
+        self_scans
+        .values("exam_type")
+        .annotate(total=Count("id"))
+        .order_by("exam_type")
+    )
+
+    # Overall counts
+    total_counts = (
+        user_scans
+        .values("exam_type")
+        .annotate(total=Count("id"))
+        .order_by("exam_type")
+    )
+
+    return render(request, "logbook/my_scans.html", {
+        "academic_scans": academic_scans,
+        "self_scans": self_scans,
+        "academic_counts": academic_counts,
+        "self_counts": self_counts,
+        "total_counts": total_counts,
+        "academic_total": academic_scans.count(),
+        "self_total": self_scans.count(),
+    })
 
 @staff_member_required
 def scan_totals(request):
@@ -450,11 +478,17 @@ def add_scan_bundle(request, bundle):
     if not exam_type:
         return redirect("home")
 
+    # Get scan context (default to SELF if not provided)
+    scan_context = request.POST.get("scan_context", "SELF")
+    if scan_context not in ["ACADEMIC", "SELF"]:
+        scan_context = "SELF"
+
     today = timezone.localdate()
 
     Scan.objects.create(
         user=request.user,
         exam_type=exam_type,
+        scan_context=scan_context,
         performed_at=today,
         finding="NORMAL",
     )
@@ -496,6 +530,11 @@ def batch_add_scans(request):
         "OB_FIRST": "First-Trimester OB",
     }
 
+    # Get scan context (default to SELF if not provided)
+    scan_context = request.POST.get("scan_context", "SELF")
+    if scan_context not in ["ACADEMIC", "SELF"]:
+        scan_context = "SELF"
+
     today = timezone.localdate()
     scans_to_create = []
     added_summary = []
@@ -520,6 +559,7 @@ def batch_add_scans(request):
                     Scan(
                         user=request.user,
                         exam_type=scan_type,
+                        scan_context=scan_context,
                         performed_at=today,
                         finding="NORMAL",
                     )

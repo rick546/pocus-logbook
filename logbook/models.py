@@ -70,6 +70,11 @@ class Scan(models.Model):
         ("INDETERMINATE", "Indeterminate"),
     ]
 
+    CONTEXT_CHOICES = [
+        ("ACADEMIC", "Academic Half Day"),
+        ("SELF", "Self Logged"),
+    ]
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -79,6 +84,14 @@ class Scan(models.Model):
     performed_at = models.DateField()
 
     exam_type = models.CharField(max_length=20, choices=EXAM_CHOICES)
+
+    scan_context = models.CharField(
+        max_length=10,
+        choices=CONTEXT_CHOICES,
+        default="SELF",
+        verbose_name="Scan Context",
+        help_text="Where was this scan performed?",
+    )
 
     indication = models.CharField(max_length=200, blank=True)
 
