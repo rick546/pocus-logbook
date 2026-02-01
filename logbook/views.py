@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 from django.contrib.auth import login
 from django.db import models
 from django.db.models import Count, Avg, F, Q
@@ -467,7 +467,7 @@ def register(request):
         return redirect("home")
 
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             # Specify the backend to ensure proper session setup
@@ -475,7 +475,7 @@ def register(request):
             messages.success(request, f"Welcome to POCUS Portal, {user.username}!")
             return redirect("home")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
 
     return render(request, "registration/register.html", {"form": form})
 

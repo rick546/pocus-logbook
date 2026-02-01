@@ -120,7 +120,7 @@
 
             <div class="form-group">
                 <label for="id_username"><i class="fas fa-user me-1"></i> Username</label>
-                <input type="text" name="username" id="id_username" required autofocus maxlength="150" placeholder="Choose a username">
+                <input type="text" name="username" id="id_username" required autofocus maxlength="150" placeholder="Choose a username" value="{{ form.username.value|default:'' }}">
                 {% if form.username.errors %}
                     <ul class="errorlist">
                     {% for error in form.username.errors %}
@@ -128,6 +128,19 @@
                     {% endfor %}
                     </ul>
                 {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_email"><i class="fas fa-envelope me-1"></i> Email Address</label>
+                <input type="email" name="email" id="id_email" required placeholder="Enter your email address" value="{{ form.email.value|default:'' }}">
+                {% if form.email.errors %}
+                    <ul class="errorlist">
+                    {% for error in form.email.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                <p class="helptext">Required for password reset</p>
             </div>
 
             <div class="form-group">
