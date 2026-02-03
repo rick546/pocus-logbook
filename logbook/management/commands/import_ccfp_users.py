@@ -132,12 +132,16 @@ class Command(BaseCommand):
                 }
             )
 
+            # Always set password (for new users and to fix existing ones)
+            user.set_password(password)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+
             if created:
-                user.set_password(password)
-                user.save()
                 self.stdout.write(self.style.SUCCESS(f"Created user: {username}"))
             else:
-                self.stdout.write(self.style.WARNING(f"User already exists: {username}"))
+                self.stdout.write(self.style.SUCCESS(f"Updated password for: {username}"))
 
             # Add scans for this user
             scans_to_create = []
