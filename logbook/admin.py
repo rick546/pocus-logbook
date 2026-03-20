@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.http import HttpResponse
 
-from .models import Scan
+from .models import Scan, QuizAttempt, QuizBestScore
 from .admin_forms import MassAddScansForm
 
 from django.contrib import admin
@@ -18,6 +18,74 @@ admin.site.register(ClinicalCase)
 admin.site.register(CaseStep)
 admin.site.register(CaseQuestion)
 admin.site.register(CaseChoice)
+
+
+@admin.register(QuizAttempt)
+class QuizAttemptAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "quiz_title", "score", "total", "percentage_display", "passed_display", "created_at")
+    list_filter = ("quiz_id", "quiz_title")
+    search_fields = ("user__username", "user__email")
+    ordering = ("-created_at",)
+    readonly_fields = ("user", "quiz_id", "quiz_title", "answers", "score", "total", "created_at")
+    actions = ["export_quiz_scores_csv"]
+
+    def percentage_display(self, obj):
+        return f"{obj.percentage}%"
+    percentage_display.short_description = "Score %"
+
+    def passed_display(self, obj):
+        return "✓ Pass" if obj.percentage >= 70 else "✗ Fail"
+    passed_display.short_description = "Result"
+
+    def export_quiz_scores_csv(self, request, queryset):
+        """Export selected quiz attempts including short answers to CSV."""
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="quiz_scores.csv"'
+        writer = csv.writer(response)
+
+        writer.writerow([
+            "Username", "Email", "Quiz", "MC Score", "Total MC Qs",
+            "Score %", "Result", "SA1 Response", "SA2 Response", "SA3 Response",
+            "Date Completed",
+        ])
+
+        for attempt in queryset.select_related("user"):
+            answers = attempt.answers or {}
+            writer.writerow([
+                attempt.user.username,
+                attempt.user.email,
+                attempt.quiz_title,
+                attempt.score,
+                attempt.total,
+                f"{attempt.percentage}%",
+                "Pass" if attempt.percentage >= 70 else "Fail",
+                answers.get("sa1", ""),
+                answers.get("sa2", ""),
+                answers.get("sa3", ""),
+                attempt.created_at.strftime("%Y-%m-%d %H:%M"),
+            ])
+
+        self.message_user(request, f"Exported {queryset.count()} quiz attempt(s).")
+        return response
+
+    export_quiz_scores_csv.short_description = "Export selected attempts to CSV"
+
+
+@admin.register(QuizBestScore)
+class QuizBestScoreAdmin(admin.ModelAdmin):
+    list_display = ("user", "quiz_title", "best_score", "total", "percentage_display", "passed_display", "attempts", "last_attempt")
+    list_filter = ("quiz_id", "quiz_title")
+    search_fields = ("user__username", "user__email")
+    ordering = ("quiz_id", "user__username")
+    readonly_fields = ("user", "quiz_id", "quiz_title", "best_score", "total", "attempts", "last_attempt")
+
+    def percentage_display(self, obj):
+        return f"{obj.percentage}%"
+    percentage_display.short_description = "Best %"
+
+    def passed_display(self, obj):
+        return "✓ Pass" if obj.passed else "✗ Fail"
+    passed_display.short_description = "Passed"
 
 User = get_user_model()
 

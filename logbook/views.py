@@ -300,6 +300,75 @@ def send_quiz_completion_email(user, quiz, quiz_id, score, total,
         pass  # Never let email failure break quiz submission
 
 
+def send_admin_quiz_notification(user, quiz, quiz_id, score, total,
+                                 answer_key, submitted_answers, sa_results=None):
+    """Send a quiz-completion notification to all staff/admin users."""
+    admin_emails = list(
+        User.objects.filter(is_staff=True).exclude(email="").values_list("email", flat=True)
+    )
+    if not admin_emails:
+        return
+
+    percentage = round((score / total) * 100) if total > 0 else 0
+    passed = percentage >= 70
+    status_line = "PASSED ✓" if passed else "Did not pass"
+
+    # MC wrong answers
+    wrong_lines = []
+    for q_key, correct in answer_key.items():
+        user_ans = submitted_answers.get(q_key)
+        if user_ans != correct:
+            q_num = q_key.replace("q", "")
+            wrong_lines.append(
+                f"  Q{q_num}: answered {user_ans or 'skipped'}  |  correct: {correct}"
+            )
+    wrong_section = (
+        "Wrong answers:\n" + "\n".join(wrong_lines) + "\n\n"
+        if wrong_lines else "All MC questions correct.\n\n"
+    )
+
+    # SA responses
+    sa_section = ""
+    if sa_results:
+        sa_lines = []
+        for sa_key, sa_data in sa_results.items():
+            sa_num = sa_key.replace("sa", "")
+            matched = sa_data.get("matched_keywords", [])
+            auto = "Auto-pass" if sa_data.get("auto_passed") else "Needs review"
+            sa_lines.append(
+                f"  SA{sa_num} [{auto}]: {sa_data['prompt'][:80]}...\n"
+                f"    Response: {sa_data['user_answer'][:300] or '(blank)'}\n"
+                f"    Keywords matched: {', '.join(matched) if matched else 'none'}"
+            )
+        sa_section = "Short answers:\n" + "\n".join(sa_lines) + "\n\n"
+
+    subject = (
+        f"[POCUS Portal] {user.username} completed: {quiz['title']} — "
+        f"{score}/{total} ({percentage}%) {status_line}"
+    )
+    body = (
+        f"A learner has completed a quiz on POCUS Portal.\n\n"
+        f"User:    {user.get_full_name() or user.username} ({user.email or 'no email'})\n"
+        f"Quiz:    {quiz['title']}\n"
+        f"Score:   {score}/{total} ({percentage}%) — {status_line}\n\n"
+        f"{wrong_section}"
+        f"{sa_section}"
+        f"View all scores: /admin/quiz-analytics/\n\n"
+        f"— POCUS Portal"
+    )
+
+    try:
+        send_mail(
+            subject,
+            body,
+            django_settings.DEFAULT_FROM_EMAIL,
+            admin_emails,
+            fail_silently=True,
+        )
+    except Exception:
+        pass
+
+
 # Quiz home page showing all available quizzes
 @login_required
 def quizzes_home(request):
@@ -402,7 +471,9 @@ def quiz_detail(request, quiz_id):
         else:
             is_new_best = True
 
-        # Send completion email (non-blocking)
+        mc_answers = {k: v for k, v in submitted_answers.items() if not k.startswith("sa")}
+
+        # Email to learner
         send_quiz_completion_email(
             user=request.user,
             quiz=quiz,
@@ -410,8 +481,20 @@ def quiz_detail(request, quiz_id):
             score=score,
             total=total,
             answer_key=answer_key,
-            submitted_answers={k: v for k, v in submitted_answers.items() if not k.startswith("sa")},
+            submitted_answers=mc_answers,
             is_new_best=is_new_best,
+            sa_results=sa_results if sa_results else None,
+        )
+
+        # Email to all admins/staff
+        send_admin_quiz_notification(
+            user=request.user,
+            quiz=quiz,
+            quiz_id=quiz_id,
+            score=score,
+            total=total,
+            answer_key=answer_key,
+            submitted_answers=mc_answers,
             sa_results=sa_results if sa_results else None,
         )
 
@@ -1078,6 +1161,41 @@ def quiz_analytics(request):
                 "total_responses": len(responses_for_sa),
             })
 
+        # Per-user individual attempt records
+        sa_defs = quiz_data.get("short_answers", {})
+        user_attempts = []
+        for attempt in attempts_qs.select_related("user").order_by("-created_at"):
+            attempt_sa = {}
+            for sa_key, sa_def in sa_defs.items():
+                text = attempt.answers.get(sa_key, "")
+                if text:
+                    matched_count, total_kw, matched_kws = score_short_answer(
+                        text, sa_def["keywords"]
+                    )
+                    attempt_sa[sa_key] = {
+                        "prompt": sa_def["prompt"],
+                        "text": text,
+                        "matched_keywords": matched_kws,
+                        "auto_passed": matched_count >= sa_def.get("min_keywords", 1),
+                    }
+                else:
+                    attempt_sa[sa_key] = {
+                        "prompt": sa_def["prompt"],
+                        "text": "",
+                        "matched_keywords": [],
+                        "auto_passed": False,
+                    }
+            user_attempts.append({
+                "username": attempt.user.username,
+                "email": attempt.user.email,
+                "date": attempt.created_at,
+                "score": attempt.score,
+                "total": attempt.total,
+                "percentage": attempt.percentage,
+                "passed": attempt.percentage >= 70,
+                "sa": attempt_sa,
+            })
+
         quiz_stats.append({
             "quiz_id": quiz_id,
             "title": quiz_data["title"],
@@ -1087,6 +1205,8 @@ def quiz_analytics(request):
             "pass_rate": pass_rate,
             "question_stats": question_stats,
             "sa_responses": sa_responses,
+            "user_attempts": user_attempts,
+            "sa_keys": list(sa_defs.keys()),
         })
 
     return render(request, "logbook/quiz_analytics.html", {

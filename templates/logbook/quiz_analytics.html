@@ -110,62 +110,94 @@
       {% endif %}
       {% endif %}
 
-      <!-- Short-answer review section -->
+      <!-- ============================================================ -->
+      <!-- USER SCORES TABLE                                          -->
+      <!-- ============================================================ -->
+      <h5 class="mb-3 mt-2">
+        <i class="fas fa-users me-2"></i>Individual Learner Scores
+        <small class="text-muted fw-normal">(most recent first)</small>
+      </h5>
+
+      {% if qs.user_attempts %}
+      <div class="table-responsive mb-4">
+        <table class="table table-sm table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Learner</th>
+              <th>Date</th>
+              <th>MC Score</th>
+              <th>Result</th>
+              {% for sa_key in qs.sa_keys %}
+              <th>SA{{ forloop.counter }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for attempt in qs.user_attempts %}
+            <tr>
+              <td>
+                <strong>{{ attempt.username }}</strong>
+                {% if attempt.email %}<div class="text-muted small">{{ attempt.email }}</div>{% endif %}
+              </td>
+              <td class="text-nowrap small text-muted">{{ attempt.date|date:"Y-m-d H:i" }}</td>
+              <td>
+                <span class="fw-bold">{{ attempt.score }}/{{ attempt.total }}</span>
+                <span class="text-muted small ms-1">({{ attempt.percentage }}%)</span>
+                <div class="progress mt-1" style="height:5px; width:80px;">
+                  <div class="progress-bar {% if attempt.percentage >= 70 %}bg-success{% elif attempt.percentage >= 50 %}bg-warning{% else %}bg-danger{% endif %}"
+                       style="width:{{ attempt.percentage }}%"></div>
+                </div>
+              </td>
+              <td>
+                {% if attempt.passed %}
+                  <span class="badge bg-success">Pass</span>
+                {% else %}
+                  <span class="badge bg-danger">Fail</span>
+                {% endif %}
+              </td>
+              {% for sa_key in qs.sa_keys %}
+                {% with sa=attempt.sa|default_if_none:'' %}
+                <td style="max-width:220px;">
+                  {% for k, v in attempt.sa.items %}{% if k == sa_key %}
+                    {% if v.text %}
+                      <p class="mb-1 small" style="word-break:break-word;">{{ v.text|truncatechars:120 }}</p>
+                      {% if v.matched_keywords %}
+                        <div>
+                          {% for kw in v.matched_keywords %}
+                            <span class="badge bg-info text-dark me-1" style="font-size:0.65rem;">{{ kw }}</span>
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                      <span class="badge {% if v.auto_passed %}bg-success{% else %}bg-warning text-dark{% endif %} mt-1" style="font-size:0.7rem;">
+                        {% if v.auto_passed %}Auto-pass{% else %}Review{% endif %}
+                      </span>
+                    {% else %}
+                      <span class="text-muted small">—</span>
+                    {% endif %}
+                  {% endif %}{% endfor %}
+                </td>
+                {% endwith %}
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="text-muted mb-4">No attempts recorded yet.</p>
+      {% endif %}
+
+      <!-- Short-answer sample answers (reference) -->
       {% for sa in qs.sa_responses %}
       <div class="border rounded p-3 mb-3" style="background:#f8f9fa;">
         <h6 class="mb-1">
           <i class="fas fa-pen me-1 text-info"></i>
-          Short Answer: {{ sa.prompt }}
+          SA{{ forloop.counter }} — {{ sa.prompt|truncatechars:100 }}
         </h6>
-        <p class="text-muted small mb-2">
+        <p class="text-muted small mb-0">
           <strong>Sample answer:</strong> {{ sa.sample_answer }}
         </p>
-        <p class="text-muted small mb-2">{{ sa.total_responses }} response{{ sa.total_responses|pluralize }} submitted</p>
-
-        {% if sa.responses %}
-        <div class="table-responsive">
-          <table class="table table-sm table-bordered mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>Learner</th>
-                <th>Date</th>
-                <th>Response</th>
-                <th>Keywords Matched</th>
-                <th>Auto-score</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for resp in sa.responses %}
-              <tr>
-                <td>{{ resp.username }}</td>
-                <td class="text-nowrap small">{{ resp.date|date:"Y-m-d" }}</td>
-                <td style="max-width:300px; word-break:break-word;">{{ resp.text }}</td>
-                <td>
-                  {% for kw in resp.matched_keywords %}
-                    <span class="badge bg-info text-dark me-1" style="font-size:0.7rem;">{{ kw }}</span>
-                  {% empty %}
-                    <span class="text-danger small">none</span>
-                  {% endfor %}
-                </td>
-                <td class="text-center">
-                  {% if resp.auto_passed %}
-                    <span class="badge bg-success">Pass</span>
-                  {% else %}
-                    <span class="badge bg-warning text-dark">Review</span>
-                  {% endif %}
-                  <small class="text-muted d-block">{{ resp.matched_count }}/{{ resp.total_keywords }} kw</small>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        {% else %}
-          <p class="text-muted small mb-0">No responses yet.</p>
-        {% endif %}
       </div>
-      {% empty %}
-        {# No short-answer questions for this quiz — nothing to show #}
       {% endfor %}
 
     </div><!-- /card-body -->
