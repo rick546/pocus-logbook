@@ -29,22 +29,14 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-cjplaiw#xf=)yxyhs5h4(
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
-    'web-production-ac99f.up.railway.app',
+    'rngo.pythonanywhere.com',
     'localhost',
     '127.0.0.1',
 ]
 
-# Add Railway hostname from env
-RAILWAY_PUBLIC_DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
-if RAILWAY_PUBLIC_DOMAIN:
-    ALLOWED_HOSTS.append(RAILWAY_PUBLIC_DOMAIN)
-
-# CSRF trusted origins for Railway
 CSRF_TRUSTED_ORIGINS = [
-    'https://web-production-ac99f.up.railway.app',
+    'https://rngo.pythonanywhere.com',
 ]
-if RAILWAY_PUBLIC_DOMAIN:
-    CSRF_TRUSTED_ORIGINS.append(f'https://{RAILWAY_PUBLIC_DOMAIN}')
 
 
 # Application definition
