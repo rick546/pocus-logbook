@@ -752,22 +752,41 @@ def scan_totals(request):
 from .models import ClinicalCase   # add this at the top if not already imported
 
 def cases_list(request):
-    feedback = None
-
-    if request.method == "POST":
-        answer = request.POST.get("answer")
-        if answer == "B":
-            feedback = "✅ Correct. Bilateral diffuse B-lines with pleural effusions and a smooth pleural line is most consistent with cardiogenic pulmonary edema."
-        elif answer:
-            feedback = "❌ Not quite. Re-check for bilateral diffuse B-lines, a smooth pleural line, and pleural effusions—these findings point toward pulmonary edema."
-
-    return render(request, "logbook/cases_example.html", {"feedback": feedback})
+    cases = ClinicalCase.objects.filter(is_published=True)
+    return render(request, "logbook/cases_list.html", {"cases": cases})
 
 
 def case_step(request, case_id, step_order):
     case = get_object_or_404(ClinicalCase, id=case_id)
     step = get_object_or_404(CaseStep, case=case, order=step_order)
-    return render(request, "logbook/case_step.html", {"case": case, "step": step})
+    question = getattr(step, 'question', None)
+    feedback = None
+    selected = None
+
+    if request.method == "POST" and question:
+        selected = request.POST.get("answer")
+        if selected:
+            try:
+                choice = question.choices.get(pk=selected)
+                feedback = choice.feedback or ("✅ Correct!" if choice.is_correct else "❌ Incorrect — review the findings and try again.")
+                selected = choice
+            except question.choices.model.DoesNotExist:
+                pass
+
+    total_steps = case.steps.count()
+    next_step = step_order + 1 if step_order < total_steps else None
+    prev_step = step_order - 1 if step_order > 1 else None
+
+    return render(request, "logbook/case_step.html", {
+        "case": case,
+        "step": step,
+        "question": question,
+        "feedback": feedback,
+        "selected": selected,
+        "next_step": next_step,
+        "prev_step": prev_step,
+        "total_steps": total_steps,
+    })
 
 
 def pocus_calendar(request):

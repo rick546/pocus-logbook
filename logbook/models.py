@@ -233,6 +233,7 @@ class CaseStep(models.Model):
     case = models.ForeignKey(ClinicalCase, on_delete=models.CASCADE, related_name="steps")
     order = models.PositiveIntegerField()
     content = models.TextField()
+    media_url = models.URLField(blank=True, help_text="Optional YouTube embed URL or direct video/image URL to display above the question")
 
     def __str__(self):
         return f"{self.case.title} – Step {self.order}"
