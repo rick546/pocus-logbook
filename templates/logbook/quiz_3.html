@@ -208,22 +208,24 @@
               RA, and RV.
             </p>
 
-            <!-- PLAX image — hosted via GitHub Issues CDN (no repo storage) -->
-            <!-- INSTRUCTIONS: replace the src URL below with your GitHub CDN URL.
-                 Steps: go to github.com/rick546/pocus-logbook/issues/new,
-                 drag the PLAX image into the comment box, copy the
-                 https://user-images.githubusercontent.com/... URL that appears,
-                 then close the tab without submitting. Paste that URL here. -->
             <div class="text-center mb-2">
               <img
+                id="case-a-img"
                 src="https://github.com/user-attachments/assets/e042a27a-5be7-4eaa-a57a-4cd2f3896379"
                 alt="PLAX view — dilated LV with reduced EF, EPSS 23.7 mm"
                 class="img-fluid rounded shadow-sm"
                 style="max-height:380px; border:2px solid #0b4f6c33;"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-              <div style="display:none;" class="alert alert-warning p-2 small mt-2">
-                <i class="fas fa-image me-1"></i>
-                Image pending upload — see instructor for setup instructions.
+                referrerpolicy="no-referrer"
+                onerror="this.style.display='none'; document.getElementById('case-a-fallback').style.display='block';">
+              <div id="case-a-fallback" style="display:none;"
+                   class="border rounded p-3 text-center text-muted small"
+                   style="background:#f0f4f8;">
+                <i class="fas fa-heartbeat fa-2x mb-2 d-block" style="color:#0b4f6c;"></i>
+                <strong>PLAX View — Dilated Cardiomyopathy</strong><br>
+                Grossly dilated LV &bull; Global hypokinesis &bull; EPSS 23.7 mm<br>
+                <em class="text-danger small">
+                  Image failed to load — re-upload using the <code>user-images.githubusercontent.com</code> URL format.
+                </em>
               </div>
             </div>
             <p class="text-center text-muted small mb-0">
