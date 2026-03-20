@@ -456,6 +456,12 @@ class QuizQuestionAdmin(admin.ModelAdmin):
     has_image.boolean = True
     has_image.short_description = "Image?"
 
+    class Media:
+        js = ('admin/js/quiz_field_tooltips.js',)
+
+    class Media:
+        js = ('admin/js/quiz_field_tooltips.js',)
+
 
 @admin.register(QuizShortAnswer)
 class QuizShortAnswerAdmin(admin.ModelAdmin):
