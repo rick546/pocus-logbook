@@ -29,5 +29,6 @@ urlpatterns = [
     path("cases/<int:case_id>/step/<int:step_order>/", views.case_step, name="case_step"),
     path("badges/", views.badges, name="badges"),
     path("admin/scans/", views.scan_totals, name="scan_totals"),
+    path("admin/quiz-analytics/", views.quiz_analytics, name="quiz_analytics"),
 ]
 

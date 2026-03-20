@@ -180,10 +180,51 @@
           </div>
         </div>
 
+        <!-- Short-answer questions -->
+        {% if short_answer_defs %}
+        <h5 class="mb-3 mt-4" style="color: var(--medical-secondary);">Short Answer Questions</h5>
+        {% for sa_key, sa_def in short_answer_defs.items %}
+        <div class="mb-4 p-3 border rounded bg-light">
+          <p class="fw-bold mb-2">
+            <i class="fas fa-pen-alt me-1 text-info"></i>
+            {{ sa_def.prompt }}
+          </p>
+          {% if sa_results %}
+            {% for rk, rv in sa_results.items %}{% if rk == sa_key %}
+            <div class="mb-2">
+              <strong>Your answer:</strong>
+              <p class="text-muted mb-1">{{ rv.user_answer|default:"(no answer provided)" }}</p>
+              {% if rv.matched_keywords %}
+                <p class="mb-1 small text-success">
+                  <i class="fas fa-check-circle me-1"></i>
+                  Key concepts identified: {{ rv.matched_keywords|join:", " }}
+                </p>
+              {% else %}
+                <p class="mb-1 small text-warning">
+                  <i class="fas fa-exclamation-circle me-1"></i>
+                  No key concepts detected — review the sample answer below.
+                </p>
+              {% endif %}
+              <details class="mt-2">
+                <summary class="text-primary small" style="cursor:pointer;">Show sample answer</summary>
+                <p class="text-muted small mt-1 mb-0">{{ rv.sample_answer }}</p>
+              </details>
+            </div>
+            {% endif %}{% endfor %}
+          {% else %}
+            <textarea class="form-control" name="{{ sa_key }}" rows="4"
+              placeholder="Type your answer here..."></textarea>
+          {% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+
         <div class="d-flex gap-2">
+          {% if not sa_results %}
           <button type="submit" class="btn btn-primary">
             <i class="fas fa-paper-plane me-1"></i> Submit Quiz
           </button>
+          {% endif %}
           <a href="{% url 'quizzes_list' %}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-1"></i> Back to Quizzes
           </a>

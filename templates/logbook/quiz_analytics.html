@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Quiz Analytics — POCUS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+    <div>
+      <h1 style="color: var(--medical-primary);">Quiz Analytics</h1>
+      <p class="text-muted mb-0">Per-question difficulty and learner performance across all quizzes.</p>
+    </div>
+    <a href="{% url 'scan_totals' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-1"></i> Scan Totals
+    </a>
+  </div>
+
+  {% for qs in quiz_stats %}
+  <div class="card mb-5 shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center"
+         style="background: var(--medical-primary); color: white;">
+      <strong>Quiz {{ qs.quiz_id }}: {{ qs.title }}</strong>
+      <span class="badge bg-light text-dark">{{ qs.total_attempts }} attempt{{ qs.total_attempts|pluralize }}</span>
+    </div>
+    <div class="card-body">
+
+      <!-- Overview stats -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="border rounded p-3 text-center">
+            <div class="fs-4 fw-bold" style="color: var(--medical-primary);">{{ qs.total_attempts }}</div>
+            <div class="text-muted small">Total Attempts</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="border rounded p-3 text-center">
+            <div class="fs-4 fw-bold" style="color: var(--medical-secondary);">{{ qs.unique_users }}</div>
+            <div class="text-muted small">Unique Learners</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="border rounded p-3 text-center">
+            <div class="fs-4 fw-bold text-info">{{ qs.avg_pct }}%</div>
+            <div class="text-muted small">Avg Score</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="border rounded p-3 text-center">
+            <div class="fs-4 fw-bold {% if qs.pass_rate >= 70 %}text-success{% else %}text-warning{% endif %}">
+              {{ qs.pass_rate }}%
+            </div>
+            <div class="text-muted small">Pass Rate (≥70%)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Per-question difficulty table (sorted hardest → easiest) -->
+      {% if qs.question_stats %}
+      <h5 class="mb-3">Question Difficulty <small class="text-muted fw-normal">(sorted hardest first)</small></h5>
+
+      {% if qs.total_attempts == 0 %}
+        <p class="text-muted">No attempts yet.</p>
+      {% else %}
+      <div class="table-responsive mb-4">
+        <table class="table table-sm table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Q#</th>
+              <th>Topic</th>
+              <th>Correct Answer</th>
+              <th>% Correct</th>
+              <th style="min-width:160px;">Difficulty</th>
+              <th>Most Common Wrong Answers</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for q in qs.question_stats %}
+            <tr {% if q.is_difficult %}class="table-warning"{% endif %}>
+              <td><strong>{{ q.key|upper }}</strong></td>
+              <td>{{ q.label }}</td>
+              <td class="text-center"><span class="badge bg-success">{{ q.correct_answer }}</span></td>
+              <td>
+                <strong {% if q.pct_correct < 50 %}style="color:#dc3545"{% elif q.pct_correct < 70 %}style="color:#f59e0b"{% else %}style="color:#22c55e"{% endif %}>
+                  {{ q.pct_correct }}%
+                </strong>
+                <small class="text-muted">({{ q.total_responses }} resp.)</small>
+              </td>
+              <td>
+                <div class="progress" style="height:8px;">
+                  <div class="progress-bar
+                    {% if q.pct_correct >= 70 %}bg-success
+                    {% elif q.pct_correct >= 50 %}bg-warning
+                    {% else %}bg-danger{% endif %}"
+                    style="width:{{ q.pct_correct }}%"></div>
+                </div>
+                {% if q.is_difficult %}
+                  <span class="badge bg-warning text-dark mt-1" style="font-size:0.7rem;">Difficult</span>
+                {% endif %}
+              </td>
+              <td>
+                {% for choice, count in q.wrong_choices %}
+                  <span class="badge bg-secondary me-1">{{ choice }}: {{ count }}×</span>
+                {% empty %}
+                  <span class="text-muted small">—</span>
+                {% endfor %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+      {% endif %}
+
+      <!-- Short-answer review section -->
+      {% for sa in qs.sa_responses %}
+      <div class="border rounded p-3 mb-3" style="background:#f8f9fa;">
+        <h6 class="mb-1">
+          <i class="fas fa-pen me-1 text-info"></i>
+          Short Answer: {{ sa.prompt }}
+        </h6>
+        <p class="text-muted small mb-2">
+          <strong>Sample answer:</strong> {{ sa.sample_answer }}
+        </p>
+        <p class="text-muted small mb-2">{{ sa.total_responses }} response{{ sa.total_responses|pluralize }} submitted</p>
+
+        {% if sa.responses %}
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Learner</th>
+                <th>Date</th>
+                <th>Response</th>
+                <th>Keywords Matched</th>
+                <th>Auto-score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for resp in sa.responses %}
+              <tr>
+                <td>{{ resp.username }}</td>
+                <td class="text-nowrap small">{{ resp.date|date:"Y-m-d" }}</td>
+                <td style="max-width:300px; word-break:break-word;">{{ resp.text }}</td>
+                <td>
+                  {% for kw in resp.matched_keywords %}
+                    <span class="badge bg-info text-dark me-1" style="font-size:0.7rem;">{{ kw }}</span>
+                  {% empty %}
+                    <span class="text-danger small">none</span>
+                  {% endfor %}
+                </td>
+                <td class="text-center">
+                  {% if resp.auto_passed %}
+                    <span class="badge bg-success">Pass</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark">Review</span>
+                  {% endif %}
+                  <small class="text-muted d-block">{{ resp.matched_count }}/{{ resp.total_keywords }} kw</small>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <p class="text-muted small mb-0">No responses yet.</p>
+        {% endif %}
+      </div>
+      {% empty %}
+        {# No short-answer questions for this quiz — nothing to show #}
+      {% endfor %}
+
+    </div><!-- /card-body -->
+  </div><!-- /card -->
+  {% empty %}
+    <p class="text-muted">No quiz data found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

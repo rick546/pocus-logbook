@@ -1,5 +1,9 @@
+import difflib
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.mail import send_mail
+from django.conf import settings as django_settings
 from .forms import CustomUserCreationForm
 from django.contrib.auth import login
 from django.db import models
@@ -28,7 +32,31 @@ QUIZZES = {
             "q3": "C",
             "q4": "B",
             "q5": "B",
-        }
+        },
+        "question_labels": {
+            "q1": "Primary purpose of E-FAST in trauma",
+            "q2": "Most sensitive E-FAST area for free fluid",
+            "q3": "Key advantage of US-guided CVC",
+            "q4": "Risk of short-axis needle advancement",
+            "q5": "True statement about POCUS",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": "Briefly describe the E-FAST exam: what does it stand for and which body cavities does it assess?",
+                "keywords": [
+                    "extended", "focused", "assessment", "sonography", "trauma",
+                    "peritoneal", "pericardial", "pleural", "thorax", "lung",
+                    "pneumothorax", "hemothorax", "free fluid", "abdominal",
+                ],
+                "min_keywords": 3,
+                "sample_answer": (
+                    "E-FAST stands for Extended Focused Assessment with Sonography in Trauma. "
+                    "It assesses the peritoneal cavity (for free fluid/hemoperitoneum), "
+                    "the pericardial space (for tamponade), and bilateral pleural cavities "
+                    "(for pneumothorax and hemothorax)."
+                ),
+            }
+        },
     },
     2: {
         "title": "POCUS Session #1 - Pre-Session Quiz",
@@ -44,7 +72,37 @@ QUIZZES = {
             "q8": "B",
             "q9": "B",
             "q10": "A",
-        }
+        },
+        "question_labels": {
+            "q1": "Ultrasound wave property",
+            "q2": "Probe frequency and penetration",
+            "q3": "Aorta normal diameter",
+            "q4": "AAA definition",
+            "q5": "Aorta measurement technique",
+            "q6": "B-line characteristics",
+            "q7": "Lung sliding significance",
+            "q8": "Pleural effusion appearance",
+            "q9": "IVC and volume status",
+            "q10": "POCUS limitation",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": "Describe what ultrasound findings would be most concerning for an abdominal aortic aneurysm (AAA) and what measurement threshold is used.",
+                "keywords": [
+                    "aneurysm", "dilation", "dilated", "widened", "enlargement",
+                    "3cm", "3 cm", "greater than 3", ">3", "diameter",
+                    "anteroposterior", "AP", "outer wall", "transverse",
+                    "rupture", "free fluid", "hematoma",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "An AAA is defined as aortic diameter >3 cm (outer wall to outer wall). "
+                    "Concerning POCUS findings include an aorta measuring ≥3 cm in transverse "
+                    "or anteroposterior diameter. Free fluid around the aorta suggests rupture "
+                    "and is a surgical emergency."
+                ),
+            }
+        },
     },
     3: {
         "title": "Focused Echo Pre-Session Quiz",
@@ -55,12 +113,143 @@ QUIZZES = {
             "q3": "B",
             "q4": "D",
             "q5": "C",
-        }
+        },
+        "question_labels": {
+            "q1": "Cardiac POCUS primary use",
+            "q2": "Parasternal long axis (PLAX) structure",
+            "q3": "Pericardial effusion location in PLAX",
+            "q4": "Subxiphoid view assessment",
+            "q5": "Tamponade physiology sign",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": "Name and briefly describe 2 cardiac POCUS views and what each best demonstrates.",
+                "keywords": [
+                    "parasternal", "PLAX", "PSAX", "apical", "subxiphoid",
+                    "long axis", "short axis", "four chamber", "pericardial",
+                    "mitral", "aortic", "valve", "left ventricle", "right ventricle",
+                    "tamponade", "effusion", "IVC",
+                ],
+                "min_keywords": 3,
+                "sample_answer": (
+                    "Examples: (1) Parasternal Long Axis (PLAX) — shows left ventricle, mitral valve, "
+                    "aortic valve, and pericardial effusion posterior to the heart. "
+                    "(2) Subxiphoid — provides a wide view of pericardium, both ventricles, "
+                    "and is ideal for detecting tamponade physiology."
+                ),
+            }
+        },
     },
 }
 
 # Keep QUIZ_1 for backward compatibility
 QUIZ_1 = QUIZZES[1]
+
+
+# ---------------------------------------------------------------------------
+# Short-answer scoring helper
+# ---------------------------------------------------------------------------
+def score_short_answer(user_answer, keywords, threshold=0.75):
+    """
+    Score a free-text answer against a list of target keywords using fuzzy
+    matching.  Returns (matched_count, total_keywords, matched_keywords).
+    """
+    if not user_answer or not keywords:
+        return 0, len(keywords), []
+
+    answer_lower = user_answer.lower()
+    # Tokenise the answer into individual words for word-level fuzzy matching
+    answer_words = answer_lower.split()
+    matched = []
+
+    for keyword in keywords:
+        kw_lower = keyword.lower()
+        # 1. Exact substring match (handles multi-word keywords like "free fluid")
+        if kw_lower in answer_lower:
+            matched.append(keyword)
+            continue
+        # 2. Fuzzy word-level match for single words
+        for word in answer_words:
+            ratio = difflib.SequenceMatcher(None, kw_lower, word).ratio()
+            if ratio >= threshold:
+                matched.append(keyword)
+                break
+
+    return len(matched), len(keywords), matched
+
+
+# ---------------------------------------------------------------------------
+# Email notification helper
+# ---------------------------------------------------------------------------
+def send_quiz_completion_email(user, quiz, quiz_id, score, total,
+                               answer_key, submitted_answers,
+                               is_new_best, sa_results=None):
+    """Send quiz-completion email to the learner."""
+    if not user.email:
+        return
+
+    percentage = round((score / total) * 100) if total > 0 else 0
+    passed = percentage >= 70
+    status_line = "PASSED ✓" if passed else "Did not pass (70% required)"
+    new_best_note = "  — New personal best!" if is_new_best else ""
+
+    # Build wrong-answer summary
+    wrong_lines = []
+    for q_key, correct in answer_key.items():
+        user_ans = submitted_answers.get(q_key)
+        if user_ans != correct:
+            q_num = q_key.replace("q", "")
+            user_ans_str = user_ans if user_ans else "not answered"
+            wrong_lines.append(
+                f"  Q{q_num}: your answer = {user_ans_str}  |  correct = {correct}"
+            )
+
+    wrong_section = ""
+    if wrong_lines:
+        wrong_section = "Questions to review:\n" + "\n".join(wrong_lines) + "\n\n"
+    else:
+        wrong_section = "Perfect score — excellent work!\n\n"
+
+    # Short-answer section
+    sa_section = ""
+    if sa_results:
+        sa_lines = []
+        for sa_key, sa_data in sa_results.items():
+            sa_num = sa_key.replace("sa", "")
+            matched = sa_data.get("matched_keywords", [])
+            sa_lines.append(
+                f"  SA{sa_num}: {sa_data['prompt'][:80]}...\n"
+                f"    Your answer: {sa_data['user_answer'][:200]}\n"
+                f"    Keywords matched: {', '.join(matched) if matched else 'none detected'}\n"
+                f"    Sample answer: {sa_data['sample_answer'][:300]}"
+            )
+        sa_section = "Short-answer questions (for self-review):\n" + "\n".join(sa_lines) + "\n\n"
+
+    subject = (
+        f"[POCUS Portal] Quiz Complete: {quiz['title']} — "
+        f"{score}/{total} ({percentage}%)"
+    )
+    body = (
+        f"Hi {user.get_full_name() or user.username},\n\n"
+        f"You completed: {quiz['title']}\n"
+        f"Score: {score}/{total} ({percentage}%) — {status_line}{new_best_note}\n\n"
+        f"{wrong_section}"
+        f"{sa_section}"
+        f"Keep up the great work on your POCUS training!\n\n"
+        f"— POCUS Portal"
+    )
+
+    try:
+        send_mail(
+            subject,
+            body,
+            django_settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=True,
+        )
+    except Exception:
+        pass  # Never let email failure break quiz submission
+
 
 # Quiz home page showing all available quizzes
 @login_required
@@ -107,9 +296,31 @@ def quiz_detail(request, quiz_id):
     # Get user's previous best score for this quiz
     previous_best = QuizBestScore.objects.filter(user=request.user, quiz_id=quiz_id).first()
 
+    short_answer_defs = quiz.get("short_answers", {})
+    sa_results = {}
+
     if request.method == "POST":
         submitted_answers = {q: request.POST.get(q) for q in answer_key.keys()}
         score = sum(1 for q, correct in answer_key.items() if submitted_answers.get(q) == correct)
+
+        # Score short-answer questions
+        for sa_key, sa_def in short_answer_defs.items():
+            user_sa = (request.POST.get(sa_key) or "").strip()
+            matched_count, total_kw, matched_kws = score_short_answer(
+                user_sa, sa_def["keywords"]
+            )
+            sa_results[sa_key] = {
+                "prompt": sa_def["prompt"],
+                "user_answer": user_sa,
+                "matched_keywords": matched_kws,
+                "matched_count": matched_count,
+                "total_keywords": total_kw,
+                "min_keywords": sa_def.get("min_keywords", 1),
+                "sample_answer": sa_def["sample_answer"],
+                "auto_passed": matched_count >= sa_def.get("min_keywords", 1),
+            }
+            # Store SA text in the answers dict for admin review
+            submitted_answers[sa_key] = user_sa
 
         # Save the quiz attempt
         QuizAttempt.objects.create(
@@ -142,6 +353,19 @@ def quiz_detail(request, quiz_id):
         else:
             is_new_best = True
 
+        # Send completion email (non-blocking)
+        send_quiz_completion_email(
+            user=request.user,
+            quiz=quiz,
+            quiz_id=quiz_id,
+            score=score,
+            total=total,
+            answer_key=answer_key,
+            submitted_answers={k: v for k, v in submitted_answers.items() if not k.startswith("sa")},
+            is_new_best=is_new_best,
+            sa_results=sa_results if sa_results else None,
+        )
+
     # Use quiz-specific template if available, otherwise default
     template = quiz.get("template", "logbook/quizzes_list.html")
 
@@ -154,6 +378,8 @@ def quiz_detail(request, quiz_id):
         "total": total,
         "previous_best": previous_best,
         "is_new_best": is_new_best,
+        "short_answer_defs": short_answer_defs,
+        "sa_results": sa_results,
     })
 
 
@@ -713,3 +939,107 @@ def badges(request):
         "self_count": self_count,
     })
 
+
+
+# ---------------------------------------------------------------------------
+# Admin: Quiz Analytics
+# ---------------------------------------------------------------------------
+@staff_member_required
+def quiz_analytics(request):
+    """
+    Staff-only view showing per-quiz statistics and per-question difficulty,
+    helping instructors identify topics that learners find most challenging.
+    """
+    quiz_stats = []
+
+    for quiz_id, quiz_data in QUIZZES.items():
+        attempts_qs = QuizAttempt.objects.filter(quiz_id=quiz_id)
+        total_attempts = attempts_qs.count()
+        unique_users = attempts_qs.values("user").distinct().count()
+
+        if total_attempts > 0:
+            agg = attempts_qs.aggregate(avg_score=Avg("score"))
+            avg_score = agg["avg_score"] or 0
+            mc_total = len(quiz_data["questions"])
+            avg_pct = round((avg_score / mc_total) * 100, 1) if mc_total else 0
+
+            pass_count = sum(1 for a in attempts_qs if a.percentage >= 70)
+            pass_rate = round((pass_count / total_attempts) * 100, 1)
+        else:
+            avg_pct = 0.0
+            pass_rate = 0.0
+
+        all_answers = list(attempts_qs.values_list("answers", flat=True))
+        answer_key = quiz_data["questions"]
+        question_labels = quiz_data.get("question_labels", {})
+
+        question_stats = []
+        for q_key, correct_answer in answer_key.items():
+            responses = [a.get(q_key) for a in all_answers if a.get(q_key)]
+            total_resp = len(responses)
+            if total_resp > 0:
+                correct_count = sum(1 for r in responses if r == correct_answer)
+                pct_correct = round((correct_count / total_resp) * 100, 1)
+                wrong_choices = {}
+                for r in responses:
+                    if r != correct_answer:
+                        wrong_choices[r] = wrong_choices.get(r, 0) + 1
+                wrong_choices_sorted = sorted(wrong_choices.items(), key=lambda x: -x[1])
+            else:
+                pct_correct = 0.0
+                wrong_choices_sorted = []
+
+            question_stats.append({
+                "key": q_key,
+                "label": question_labels.get(q_key, q_key),
+                "correct_answer": correct_answer,
+                "total_responses": total_resp,
+                "pct_correct": pct_correct,
+                "pct_incorrect": round(100 - pct_correct, 1),
+                "wrong_choices": wrong_choices_sorted,
+                "is_difficult": pct_correct < 60,
+            })
+
+        question_stats.sort(key=lambda x: x["pct_correct"])
+
+        sa_defs = quiz_data.get("short_answers", {})
+        sa_responses = []
+        for sa_key, sa_def in sa_defs.items():
+            responses_for_sa = []
+            for attempt in attempts_qs.select_related("user"):
+                text = attempt.answers.get(sa_key, "")
+                if text:
+                    matched_count, total_kw, matched_kws = score_short_answer(
+                        text, sa_def["keywords"]
+                    )
+                    responses_for_sa.append({
+                        "username": attempt.user.username,
+                        "date": attempt.created_at,
+                        "text": text,
+                        "matched_keywords": matched_kws,
+                        "matched_count": matched_count,
+                        "total_keywords": total_kw,
+                        "auto_passed": matched_count >= sa_def.get("min_keywords", 1),
+                    })
+            sa_responses.append({
+                "key": sa_key,
+                "prompt": sa_def["prompt"],
+                "sample_answer": sa_def["sample_answer"],
+                "responses": responses_for_sa,
+                "total_responses": len(responses_for_sa),
+            })
+
+        quiz_stats.append({
+            "quiz_id": quiz_id,
+            "title": quiz_data["title"],
+            "total_attempts": total_attempts,
+            "unique_users": unique_users,
+            "avg_pct": avg_pct,
+            "pass_rate": pass_rate,
+            "question_stats": question_stats,
+            "sa_responses": sa_responses,
+        })
+
+    return render(request, "logbook/quiz_analytics.html", {
+        "quiz_stats": quiz_stats,
+    })
