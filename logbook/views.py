@@ -115,29 +115,78 @@ QUIZZES = {
             "q5": "C",
         },
         "question_labels": {
-            "q1": "Cardiac POCUS primary use",
-            "q2": "Parasternal long axis (PLAX) structure",
-            "q3": "Pericardial effusion location in PLAX",
-            "q4": "Subxiphoid view assessment",
-            "q5": "Tamponade physiology sign",
+            "q1": "Chamber not visible in PLAX",
+            "q2": "Apical 4-chamber probe position",
+            "q3": "Differentiating pleural vs pericardial space",
+            "q4": "Valve visibility in PSAX",
+            "q5": "Fifth chamber on A4C tilt",
         },
         "short_answers": {
             "sa1": {
-                "prompt": "Name and briefly describe 2 cardiac POCUS views and what each best demonstrates.",
+                "prompt": (
+                    "Case A \u2014 New Onset Cardiomyopathy (PLAX view): "
+                    "The EPSS measured on this scan is 23.7 mm. "
+                    "What does EPSS measure, and what threshold suggests impaired LV systolic function?"
+                ),
                 "keywords": [
-                    "parasternal", "PLAX", "PSAX", "apical", "subxiphoid",
-                    "long axis", "short axis", "four chamber", "pericardial",
-                    "mitral", "aortic", "valve", "left ventricle", "right ventricle",
-                    "tamponade", "effusion", "IVC",
+                    "E-point", "E point", "septal separation", "anterior leaflet", "mitral",
+                    "interventricular septum", "septum", "systolic function", "ejection fraction",
+                    "EF", "7mm", "7 mm", ">7", "reduced", "impaired", "dysfunction",
                 ],
                 "min_keywords": 3,
                 "sample_answer": (
-                    "Examples: (1) Parasternal Long Axis (PLAX) — shows left ventricle, mitral valve, "
-                    "aortic valve, and pericardial effusion posterior to the heart. "
-                    "(2) Subxiphoid — provides a wide view of pericardium, both ventricles, "
-                    "and is ideal for detecting tamponade physiology."
+                    "EPSS measures the distance between the anterior mitral valve leaflet at its "
+                    "E-point (peak early diastolic opening) and the interventricular septum. "
+                    "Normal EPSS is <7 mm. An EPSS >7 mm suggests reduced LV systolic function. "
+                    "An EPSS of 23.7 mm indicates severely reduced EF, consistent with EF <20%."
                 ),
-            }
+            },
+            "sa2": {
+                "prompt": (
+                    "Case A \u2014 New Onset Cardiomyopathy (PLAX view): "
+                    "Describe the key sonographic features visible on this PLAX image that are "
+                    "consistent with dilated cardiomyopathy with severely reduced ejection fraction."
+                ),
+                "keywords": [
+                    "dilated", "enlarged", "LV", "left ventricle", "dilation",
+                    "hypokinesis", "poor contractility", "systolic dysfunction",
+                    "cardiomyopathy", "globular", "EPSS", "mitral valve", "reduced",
+                    "wall motion",
+                ],
+                "min_keywords": 3,
+                "sample_answer": (
+                    "PLAX findings of dilated cardiomyopathy with reduced EF include: "
+                    "(1) Markedly dilated LV cavity \u2014 globular rather than oval. "
+                    "(2) Global hypokinesis \u2014 reduced wall motion throughout. "
+                    "(3) Elevated EPSS (>7 mm) reflecting poor LV contractility and reduced mitral valve opening. "
+                    "In this case the LV is grossly dilated with an EPSS of 23.7 mm, correlating with EF <20%."
+                ),
+            },
+            "sa3": {
+                "prompt": (
+                    "Case A \u2014 New Onset Cardiomyopathy: "
+                    "This 47-year-old male has dyspnea and bilateral leg swelling. "
+                    "Formal echo confirmed EF <20% with dilation of the LA, RA, and RV. "
+                    "Explain how severely reduced LV function leads to these multi-chamber findings "
+                    "and symptoms. What is the clinical term for this condition?"
+                ),
+                "keywords": [
+                    "biventricular", "heart failure", "HFrEF", "congestion",
+                    "pulmonary edema", "pulmonary hypertension", "right heart failure",
+                    "peripheral edema", "venous congestion", "reduced ejection fraction",
+                    "LA", "RV", "right ventricle", "dilation", "backward failure",
+                    "left atrium", "forward failure",
+                ],
+                "min_keywords": 3,
+                "sample_answer": (
+                    "Severely reduced LV EF (<20%) causes: "
+                    "(1) Elevated LV filling pressures back up into the LA \u2014 LA dilation and pulmonary "
+                    "venous hypertension \u2014 pulmonary edema \u2014 dyspnea. "
+                    "(2) Chronic pulmonary hypertension increases RV afterload \u2014 RV dilation and failure \u2014 "
+                    "systemic venous congestion \u2014 RA dilation and peripheral leg edema. "
+                    "This cascade is biventricular failure (HFrEF). All four chambers become involved."
+                ),
+            },
         },
     },
 }

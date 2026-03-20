@@ -180,44 +180,165 @@
           </div>
         </div>
 
-        <!-- Short-answer questions -->
-        {% if short_answer_defs %}
-        <h5 class="mb-3 mt-4" style="color: var(--medical-secondary);">Short Answer Questions</h5>
-        {% for sa_key, sa_def in short_answer_defs.items %}
-        <div class="mb-4 p-3 border rounded bg-light">
+        <!-- ============================================================ -->
+        <!-- CASE-BASED SHORT ANSWER SECTION                            -->
+        <!-- ============================================================ -->
+        <hr class="my-4">
+        <h5 class="mb-1" style="color: var(--medical-secondary);">
+          <i class="fas fa-stethoscope me-2"></i>Clinical Case — Short Answer Questions
+        </h5>
+        <p class="text-muted small mb-3">
+          Read the case and image below, then answer each question in your own words.
+          After submitting, you will see which key concepts were detected in your answer
+          and a sample answer for self-review.
+        </p>
+
+        <!-- Case stem + image -->
+        <div class="card mb-4 border-0" style="background: linear-gradient(135deg,#0b4f6c11,#2a9d8f11);">
+          <div class="card-body">
+            <h6 class="fw-bold mb-2" style="color:var(--medical-primary);">
+              Case A — New Onset Cardiomyopathy with Reduced EF
+            </h6>
+            <p class="mb-3" style="font-size:0.95rem;">
+              A 47-year-old male with <strong>no prior cardiac history</strong> presents with
+              <strong>2 weeks of progressive shortness of breath and bilateral leg swelling</strong>.
+              POCUS echocardiogram (PLAX view shown below) demonstrated significant LV dilation
+              with reduced contractility and an <strong>EPSS of 23.7 mm</strong>. Formal
+              echocardiogram confirmed <strong>EF &lt;20%</strong> with mild dilation of the LA,
+              RA, and RV.
+            </p>
+
+            <!-- PLAX image — hosted via GitHub Issues CDN (no repo storage) -->
+            <!-- INSTRUCTIONS: replace the src URL below with your GitHub CDN URL.
+                 Steps: go to github.com/rick546/pocus-logbook/issues/new,
+                 drag the PLAX image into the comment box, copy the
+                 https://user-images.githubusercontent.com/... URL that appears,
+                 then close the tab without submitting. Paste that URL here. -->
+            <div class="text-center mb-2">
+              <img
+                src="PASTE_GITHUB_CDN_IMAGE_URL_HERE"
+                alt="PLAX view — dilated LV with reduced EF, EPSS 23.7 mm"
+                class="img-fluid rounded shadow-sm"
+                style="max-height:380px; border:2px solid #0b4f6c33;"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <div style="display:none;" class="alert alert-warning p-2 small mt-2">
+                <i class="fas fa-image me-1"></i>
+                Image pending upload — see instructor for setup instructions.
+              </div>
+            </div>
+            <p class="text-center text-muted small mb-0">
+              <em>PLAX view — dilated LV, EPSS 23.7 mm</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- SA1 — EPSS -->
+        {% with sa_key="sa1" %}
+        <div class="mb-4 p-3 border rounded" style="background:#f8f9fa; border-left:4px solid var(--medical-secondary) !important;">
           <p class="fw-bold mb-2">
             <i class="fas fa-pen-alt me-1 text-info"></i>
-            {{ sa_def.prompt }}
+            Short Answer 1 of 3 — EPSS
           </p>
-          {% if sa_results %}
-            {% for rk, rv in sa_results.items %}{% if rk == sa_key %}
-            <div class="mb-2">
-              <strong>Your answer:</strong>
-              <p class="text-muted mb-1">{{ rv.user_answer|default:"(no answer provided)" }}</p>
-              {% if rv.matched_keywords %}
-                <p class="mb-1 small text-success">
-                  <i class="fas fa-check-circle me-1"></i>
-                  Key concepts identified: {{ rv.matched_keywords|join:", " }}
-                </p>
-              {% else %}
-                <p class="mb-1 small text-warning">
-                  <i class="fas fa-exclamation-circle me-1"></i>
-                  No key concepts detected — review the sample answer below.
-                </p>
-              {% endif %}
-              <details class="mt-2">
-                <summary class="text-primary small" style="cursor:pointer;">Show sample answer</summary>
-                <p class="text-muted small mt-1 mb-0">{{ rv.sample_answer }}</p>
-              </details>
+          <p class="mb-2" style="font-size:0.95rem;">
+            The EPSS measured on this scan is <strong>23.7 mm</strong>.
+            What does EPSS measure, and what threshold suggests impaired LV systolic function?
+          </p>
+          {% if sa_results.sa1 %}
+            <div class="mb-1"><strong>Your answer:</strong>
+              <p class="text-muted mb-1">{{ sa_results.sa1.user_answer|default:"(no answer provided)" }}</p>
             </div>
-            {% endif %}{% endfor %}
+            {% if sa_results.sa1.matched_keywords %}
+              <p class="mb-1 small text-success">
+                <i class="fas fa-check-circle me-1"></i>
+                Key concepts identified: {{ sa_results.sa1.matched_keywords|join:", " }}
+              </p>
+            {% else %}
+              <p class="mb-1 small text-warning">
+                <i class="fas fa-exclamation-circle me-1"></i>
+                No key concepts detected — review the sample answer.
+              </p>
+            {% endif %}
+            <details class="mt-2">
+              <summary class="text-primary small" style="cursor:pointer;">Show sample answer</summary>
+              <p class="text-muted small mt-1 mb-0">{{ sa_results.sa1.sample_answer }}</p>
+            </details>
           {% else %}
-            <textarea class="form-control" name="{{ sa_key }}" rows="4"
-              placeholder="Type your answer here..."></textarea>
+            <textarea class="form-control" name="sa1" rows="4"
+              placeholder="Describe what EPSS measures and the threshold for LV dysfunction..."></textarea>
           {% endif %}
         </div>
-        {% endfor %}
-        {% endif %}
+        {% endwith %}
+
+        <!-- SA2 — PLAX findings -->
+        <div class="mb-4 p-3 border rounded" style="background:#f8f9fa; border-left:4px solid var(--medical-secondary) !important;">
+          <p class="fw-bold mb-2">
+            <i class="fas fa-pen-alt me-1 text-info"></i>
+            Short Answer 2 of 3 — PLAX Findings
+          </p>
+          <p class="mb-2" style="font-size:0.95rem;">
+            Referring to the PLAX image above, describe the key sonographic features
+            consistent with <strong>dilated cardiomyopathy with severely reduced EF</strong>.
+          </p>
+          {% if sa_results.sa2 %}
+            <div class="mb-1"><strong>Your answer:</strong>
+              <p class="text-muted mb-1">{{ sa_results.sa2.user_answer|default:"(no answer provided)" }}</p>
+            </div>
+            {% if sa_results.sa2.matched_keywords %}
+              <p class="mb-1 small text-success">
+                <i class="fas fa-check-circle me-1"></i>
+                Key concepts identified: {{ sa_results.sa2.matched_keywords|join:", " }}
+              </p>
+            {% else %}
+              <p class="mb-1 small text-warning">
+                <i class="fas fa-exclamation-circle me-1"></i>
+                No key concepts detected — review the sample answer.
+              </p>
+            {% endif %}
+            <details class="mt-2">
+              <summary class="text-primary small" style="cursor:pointer;">Show sample answer</summary>
+              <p class="text-muted small mt-1 mb-0">{{ sa_results.sa2.sample_answer }}</p>
+            </details>
+          {% else %}
+            <textarea class="form-control" name="sa2" rows="4"
+              placeholder="Describe the PLAX features of dilated cardiomyopathy..."></textarea>
+          {% endif %}
+        </div>
+
+        <!-- SA3 — Biventricular failure / clinical correlation -->
+        <div class="mb-4 p-3 border rounded" style="background:#f8f9fa; border-left:4px solid var(--medical-secondary) !important;">
+          <p class="fw-bold mb-2">
+            <i class="fas fa-pen-alt me-1 text-info"></i>
+            Short Answer 3 of 3 — Clinical Correlation
+          </p>
+          <p class="mb-2" style="font-size:0.95rem;">
+            Formal echo confirmed <strong>EF &lt;20%</strong> with dilation of the LA, RA, and RV.
+            Explain how severely reduced LV function leads to these multi-chamber findings
+            and this patient's symptoms (dyspnea, leg edema). What is the clinical term for this condition?
+          </p>
+          {% if sa_results.sa3 %}
+            <div class="mb-1"><strong>Your answer:</strong>
+              <p class="text-muted mb-1">{{ sa_results.sa3.user_answer|default:"(no answer provided)" }}</p>
+            </div>
+            {% if sa_results.sa3.matched_keywords %}
+              <p class="mb-1 small text-success">
+                <i class="fas fa-check-circle me-1"></i>
+                Key concepts identified: {{ sa_results.sa3.matched_keywords|join:", " }}
+              </p>
+            {% else %}
+              <p class="mb-1 small text-warning">
+                <i class="fas fa-exclamation-circle me-1"></i>
+                No key concepts detected — review the sample answer.
+              </p>
+            {% endif %}
+            <details class="mt-2">
+              <summary class="text-primary small" style="cursor:pointer;">Show sample answer</summary>
+              <p class="text-muted small mt-1 mb-0">{{ sa_results.sa3.sample_answer }}</p>
+            </details>
+          {% else %}
+            <textarea class="form-control" name="sa3" rows="4"
+              placeholder="Explain the cascade from reduced LV EF to biventricular failure..."></textarea>
+          {% endif %}
+        </div>
 
         <div class="d-flex gap-2">
           {% if not sa_results %}
