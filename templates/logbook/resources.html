@@ -1,15 +1,49 @@
 {% extends "base.html" %}
+{% block title %}Resources - POCUS Portal{% endblock %}
+
 {% block content %}
-
 <div class="container-fluid px-4">
-    <h1 class="mt-4">Resources</h1>
-    <p class="text-muted">
-        Curated learning materials, protocols, and reference guides.
-    </p>
+  <h1 class="mt-4">Resources</h1>
+  <p class="text-muted mb-4">Curated learning materials, protocols, and reference guides.</p>
 
-    <div class="alert alert-success">
-        📖 Resource library coming soon.
+  {% if not resources %}
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i>No resources have been added yet. Admins can add resources via the <a href="/admin/logbook/resource/" class="alert-link">admin panel</a>.
     </div>
+  {% else %}
+    {% for category, items in categories.items %}
+      <h4 class="mt-4 mb-3">
+        {% if category == "Video" %}<i class="fas fa-video me-2 text-danger"></i>
+        {% elif category == "Article" %}<i class="fas fa-newspaper me-2 text-primary"></i>
+        {% elif category == "PDF / Document" %}<i class="fas fa-file-pdf me-2 text-warning"></i>
+        {% elif category == "Guideline" %}<i class="fas fa-clipboard-list me-2 text-success"></i>
+        {% else %}<i class="fas fa-link me-2 text-secondary"></i>
+        {% endif %}
+        {{ category }}
+      </h4>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+        {% for resource in items %}
+          <div class="col">
+            <div class="card h-100 shadow-sm">
+              {% if resource.image_url %}
+                <img src="{{ resource.image_url }}" class="card-img-top" alt="{{ resource.title }}" style="max-height:160px; object-fit:cover;">
+              {% endif %}
+              <div class="card-body">
+                <h6 class="card-title fw-bold">{{ resource.title }}</h6>
+                {% if resource.description %}
+                  <p class="card-text text-muted small">{{ resource.description }}</p>
+                {% endif %}
+              </div>
+              <div class="card-footer bg-transparent border-top-0">
+                <a href="{{ resource.url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary w-100">
+                  <i class="fas fa-external-link-alt me-1"></i> Open Resource
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% endif %}
 </div>
-
 {% endblock %}

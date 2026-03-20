@@ -13,6 +13,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .models import ClinicalCase, CaseStep
 from .models import QuizAttempt, QuizBestScore, QuizQuestion, QuizShortAnswer
+from .models import Resource, POCUSProtocol
 from .forms import ScanForm
 from .models import Scan
 
@@ -774,11 +775,19 @@ def pocus_calendar(request):
 
 
 def resources(request):
-    return render(request, "logbook/resources.html")
+    resources_qs = Resource.objects.filter(is_published=True)
+    categories = {}
+    for r in resources_qs:
+        categories.setdefault(r.get_category_display(), []).append(r)
+    return render(request, "logbook/resources.html", {
+        "resources": resources_qs,
+        "categories": categories,
+    })
 
 
 def protocols(request):
-    return render(request, "logbook/protocols.html")
+    protocols_qs = POCUSProtocol.objects.filter(is_published=True)
+    return render(request, "logbook/protocols.html", {"db_protocols": protocols_qs})
 
 
 def faculty_evaluation(request):

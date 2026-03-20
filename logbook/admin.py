@@ -9,17 +9,114 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.http import HttpResponse
 
-from .models import Scan, QuizAttempt, QuizBestScore, QuizQuestion, QuizShortAnswer
+from .models import Scan, QuizAttempt, QuizBestScore, QuizQuestion, QuizShortAnswer, ClinicalCase, CaseStep, CaseQuestion, CaseChoice, Resource, POCUSProtocol
 from .admin_forms import MassAddScansForm
 from .views import QUIZZES
 
-from django.contrib import admin
-from .models import ClinicalCase, CaseStep, CaseQuestion, CaseChoice
 
-admin.site.register(ClinicalCase)
-admin.site.register(CaseStep)
-admin.site.register(CaseQuestion)
-admin.site.register(CaseChoice)
+# ── Clinical Cases ────────────────────────────────────────────────────────────
+
+class CaseChoiceInline(admin.TabularInline):
+    model = CaseChoice
+    extra = 4
+    fields = ('text', 'is_correct', 'feedback')
+
+
+class CaseQuestionInline(admin.StackedInline):
+    model = CaseQuestion
+    extra = 0
+    fields = ('prompt',)
+
+
+@admin.register(CaseStep)
+class CaseStepAdmin(admin.ModelAdmin):
+    list_display = ('case', 'order', 'content_preview')
+    list_filter = ('case',)
+    ordering = ('case', 'order')
+    inlines = [CaseQuestionInline]
+
+    def content_preview(self, obj):
+        return obj.content[:80] + ('…' if len(obj.content) > 80 else '')
+    content_preview.short_description = "Content"
+
+
+@admin.register(CaseQuestion)
+class CaseQuestionAdmin(admin.ModelAdmin):
+    list_display = ('prompt_preview', 'step')
+    inlines = [CaseChoiceInline]
+
+    def prompt_preview(self, obj):
+        return obj.prompt[:80] + ('…' if len(obj.prompt) > 80 else '')
+    prompt_preview.short_description = "Prompt"
+
+
+class CaseStepInline(admin.StackedInline):
+    model = CaseStep
+    extra = 1
+    show_change_link = True
+    fields = ('order', 'content')
+    ordering = ('order',)
+
+
+@admin.register(ClinicalCase)
+class ClinicalCaseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'is_published', 'step_count')
+    list_editable = ('is_published',)
+    search_fields = ('title', 'description')
+    inlines = [CaseStepInline]
+
+    def step_count(self, obj):
+        return obj.steps.count()
+    step_count.short_description = "Steps"
+
+
+# ── Resources ─────────────────────────────────────────────────────────────────
+
+@admin.register(Resource)
+class ResourceAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'order', 'is_published', 'url_link')
+    list_editable = ('order', 'is_published')
+    list_filter = ('category', 'is_published')
+    search_fields = ('title', 'description')
+    ordering = ('order', 'title')
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'category', 'description', 'is_published', 'order'),
+        }),
+        ('Link & Media', {
+            'fields': ('url', 'image_url'),
+        }),
+    )
+
+    def url_link(self, obj):
+        from django.utils.html import format_html
+        return format_html('<a href="{}" target="_blank">Open</a>', obj.url)
+    url_link.short_description = "URL"
+
+    class Media:
+        js = ('admin/js/quiz_field_tooltips.js',)
+
+
+# ── POCUS Protocols ───────────────────────────────────────────────────────────
+
+@admin.register(POCUSProtocol)
+class POCUSProtocolAdmin(admin.ModelAdmin):
+    list_display = ('name', 'tab_id', 'order', 'is_published')
+    list_editable = ('order', 'is_published')
+    search_fields = ('name', 'description')
+    ordering = ('order',)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'tab_id', 'icon_class', 'description', 'is_published', 'order'),
+        }),
+        ('Protocol Content (HTML)', {
+            'fields': ('content',),
+            'description': 'Paste the full HTML body for this protocol. It will be rendered inside the tab on the Protocols page.',
+        }),
+    )
+
+    class Media:
+        js = ('admin/js/quiz_field_tooltips.js',)
 
 
 @admin.register(QuizAttempt)

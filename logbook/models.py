@@ -256,6 +256,49 @@ class CaseChoice(models.Model):
         return self.text
 
 
+class Resource(models.Model):
+    CATEGORY_CHOICES = [
+        ('video', 'Video'),
+        ('article', 'Article'),
+        ('pdf', 'PDF / Document'),
+        ('guideline', 'Guideline'),
+        ('link', 'External Link'),
+    ]
+    title = models.CharField(max_length=200)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='link')
+    description = models.TextField(blank=True)
+    url = models.URLField(help_text="Link to the resource (article, video, PDF, etc.)")
+    image_url = models.URLField(blank=True, help_text="Optional thumbnail image URL to display on the card")
+    order = models.PositiveIntegerField(default=0, help_text="Display order — lower numbers appear first")
+    is_published = models.BooleanField(default=True, help_text="Uncheck to hide from learners")
+
+    class Meta:
+        ordering = ['order', 'title']
+        verbose_name = "Resource"
+        verbose_name_plural = "Resources"
+
+    def __str__(self):
+        return self.title
+
+
+class POCUSProtocol(models.Model):
+    name = models.CharField(max_length=100, help_text="Protocol name shown on the tab (e.g. 'FAST Scan')")
+    tab_id = models.SlugField(max_length=50, unique=True, help_text="URL-safe tab ID, no spaces (e.g. 'fast', 'lung', 'cardiac')")
+    icon_class = models.CharField(max_length=60, blank=True, default='fas fa-circle', help_text="Font Awesome icon class (e.g. 'fas fa-search', 'fas fa-lungs', 'fas fa-heart')")
+    description = models.TextField(blank=True, help_text="Short subtitle shown below the protocol heading")
+    content = models.TextField(blank=True, help_text="Full protocol body as HTML — paste your HTML here, it will be rendered directly on the page")
+    order = models.PositiveIntegerField(default=0, help_text="Tab order — lower numbers appear first (leftmost)")
+    is_published = models.BooleanField(default=True, help_text="Uncheck to hide this protocol from learners")
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = "POCUS Protocol"
+        verbose_name_plural = "POCUS Protocols"
+
+    def __str__(self):
+        return self.name
+
+
 class QuizQuestion(models.Model):
     quiz_id = models.PositiveIntegerField(db_index=True, help_text="Which quiz this question belongs to: 1 = E-FAST + CVC Basics, 2 = POCUS Session #1, 3 = Focused Echo")
     key = models.CharField(max_length=10, help_text="Unique identifier within the quiz (e.g. q1, q2, q3). New questions should continue the sequence — if the quiz has q1-q5, use q6.")
