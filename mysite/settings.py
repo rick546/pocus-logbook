@@ -29,12 +29,14 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-cjplaiw#xf=)yxyhs5h4(
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
+    'manitobapocus.pythonanywhere.com',
     'rngo.pythonanywhere.com',
     'localhost',
     '127.0.0.1',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://manitobapocus.pythonanywhere.com',
     'https://rngo.pythonanywhere.com',
 ]
 
