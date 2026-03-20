@@ -30,6 +30,9 @@
                     {% if user.is_authenticated %}
                     <li><span class="dropdown-item-text">Signed in as <strong>{{ user.username }}</strong></span></li>
                     <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-edit me-2"></i>My Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'password_change' %}"><i class="fas fa-key me-2"></i>Change Password</a></li>
+                    <li><hr class="dropdown-divider" /></li>
                     <li>
                         <form method="post" action="{% url 'logout' %}" class="px-3">
                             {% csrf_token %}

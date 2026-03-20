@@ -30,5 +30,6 @@ urlpatterns = [
     path("badges/", views.badges, name="badges"),
     path("admin/scans/", views.scan_totals, name="scan_totals"),
     path("admin/quiz-analytics/", views.quiz_analytics, name="quiz_analytics"),
+    path("profile/", views.profile, name="profile"),
 ]
 

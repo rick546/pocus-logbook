@@ -26,6 +26,24 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
 
+class UserProfileForm(forms.ModelForm):
+    """Allows users to update their email and display name."""
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+        widgets = {
+            "first_name": forms.TextInput(attrs={"placeholder": "First name", "class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"placeholder": "Last name", "class": "form-control"}),
+            "email": forms.EmailInput(attrs={"placeholder": "your@email.com", "class": "form-control"}),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if email and User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("That email address is already in use by another account.")
+        return email
+
+
 class ScanForm(forms.ModelForm):
     class Meta:
         model = Scan
