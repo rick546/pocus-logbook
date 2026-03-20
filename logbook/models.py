@@ -254,3 +254,58 @@ class CaseChoice(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class QuizQuestion(models.Model):
+    quiz_id = models.PositiveIntegerField(db_index=True)
+    key = models.CharField(max_length=10)
+    order = models.PositiveIntegerField(default=0)
+    section_heading = models.CharField(max_length=200, blank=True, help_text="Optional section heading shown before this question (e.g. 'Ultrasound Physics Questions')")
+    question_text = models.TextField()
+    choice_a = models.CharField(max_length=500, blank=True)
+    choice_b = models.CharField(max_length=500, blank=True)
+    choice_c = models.CharField(max_length=500, blank=True)
+    choice_d = models.CharField(max_length=500, blank=True)
+    choice_e = models.CharField(max_length=500, blank=True)
+    correct_answer = models.CharField(max_length=1, help_text="A, B, C, D, or E")
+    image_url = models.URLField(blank=True, help_text="Optional POCUS image URL displayed above this question")
+    label = models.CharField(max_length=200, blank=True, help_text="Short topic label used in analytics")
+
+    class Meta:
+        unique_together = ['quiz_id', 'key']
+        ordering = ['quiz_id', 'order']
+        verbose_name = "Quiz Question"
+        verbose_name_plural = "Quiz Questions"
+
+    def __str__(self):
+        return f"Quiz {self.quiz_id} — {self.key.upper()}: {self.question_text[:60]}"
+
+    def get_choices(self):
+        choices = []
+        for letter, text in [('A', self.choice_a), ('B', self.choice_b), ('C', self.choice_c), ('D', self.choice_d), ('E', self.choice_e)]:
+            if text:
+                choices.append((letter, text))
+        return choices
+
+
+class QuizShortAnswer(models.Model):
+    quiz_id = models.PositiveIntegerField(db_index=True)
+    key = models.CharField(max_length=10)
+    order = models.PositiveIntegerField(default=0)
+    prompt = models.TextField()
+    sample_answer = models.TextField(blank=True)
+    keywords = models.TextField(blank=True, help_text="Comma-separated keywords for auto-scoring")
+    min_keywords = models.PositiveIntegerField(default=2)
+    image_url = models.URLField(blank=True, help_text="Optional POCUS image URL displayed with this question")
+
+    class Meta:
+        unique_together = ['quiz_id', 'key']
+        ordering = ['quiz_id', 'order']
+        verbose_name = "Quiz Short Answer"
+        verbose_name_plural = "Quiz Short Answers"
+
+    def __str__(self):
+        return f"Quiz {self.quiz_id} — {self.key.upper()}: {self.prompt[:60]}"
+
+    def keywords_list(self):
+        return [k.strip() for k in self.keywords.split(',') if k.strip()]

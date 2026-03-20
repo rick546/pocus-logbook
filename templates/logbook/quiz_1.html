@@ -1,174 +1,97 @@
 {% extends "base.html" %}
-{% block content %}
+{% block title %}Quiz 1: E-FAST + US-Guided CVC Basics — POCUS Portal{% endblock %}
 
+{% block content %}
 <div class="container-fluid px-4">
-  <h1 class="mt-4">Quiz 1: E-FAST + US-Guided CVC Basics</h1>
-  <p class="text-muted">Test your POCUS knowledge and track progress.</p>
+  <nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'quizzes_list' %}">Quizzes</a></li>
+      <li class="breadcrumb-item active">Quiz 1</li>
+    </ol>
+  </nav>
+
+  <h1 class="mt-2" style="color: var(--medical-primary);">E-FAST + US-Guided CVC Basics</h1>
+  <p class="text-muted mb-4">Test your knowledge of E-FAST and ultrasound-guided central venous catheterization.</p>
 
   {% if score is not None %}
-    <div class="alert alert-info">
-      ✅ You scored {{ score }} / {{ total }}
+  <div class="alert alert-info mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <strong>Quiz Complete!</strong> You scored {{ score }} / {{ total }} ({% widthratio score total 100 %}%)
+        {% if is_new_best %}<span class="badge bg-warning text-dark ms-2">New Best Score!</span>{% endif %}
+      </div>
+      <a href="{% url 'quizzes_list' %}" class="btn btn-sm btn-outline-primary">Back to Quizzes</a>
     </div>
-
-    <div class="alert alert-secondary">
-      <strong>Answer Key:</strong>
-      1) {{ answer_key.q1 }} |
-      2) {{ answer_key.q2 }} |
-      3) {{ answer_key.q3 }} |
-      4) {{ answer_key.q4 }} |
-      5) {{ answer_key.q5 }}
-    </div>
+  </div>
   {% endif %}
 
   <div class="card mb-4">
     <div class="card-header">
-      <i class="fas fa-question-circle me-1"></i>
-      Quiz: E-FAST + US-Guided CVC Basics
+      <i class="fas fa-question-circle me-2"></i>
+      Quiz: E-FAST + US-Guided CVC Basics ({{ total }} Questions)
     </div>
-
     <div class="card-body">
       <form method="post">
         {% csrf_token %}
 
-        <!-- Q1 -->
-        {% if show_key %}
-          {% if submitted_answers.q1 == answer_key.q1 %}
-            <div class="text-success small">Correct ✅</div>
-          {% else %}
-            <div class="text-danger small">
-              Incorrect ❌ — Correct answer: {{ answer_key.q1 }}
-            </div>
+        {% for q in processed_questions %}
+          {% if q.section_heading %}
+          <h5 class="mb-3 mt-4" style="color: var(--medical-secondary);">{{ q.section_heading }}</h5>
           {% endif %}
-        {% endif %}
 
-        <div class="mb-3">
-          <p class="fw-bold mb-2">1) What is the primary purpose of the E-FAST exam in trauma patients?</p>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q1" id="q1a" value="A" {% if submitted_answers.q1 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q1a">A) To identify fractures</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q1" id="q1b" value="B" {% if submitted_answers.q1 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q1b">B) To guide operative management of bowel injury</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q1" id="q1c" value="C" {% if submitted_answers.q1 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q1c">C) To rapidly detect life-threatening thoracoabdominal bleeding or air</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q1" id="q1d" value="D" {% if submitted_answers.q1 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q1d">D) To evaluate cardiac ejection fraction</label>
-          </div>
-        </div>
+          <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
+            {% if q.image_url %}
+            <div class="text-center mb-3">
+              <img src="{{ q.image_url }}" class="img-fluid rounded shadow-sm" style="max-height:320px;" alt="POCUS image">
+            </div>
+            {% endif %}
 
-        <!-- Q2 -->
-        <div class="mb-3">
-          <p class="fw-bold mb-2">2) What is the most sensitive area of the E-FAST for free fluid in adults?</p>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q2" id="q2a" value="A" {% if submitted_answers.q2 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q2a">A) Utero-bladder</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q2" id="q2b" value="B" {% if submitted_answers.q2 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q2b">B) Subdiaphragmatic space in the LUQ</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q2" id="q2c" value="C" {% if submitted_answers.q2 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q2c">C) Hepatorenal interface</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q2" id="q2d" value="D" {% if submitted_answers.q2 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q2d">D) Caudal tip of the liver</label>
-          </div>
-        </div>
+            <p class="fw-bold mb-2">{{ forloop.counter }}) {{ q.text }}</p>
 
-        <!-- Q3 -->
-        <div class="mb-3">
-          <p class="fw-bold mb-2">3) What is a key advantage of real-time ultrasound guidance for central venous access?</p>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q3" id="q3a" value="A" {% if submitted_answers.q3 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q3a">A) Eliminates the need for sterile technique</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q3" id="q3b" value="B" {% if submitted_answers.q3 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q3b">B) Allows for identification of arterial structures</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q3" id="q3c" value="C" {% if submitted_answers.q3 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q3c">C) Increases first-attempt success and reduces complications</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q3" id="q3d" value="D" {% if submitted_answers.q3 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q3d">D) Allows for cannulation of deeper vessels</label>
-          </div>
-        </div>
+            {% if score is not None %}
+              {% if q.is_correct %}
+                <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
+              {% else %}
+                <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect — Correct answer: {{ q.correct }}</div>
+              {% endif %}
+            {% endif %}
 
-        <!-- Q4 -->
-        <div class="mb-3">
-          <p class="fw-bold mb-2">4) When visualizing a vessel in short-axis (transverse view), what is a common risk during needle advancement?</p>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q4" id="q4a" value="A" {% if submitted_answers.q4 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q4a">A) Piercing the carotid artery</label>
+            {% for letter, choice_text in q.choices %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="{{ q.key }}"
+                     id="{{ q.key }}{{ letter|lower }}" value="{{ letter }}"
+                     {% if q.user_answer == letter %}checked{% endif %}
+                     {% if score is not None %}disabled{% endif %}>
+              <label class="form-check-label" for="{{ q.key }}{{ letter|lower }}">{{ letter }}) {{ choice_text }}</label>
+            </div>
+            {% endfor %}
           </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q4" id="q4b" value="B" {% if submitted_answers.q4 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q4b">B) Losing track of the needle tip due to out-of-plane imaging</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q4" id="q4c" value="C" {% if submitted_answers.q4 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q4c">C) Overestimating the diameter of the vein</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q4" id="q4d" value="D" {% if submitted_answers.q4 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q4d">D) Damaging the brachial plexus</label>
-          </div>
-        </div>
+        {% empty %}
+          <p class="text-muted">No questions loaded yet. An admin needs to populate the quiz questions.</p>
+        {% endfor %}
 
-        <!-- Q5 -->
-        <div class="mb-3">
-          <p class="fw-bold mb-2">5) Which of the following statements is true?</p>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q5" id="q5a" value="A" {% if submitted_answers.q5 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q5a">A) POCUS can identify the source of hemorrhage</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q5" id="q5b" value="B" {% if submitted_answers.q5 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q5b">B) POCUS cannot assess for solid organ injury</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q5" id="q5c" value="C" {% if submitted_answers.q5 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q5c">C) POCUS is poor at identifying pneumothorax</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q5" id="q5d" value="D" {% if submitted_answers.q5 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q5d">D) POCUS can differentiate the type of fluid present</label>
-          </div>
-        </div>
-
-        <!-- Short-answer questions -->
+        {% if short_answer_defs %}
+        <h5 class="mb-3 mt-4" style="color: var(--medical-secondary);">Short Answer Questions</h5>
         {% for sa_key, sa_def in short_answer_defs.items %}
         <div class="mb-4 p-3 border rounded bg-light">
+          {% if sa_def.image_url %}
+          <div class="text-center mb-3">
+            <img src="{{ sa_def.image_url }}" class="img-fluid rounded shadow-sm" style="max-height:320px;" alt="POCUS image">
+          </div>
+          {% endif %}
           <p class="fw-bold mb-2">
             <i class="fas fa-pen-alt me-1 text-info"></i>
             Short Answer: {{ sa_def.prompt }}
           </p>
           {% if sa_results %}
-            {# Already submitted — show read-only response and feedback #}
-            {% with result=sa_results|dictsort:sa_key|first %}
             {% for rk, rv in sa_results.items %}{% if rk == sa_key %}
             <div class="mb-2">
               <strong>Your answer:</strong>
               <p class="text-muted mb-1">{{ rv.user_answer|default:"(no answer provided)" }}</p>
               {% if rv.matched_keywords %}
-                <p class="mb-1 small text-success">
-                  <i class="fas fa-check-circle me-1"></i>
-                  Keywords matched: {{ rv.matched_keywords|join:", " }}
-                </p>
+                <p class="mb-1 small text-success"><i class="fas fa-check-circle me-1"></i>Keywords matched: {{ rv.matched_keywords|join:", " }}</p>
               {% else %}
-                <p class="mb-1 small text-warning">
-                  <i class="fas fa-exclamation-circle me-1"></i>
-                  No key concepts detected — see sample answer below.
-                </p>
+                <p class="mb-1 small text-warning"><i class="fas fa-exclamation-circle me-1"></i>No key concepts detected — see sample answer below.</p>
               {% endif %}
               <details class="mt-2">
                 <summary class="text-primary small" style="cursor:pointer;">Show sample answer</summary>
@@ -176,20 +99,25 @@
               </details>
             </div>
             {% endif %}{% endfor %}
-            {% endwith %}
           {% else %}
-            <textarea class="form-control" name="{{ sa_key }}" rows="4"
-              placeholder="Type your answer here..."></textarea>
+            <textarea class="form-control" name="{{ sa_key }}" rows="4" placeholder="Type your answer here..."></textarea>
           {% endif %}
         </div>
         {% endfor %}
-
-        {% if not sa_results %}
-          <button type="submit" class="btn btn-primary">Submit</button>
         {% endif %}
+
+        <div class="d-flex gap-2 mt-3">
+          {% if not sa_results and processed_questions %}
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane me-1"></i> Submit Quiz
+          </button>
+          {% endif %}
+          <a href="{% url 'quizzes_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Quizzes
+          </a>
+        </div>
       </form>
     </div>
   </div>
 </div>
-
 {% endblock %}

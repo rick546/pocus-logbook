@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Quiz 2: POCUS Pre-Session Quiz - POCUS Portal{% endblock %}
+{% block title %}Quiz 2: POCUS Session #1 Pre-Session Quiz — POCUS Portal{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
@@ -10,333 +10,76 @@
     </ol>
   </nav>
 
-  <h1 class="mt-2" style="color: var(--medical-primary);">POCUS Session #1 - Pre-Session Quiz</h1>
+  <h1 class="mt-2" style="color: var(--medical-primary);">POCUS Session #1 — Pre-Session Quiz</h1>
   <p class="text-muted mb-4">Test your knowledge of ultrasound physics, abdominal aorta, and lung ultrasound.</p>
 
   {% if score is not None %}
-    <div class="alert {% if score >= total|floatformat:0|add:'0' and score >= 7 %}alert-success{% else %}alert-info{% endif %} mb-4">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <strong>Quiz Complete!</strong> You scored {{ score }} / {{ total }} ({% widthratio score total 100 %}%)
-          {% if is_new_best %}<span class="badge bg-warning text-dark ms-2">New Best Score!</span>{% endif %}
-        </div>
-        <a href="{% url 'quizzes_list' %}" class="btn btn-sm btn-outline-primary">Back to Quizzes</a>
+  <div class="alert alert-info mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <strong>Quiz Complete!</strong> You scored {{ score }} / {{ total }} ({% widthratio score total 100 %}%)
+        {% if is_new_best %}<span class="badge bg-warning text-dark ms-2">New Best Score!</span>{% endif %}
       </div>
+      <a href="{% url 'quizzes_list' %}" class="btn btn-sm btn-outline-primary">Back to Quizzes</a>
     </div>
-
-    <div class="alert alert-secondary mb-4">
-      <strong>Answer Key:</strong><br>
-      1) B | 2) B | 3) B | 4) B | 5) B | 6) A | 7) A | 8) B | 9) B | 10) A
-    </div>
+  </div>
   {% endif %}
 
   <div class="card mb-4">
     <div class="card-header">
       <i class="fas fa-clipboard-check me-2"></i>
-      Quiz: POCUS Session #1 - Pre-Session Quiz (10 Questions)
+      Quiz: POCUS Session #1 Pre-Session Quiz ({{ total }} Questions)
     </div>
-
     <div class="card-body">
       <p class="text-muted mb-4"><em>Instructions: Please choose the best answer for each question.</em></p>
-
       <form method="post">
         {% csrf_token %}
 
-        <h5 class="mb-3" style="color: var(--medical-secondary);">Ultrasound Physics Questions</h5>
-
-        <!-- Q1 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">1) Which of the following describes the relationship between ultrasound frequency and penetration depth?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q1 == answer_key.q1 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: B</div>
-            {% endif %}
+        {% for q in processed_questions %}
+          {% if q.section_heading %}
+          <h5 class="mb-3 mt-4" style="color: var(--medical-secondary);">{{ q.section_heading }}</h5>
           {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q1" id="q1a" value="A" {% if submitted_answers.q1 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q1a">A) Higher frequency leads to deeper penetration.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q1" id="q1b" value="B" {% if submitted_answers.q1 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q1b">B) Lower frequency leads to deeper penetration.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q1" id="q1c" value="C" {% if submitted_answers.q1 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q1c">C) Frequency and penetration depth are unrelated.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q1" id="q1d" value="D" {% if submitted_answers.q1 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q1d">D) Frequency only affects image resolution, not penetration.</label>
-          </div>
-        </div>
 
-        <!-- Q2 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">2) What is the primary benefit of using a higher frequency transducer in POCUS?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q2 == answer_key.q2 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: B</div>
+          <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
+            {% if q.image_url %}
+            <div class="text-center mb-3">
+              <img src="{{ q.image_url }}" class="img-fluid rounded shadow-sm" style="max-height:320px;" alt="POCUS image">
+            </div>
             {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q2" id="q2a" value="A" {% if submitted_answers.q2 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q2a">A) Increased penetration depth for deep structures.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q2" id="q2b" value="B" {% if submitted_answers.q2 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q2b">B) Improved spatial resolution for superficial structures.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q2" id="q2c" value="C" {% if submitted_answers.q2 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q2c">C) Reduced artifact generation.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q2" id="q2d" value="D" {% if submitted_answers.q2 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q2d">D) Wider field of view.</label>
-          </div>
-        </div>
 
-        <!-- Q3 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">3) Which artifact is characterized by a bright, hyperechoic line with posterior shadowing, often seen with gallstones?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q3 == answer_key.q3 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: B</div>
+            <p class="fw-bold mb-2">{{ forloop.counter }}) {{ q.text }}</p>
+
+            {% if score is not None %}
+              {% if q.is_correct %}
+                <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
+              {% else %}
+                <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect — Correct answer: {{ q.correct }}</div>
+              {% endif %}
             {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q3" id="q3a" value="A" {% if submitted_answers.q3 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q3a">A) Reverberation artifact.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q3" id="q3b" value="B" {% if submitted_answers.q3 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q3b">B) Acoustic shadowing.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q3" id="q3c" value="C" {% if submitted_answers.q3 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q3c">C) Enhancement artifact.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q3" id="q3d" value="D" {% if submitted_answers.q3 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q3d">D) Comet tail artifact.</label>
-          </div>
-        </div>
 
-        <!-- Q4 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">4) The gain setting on an ultrasound machine primarily controls:</p>
-          {% if score is not None %}
-            {% if submitted_answers.q4 == answer_key.q4 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: B</div>
-            {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q4" id="q4a" value="A" {% if submitted_answers.q4 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q4a">A) The depth of penetration.</label>
+            {% for letter, choice_text in q.choices %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="{{ q.key }}"
+                     id="{{ q.key }}{{ letter|lower }}" value="{{ letter }}"
+                     {% if q.user_answer == letter %}checked{% endif %}
+                     {% if score is not None %}disabled{% endif %}>
+              <label class="form-check-label" for="{{ q.key }}{{ letter|lower }}">{{ letter }}) {{ choice_text }}</label>
+            </div>
+            {% endfor %}
           </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q4" id="q4b" value="B" {% if submitted_answers.q4 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q4b">B) The overall brightness of the image.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q4" id="q4c" value="C" {% if submitted_answers.q4 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q4c">C) The frequency of the emitted sound waves.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q4" id="q4d" value="D" {% if submitted_answers.q4 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q4d">D) The speed of sound in tissue.</label>
-          </div>
-        </div>
+        {% empty %}
+          <p class="text-muted">No questions loaded yet. An admin needs to populate the quiz questions.</p>
+        {% endfor %}
 
-        <!-- Q5 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">5) Which of the following best describes the principle of piezoelectricity in ultrasound transducers?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q5 == answer_key.q5 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: B</div>
-            {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q5" id="q5a" value="A" {% if submitted_answers.q5 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q5a">A) The conversion of electrical energy into light energy.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q5" id="q5b" value="B" {% if submitted_answers.q5 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q5b">B) The emission of sound waves by a vibrating crystal and the conversion of reflected sound waves back into electrical signals.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q5" id="q5c" value="C" {% if submitted_answers.q5 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q5c">C) The amplification of sound waves within the transducer.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q5" id="q5d" value="D" {% if submitted_answers.q5 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q5d">D) The focusing of the ultrasound beam.</label>
-          </div>
-        </div>
-
-        <!-- Q6 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">6) What does 'B-mode' imaging primarily represent in ultrasound?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q6 == answer_key.q6 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: A</div>
-            {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q6" id="q6a" value="A" {% if submitted_answers.q6 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q6a">A) Brightness mode, displaying echoes as dots with varying brightness.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q6" id="q6b" value="B" {% if submitted_answers.q6 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q6b">B) Blood flow mode, used for Doppler imaging.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q6" id="q6c" value="C" {% if submitted_answers.q6 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q6c">C) Bi-directional mode, showing flow in two directions.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q6" id="q6d" value="D" {% if submitted_answers.q6 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q6d">D) Bone mode, optimized for bone visualization.</label>
-          </div>
-        </div>
-
-        <h5 class="mb-3 mt-4" style="color: var(--medical-secondary);">Abdominal Aorta Questions</h5>
-
-        <!-- Q7 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">7) Which anatomical landmark is crucial for identifying the abdominal aorta during a POCUS exam?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q7 == answer_key.q7 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: A</div>
-            {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q7" id="q7a" value="A" {% if submitted_answers.q7 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q7a">A) The inferior vena cava (IVC) anterior to the aorta.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q7" id="q7b" value="B" {% if submitted_answers.q7 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q7b">B) The gallbladder to the left of the aorta.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q7" id="q7c" value="C" {% if submitted_answers.q7 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q7c">C) The splenic vein posterior to the aorta.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q7" id="q7d" value="D" {% if submitted_answers.q7 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q7d">D) The left kidney anterior to the aorta.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q7" id="q7e" value="E" {% if submitted_answers.q7 == "E" %}checked{% endif %}>
-            <label class="form-check-label" for="q7e">E) Spine</label>
-          </div>
-        </div>
-
-        <!-- Q8 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">8) When scanning the abdominal aorta, what is the normal range for its diameter in an adult male, which, if exceeded, should raise concern for an aneurysm?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q8 == answer_key.q8 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: B</div>
-            {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q8" id="q8a" value="A" {% if submitted_answers.q8 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q8a">A) Less than 1.5 cm.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q8" id="q8b" value="B" {% if submitted_answers.q8 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q8b">B) Greater than 3.0 cm.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q8" id="q8c" value="C" {% if submitted_answers.q8 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q8c">C) Between 4.0 and 5.0 cm.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q8" id="q8d" value="D" {% if submitted_answers.q8 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q8d">D) Any diameter with visible calcifications.</label>
-          </div>
-        </div>
-
-        <h5 class="mb-3 mt-4" style="color: var(--medical-secondary);">Lung Ultrasound Questions</h5>
-
-        <!-- Q9 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">9) What is the characteristic ultrasound finding in a patient with a pneumothorax?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q9 == answer_key.q9 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: B</div>
-            {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q9" id="q9a" value="A" {% if submitted_answers.q9 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q9a">A) Presence of 'lung sliding' and B-lines.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q9" id="q9b" value="B" {% if submitted_answers.q9 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q9b">B) Absence of 'lung sliding' and presence of a 'barcode sign' (stratosphere sign) in M-mode.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q9" id="q9c" value="C" {% if submitted_answers.q9 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q9c">C) Increased pleural effusion.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q9" id="q9d" value="D" {% if submitted_answers.q9 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q9d">D) Consolidation with air bronchograms.</label>
-          </div>
-        </div>
-
-        <!-- Q10 -->
-        <div class="mb-4 p-3" style="background-color: var(--bg-main); border-radius: 8px;">
-          <p class="fw-bold mb-2">10) Which ultrasound sign helps differentiate a large pneumothorax from other lung pathologies, particularly when lung sliding is absent?</p>
-          {% if score is not None %}
-            {% if submitted_answers.q10 == answer_key.q10 %}
-              <div class="text-success small mb-2"><i class="fas fa-check-circle"></i> Correct</div>
-            {% else %}
-              <div class="text-danger small mb-2"><i class="fas fa-times-circle"></i> Incorrect - Correct answer: A</div>
-            {% endif %}
-          {% endif %}
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q10" id="q10a" value="A" {% if submitted_answers.q10 == "A" %}checked{% endif %}>
-            <label class="form-check-label" for="q10a">A) Lung point.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q10" id="q10b" value="B" {% if submitted_answers.q10 == "B" %}checked{% endif %}>
-            <label class="form-check-label" for="q10b">B) B-lines presence.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q10" id="q10c" value="C" {% if submitted_answers.q10 == "C" %}checked{% endif %}>
-            <label class="form-check-label" for="q10c">C) Consolidation.</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="q10" id="q10d" value="D" {% if submitted_answers.q10 == "D" %}checked{% endif %}>
-            <label class="form-check-label" for="q10d">D) Tissue shred sign.</label>
-          </div>
-        </div>
-
-        <!-- Short-answer questions -->
         {% if short_answer_defs %}
         <h5 class="mb-3 mt-4" style="color: var(--medical-secondary);">Short Answer Questions</h5>
         {% for sa_key, sa_def in short_answer_defs.items %}
         <div class="mb-4 p-3 border rounded bg-light">
+          {% if sa_def.image_url %}
+          <div class="text-center mb-3">
+            <img src="{{ sa_def.image_url }}" class="img-fluid rounded shadow-sm" style="max-height:320px;" alt="POCUS image">
+          </div>
+          {% endif %}
           <p class="fw-bold mb-2">
             <i class="fas fa-pen-alt me-1 text-info"></i>
             {{ sa_def.prompt }}
@@ -347,15 +90,9 @@
               <strong>Your answer:</strong>
               <p class="text-muted mb-1">{{ rv.user_answer|default:"(no answer provided)" }}</p>
               {% if rv.matched_keywords %}
-                <p class="mb-1 small text-success">
-                  <i class="fas fa-check-circle me-1"></i>
-                  Key concepts identified: {{ rv.matched_keywords|join:", " }}
-                </p>
+                <p class="mb-1 small text-success"><i class="fas fa-check-circle me-1"></i>Key concepts identified: {{ rv.matched_keywords|join:", " }}</p>
               {% else %}
-                <p class="mb-1 small text-warning">
-                  <i class="fas fa-exclamation-circle me-1"></i>
-                  No key concepts detected — review the sample answer below.
-                </p>
+                <p class="mb-1 small text-warning"><i class="fas fa-exclamation-circle me-1"></i>No key concepts detected — review the sample answer below.</p>
               {% endif %}
               <details class="mt-2">
                 <summary class="text-primary small" style="cursor:pointer;">Show sample answer</summary>
@@ -364,15 +101,14 @@
             </div>
             {% endif %}{% endfor %}
           {% else %}
-            <textarea class="form-control" name="{{ sa_key }}" rows="4"
-              placeholder="Type your answer here..."></textarea>
+            <textarea class="form-control" name="{{ sa_key }}" rows="4" placeholder="Type your answer here..."></textarea>
           {% endif %}
         </div>
         {% endfor %}
         {% endif %}
 
-        <div class="d-flex gap-2">
-          {% if not sa_results %}
+        <div class="d-flex gap-2 mt-3">
+          {% if not sa_results and processed_questions %}
           <button type="submit" class="btn btn-primary">
             <i class="fas fa-paper-plane me-1"></i> Submit Quiz
           </button>

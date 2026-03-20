@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .models import ClinicalCase, CaseStep
-from .models import QuizAttempt, QuizBestScore
+from .models import QuizAttempt, QuizBestScore, QuizQuestion, QuizShortAnswer
 from .forms import ScanForm
 from .models import Scan
 
@@ -399,29 +399,54 @@ def quizzes_home(request):
 # Individual quiz detail page
 @login_required
 def quiz_detail(request, quiz_id):
-    # Check if quiz exists and is available
     if quiz_id not in QUIZZES:
         return render(request, "logbook/quiz_unavailable.html", {"quiz_id": quiz_id})
 
     quiz = QUIZZES[quiz_id]
-    answer_key = quiz["questions"]
+
+    # Load questions from DB; fall back to QUIZZES dict for answer key
+    db_questions = list(QuizQuestion.objects.filter(quiz_id=quiz_id).order_by('order'))
+    if db_questions:
+        answer_key = {q.key: q.correct_answer for q in db_questions}
+    else:
+        answer_key = quiz["questions"]
+
     total = len(answer_key)
+
+    # Load SA definitions: merge DB records over QUIZZES dict defaults
+    db_sa_map = {sa.key: sa for sa in QuizShortAnswer.objects.filter(quiz_id=quiz_id)}
+    quizzes_sa = quiz.get("short_answers", {})
+    short_answer_defs = {}
+    for sa_key, sa_def in quizzes_sa.items():
+        db_sa = db_sa_map.get(sa_key)
+        short_answer_defs[sa_key] = {
+            "prompt": db_sa.prompt if db_sa else sa_def["prompt"],
+            "keywords": db_sa.keywords_list() if db_sa else sa_def.get("keywords", []),
+            "min_keywords": db_sa.min_keywords if db_sa else sa_def.get("min_keywords", 1),
+            "sample_answer": db_sa.sample_answer if db_sa else sa_def.get("sample_answer", ""),
+            "image_url": db_sa.image_url if db_sa else "",
+        }
+    # Also include any SA keys only in DB (not in QUIZZES dict)
+    for sa_key, db_sa in db_sa_map.items():
+        if sa_key not in short_answer_defs:
+            short_answer_defs[sa_key] = {
+                "prompt": db_sa.prompt,
+                "keywords": db_sa.keywords_list(),
+                "min_keywords": db_sa.min_keywords,
+                "sample_answer": db_sa.sample_answer,
+                "image_url": db_sa.image_url,
+            }
 
     submitted_answers = {}
     score = None
     is_new_best = False
-
-    # Get user's previous best score for this quiz
     previous_best = QuizBestScore.objects.filter(user=request.user, quiz_id=quiz_id).first()
-
-    short_answer_defs = quiz.get("short_answers", {})
     sa_results = {}
 
     if request.method == "POST":
         submitted_answers = {q: request.POST.get(q) for q in answer_key.keys()}
         score = sum(1 for q, correct in answer_key.items() if submitted_answers.get(q) == correct)
 
-        # Score short-answer questions
         for sa_key, sa_def in short_answer_defs.items():
             user_sa = (request.POST.get(sa_key) or "").strip()
             matched_count, total_kw, matched_kws = score_short_answer(
@@ -437,10 +462,8 @@ def quiz_detail(request, quiz_id):
                 "sample_answer": sa_def["sample_answer"],
                 "auto_passed": matched_count >= sa_def.get("min_keywords", 1),
             }
-            # Store SA text in the answers dict for admin review
             submitted_answers[sa_key] = user_sa
 
-        # Save the quiz attempt
         QuizAttempt.objects.create(
             user=request.user,
             quiz_id=quiz_id,
@@ -450,7 +473,6 @@ def quiz_detail(request, quiz_id):
             total=total,
         )
 
-        # Update or create best score
         best_score, created = QuizBestScore.objects.get_or_create(
             user=request.user,
             quiz_id=quiz_id,
@@ -473,7 +495,6 @@ def quiz_detail(request, quiz_id):
 
         mc_answers = {k: v for k, v in submitted_answers.items() if not k.startswith("sa")}
 
-        # Email to learner
         send_quiz_completion_email(
             user=request.user,
             quiz=quiz,
@@ -486,7 +507,6 @@ def quiz_detail(request, quiz_id):
             sa_results=sa_results if sa_results else None,
         )
 
-        # Email to all admins/staff
         send_admin_quiz_notification(
             user=request.user,
             quiz=quiz,
@@ -498,8 +518,25 @@ def quiz_detail(request, quiz_id):
             sa_results=sa_results if sa_results else None,
         )
 
-    # Use quiz-specific template if available, otherwise default
-    template = quiz.get("template", "logbook/quizzes_list.html")
+    # Build processed_questions for dynamic template rendering
+    processed_questions = []
+    for q in db_questions:
+        user_answer = submitted_answers.get(q.key, '')
+        is_correct = None
+        if score is not None:
+            is_correct = str(user_answer).upper() == q.correct_answer.upper()
+        processed_questions.append({
+            'key': q.key,
+            'text': q.question_text,
+            'choices': q.get_choices(),
+            'correct': q.correct_answer,
+            'image_url': q.image_url,
+            'section_heading': q.section_heading,
+            'user_answer': user_answer,
+            'is_correct': is_correct,
+        })
+
+    template = quiz.get("template", "logbook/quiz_unavailable.html")
 
     return render(request, template, {
         "quiz": quiz,
@@ -512,6 +549,7 @@ def quiz_detail(request, quiz_id):
         "is_new_best": is_new_best,
         "short_answer_defs": short_answer_defs,
         "sa_results": sa_results,
+        "processed_questions": processed_questions,
     })
 
 

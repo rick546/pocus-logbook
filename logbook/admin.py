@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.http import HttpResponse
 
-from .models import Scan, QuizAttempt, QuizBestScore
+from .models import Scan, QuizAttempt, QuizBestScore, QuizQuestion, QuizShortAnswer
 from .admin_forms import MassAddScansForm
 from .views import QUIZZES
 
@@ -399,7 +399,7 @@ class ScanAdmin(admin.ModelAdmin):
                             created += 1
                         else:
                             skipped += 1
-                            # If you’re preventing duplicates and one already exists for the day,
+                            # If you're preventing duplicates and one already exists for the day,
                             # creating more would keep skipping—so break.
                             break
                     else:
@@ -426,3 +426,61 @@ class ScanAdmin(admin.ModelAdmin):
         }
         return render(request, "admin/logbook/scan/mass_add.html", context)
 
+
+@admin.register(QuizQuestion)
+class QuizQuestionAdmin(admin.ModelAdmin):
+    list_display = ('quiz_id', 'key', 'question_preview', 'correct_answer', 'label', 'has_image')
+    list_filter = ('quiz_id',)
+    list_editable = ('correct_answer',)
+    search_fields = ('question_text', 'label')
+    ordering = ('quiz_id', 'order')
+    fieldsets = (
+        (None, {
+            'fields': ('quiz_id', 'key', 'order', 'label', 'section_heading')
+        }),
+        ('Question', {
+            'fields': ('question_text', 'image_url'),
+        }),
+        ('Answer Choices', {
+            'fields': ('choice_a', 'choice_b', 'choice_c', 'choice_d', 'choice_e', 'correct_answer'),
+            'description': 'Fill in the choices that apply. Leave empty choices blank.',
+        }),
+    )
+
+    def question_preview(self, obj):
+        return obj.question_text[:70] + ('…' if len(obj.question_text) > 70 else '')
+    question_preview.short_description = "Question"
+
+    def has_image(self, obj):
+        return bool(obj.image_url)
+    has_image.boolean = True
+    has_image.short_description = "Image?"
+
+
+@admin.register(QuizShortAnswer)
+class QuizShortAnswerAdmin(admin.ModelAdmin):
+    list_display = ('quiz_id', 'key', 'prompt_preview', 'min_keywords', 'has_image')
+    list_filter = ('quiz_id',)
+    search_fields = ('prompt', 'keywords')
+    ordering = ('quiz_id', 'order')
+    fieldsets = (
+        (None, {
+            'fields': ('quiz_id', 'key', 'order')
+        }),
+        ('Question', {
+            'fields': ('prompt', 'image_url'),
+        }),
+        ('Scoring', {
+            'fields': ('keywords', 'min_keywords', 'sample_answer'),
+            'description': 'Keywords are comma-separated. The learner must match at least min_keywords to auto-pass.',
+        }),
+    )
+
+    def prompt_preview(self, obj):
+        return obj.prompt[:70] + ('…' if len(obj.prompt) > 70 else '')
+    prompt_preview.short_description = "Prompt"
+
+    def has_image(self, obj):
+        return bool(obj.image_url)
+    has_image.boolean = True
+    has_image.short_description = "Image?"
