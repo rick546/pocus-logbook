@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Quiz 7: Abdominal Aortic Aneurysm (AAA) — POCUS Portal{% endblock %}
 
 {% block content %}
@@ -12,6 +13,7 @@
 
   <h1 class="mt-2" style="color: var(--medical-primary);">Abdominal Aortic Aneurysm (AAA)</h1>
   <p class="text-muted mb-4">Test your knowledge of AAA POCUS — probe selection, scanning technique, measurement, and interpretation.</p>
+  <a href="{% static 'pdfs/AAA.pdf' %}" class="btn btn-sm btn-outline-secondary mb-4" download><i class="fas fa-file-pdf me-1"></i>Download AAA Reference PDF</a>
 
   {% if score is not None %}
   <div class="alert alert-info mb-4">

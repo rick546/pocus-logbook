@@ -359,13 +359,16 @@ QUIZZES = {
                 ),
             },
             "sa3": {
-                "prompt": "In one sentence, describe the clinical integration pitfall about AAA size and rupture risk stated in the document.",
+                "prompt": "In one sentence, describe what the document states about saccular aneurysms and their surgical significance compared to fusiform AAA.",
                 "keywords": [
-                    "5cm", "rupture", "cannot", "assume", "less than",
+                    "saccular", "any size", "surgical", "determinant positive",
+                    "overlooked", "methodical",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "A clinical integration pitfall is assuming a AAA less than 5cm cannot rupture."
+                    "Unlike fusiform aneurysms which are measured by diameter, a saccular aneurysm "
+                    "is a determinant positive finding at any size because all saccular aneurysms "
+                    "are treated surgically and can be easily overlooked without a methodical scan."
                 ),
             },
         },
@@ -393,35 +396,48 @@ QUIZZES = {
         },
         "short_answers": {
             "sa1": {
-                "prompt": "In one sentence, state what a negative FAST exam can only rule out, as stated in the document.",
+                "prompt": (
+                    "In one sentence, describe the Tips and Tricks manoeuvre the document specifies "
+                    "for ensuring you can see the liver/kidney or spleen/kidney interface during "
+                    "the upper quadrant FAST views."
+                ),
                 "keywords": [
-                    "hemoperitoneum", "250ml", "moment", "time", "significant", "one specific",
+                    "slide", "posteriorly", "anteriorly", "kidney", "interface",
+                    "probe", "solid organ",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "A negative FAST can only rule out significant hemoperitoneum (greater than 250ml of fluid) "
-                    "in one specific moment in time."
+                    "The document states the kidney does not define the interface; the probe must "
+                    "slide posteriorly and anteriorly to ensure you can see both the solid organ "
+                    "and the renal interface clearly."
                 ),
             },
             "sa2": {
-                "prompt": "In one sentence, identify the most sensitive location for free fluid on the FAST exam as stated in the document.",
+                "prompt": (
+                    "In one sentence, name the external landmark and describe the probe starting "
+                    "orientation for the pelvic FAST view, as stated in the document."
+                ),
                 "keywords": [
-                    "caudal tip", "liver", "sensitive", "most", "free fluid",
+                    "symphysis pubis", "cephalad", "transverse", "bladder", "pelvic",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "The caudal tip of the liver is the most sensitive place to identify free fluid on the FAST exam."
+                    "The probe is placed just cephalad to the symphysis pubis in the transverse "
+                    "plane, using the bladder as an acoustic window to visualize the pelvic structures."
                 ),
             },
             "sa3": {
-                "prompt": "In one sentence, name two pelvic structures in males that can be misidentified as free fluid on FAST, as listed in the document.",
+                "prompt": (
+                    "In one sentence, name two substances other than blood that could cause a "
+                    "positive-appearing FAST exam, as listed in the document."
+                ),
                 "keywords": [
-                    "seminal vesicles", "prostate", "bow-tie", "misidentified",
+                    "ascites", "urine", "dialysate", "bowel contents",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "In males, the seminal vesicles — which have a bow-tie appearance — and the prostate "
-                    "can be misidentified as free fluid on the pelvic FAST view."
+                    "The document lists ascites, urine, dialysate, and bowel contents as substances "
+                    "that can appear as free fluid on the FAST exam and be mistaken for hemoperitoneum."
                 ),
             },
         },
@@ -450,36 +466,46 @@ QUIZZES = {
         },
         "short_answers": {
             "sa1": {
-                "prompt": "In one sentence, describe what the double ring sign represents and its clinical significance, as stated in the document.",
+                "prompt": (
+                    "In one sentence, list all three pregnancy criteria from the 3-2-1 rule "
+                    "that must be met to confirm an intrauterine pregnancy."
+                ),
                 "keywords": [
-                    "yolk sac", "gestational sac", "earliest", "definitive", "IUP", "double ring",
+                    "decidual reaction", "gestational sac", "yolk sac",
+                    "fetal pole", "fetal heart", "three",
                 ],
                 "min_keywords": 3,
                 "sample_answer": (
-                    "The double ring sign — the yolk sac within the gestational sac — is the earliest sign "
-                    "of a definitive intrauterine pregnancy."
+                    "The three pregnancy criteria that must all be present are: a decidual reaction, "
+                    "a gestational sac, and a yolk sac OR a fetal pole with visible fetal heart activity."
                 ),
             },
             "sa2": {
-                "prompt": "In one sentence, state the safety criterion of the 3-2-1 rule and the specific measurement required.",
-                "keywords": [
-                    "myometrial mantle", "5mm", "inner edge", "gestational sac",
-                    "outer edge", "uterus", "safety",
-                ],
-                "min_keywords": 3,
-                "sample_answer": (
-                    "The safety criterion requires an adequate myometrial mantle — the shortest distance between "
-                    "the inner edge of the gestational sac and the outer edge of the uterus must be at least 5mm."
+                "prompt": (
+                    "In one sentence, state the gestational sac size threshold above which the "
+                    "absence of a yolk sac constitutes pregnancy failure, as listed in the document."
                 ),
-            },
-            "sa3": {
-                "prompt": "In one sentence, state what OB POCUS can and cannot conclude about ectopic pregnancy, as stated in the document.",
                 "keywords": [
-                    "rule in", "intrauterine", "cannot", "rule out", "ectopic", "absolutely",
+                    "gestational sac", "15mm", "yolk sac", "failure", "pregnancy failure",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "OB POCUS can rule in an intrauterine pregnancy but cannot absolutely rule out an ectopic pregnancy."
+                    "Pregnancy failure is indicated when no yolk sac is present with a gestational "
+                    "sac measuring greater than 15mm."
+                ),
+            },
+            "sa3": {
+                "prompt": (
+                    "In one sentence, state the BhCG level above which the absence of a gestational "
+                    "sac on transabdominal scanning indicates pregnancy failure, as listed in the document."
+                ),
+                "keywords": [
+                    "BhCG", "3000", "transabdominal", "gestational sac", "failure",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "The document lists pregnancy failure when there is no gestational sac on "
+                    "transabdominal scanning with a BhCG greater than 3000."
                 ),
             },
         },
@@ -508,40 +534,49 @@ QUIZZES = {
         },
         "short_answers": {
             "sa1": {
-                "prompt": "In one sentence, define lung sliding as described in the document, including the visual description.",
+                "prompt": (
+                    "In one sentence, define comet tails or B-lines as described in the pneumothorax "
+                    "document and explain what their presence at the pleural line indicates."
+                ),
                 "keywords": [
-                    "visceral", "parietal", "pleura", "respiration", "ants",
-                    "sliding", "log",
+                    "comet tails", "B-lines", "vertical", "reverberation",
+                    "pleural line", "lung", "contact", "aerated",
                 ],
-                "min_keywords": 3,
+                "min_keywords": 2,
                 "sample_answer": (
-                    "Lung sliding is the visceral and parietal pleura moving against each other with respiration, "
-                    "described as looking like ants sliding on a log."
+                    "Comet tails or B-lines are vertical reverberation artifacts arising from the "
+                    "pleural line, confirming that aerated lung tissue is in contact with the chest wall."
                 ),
             },
             "sa2": {
-                "prompt": "In one sentence, describe what defines a determinate negative pneumothorax scan.",
+                "prompt": (
+                    "In one sentence, describe the two M-mode patterns used in pneumothorax assessment "
+                    "and what each indicates, as described in the document."
+                ),
                 "keywords": [
-                    "lung sliding", "lung pulse", "comet tails", "B-lines",
-                    "OR", "anterior", "rib space", "present",
+                    "seashore", "barcode", "M-mode", "sliding", "absent", "pneumothorax",
                 ],
-                "min_keywords": 3,
+                "min_keywords": 2,
                 "sample_answer": (
-                    "A determinate negative scan requires lung sliding OR lung pulse OR comet tails/B-lines "
-                    "to be present in the most anterior rib space."
+                    "On M-mode, the seashore sign indicates normal lung sliding is present, while the "
+                    "barcode sign (parallel horizontal lines) indicates absent lung sliding and is "
+                    "consistent with pneumothorax."
                 ),
             },
             "sa3": {
-                "prompt": "In one sentence, describe how a physiologic lung point differs from a true pathological lung point.",
+                "prompt": (
+                    "In one sentence, describe what the document states about declaring a pneumothorax "
+                    "in an unstable patient when lung sliding, comet tails, and lung pulse are all absent."
+                ),
                 "keywords": [
-                    "sliding", "physiologic", "cardiac", "liver", "spleen", "gastric",
-                    "true", "pathological", "no sliding", "100%", "specific",
+                    "unstable", "absent", "lung point", "declare", "pneumothorax",
+                    "rib space", "respiratory cycles",
                 ],
-                "min_keywords": 3,
+                "min_keywords": 2,
                 "sample_answer": (
-                    "A physiologic lung point is sliding next to something else that is also sliding (cardiac, liver, "
-                    "spleen, or gastric), while the true pathological lung point is sliding next to no sliding "
-                    "and is 100% specific for pneumothorax."
+                    "In an unstable patient, if lung sliding, comet tails, and lung pulse are all absent "
+                    "in at least one rib space over three respiratory cycles, a pneumothorax can be "
+                    "declared without needing to identify a lung point."
                 ),
             },
         },

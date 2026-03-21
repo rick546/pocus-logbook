@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Quiz 9: OB POCUS — Scanning Technique &amp; 3-2-1 Rule — POCUS Portal{% endblock %}
 
 {% block content %}
@@ -12,6 +13,7 @@
 
   <h1 class="mt-2" style="color: var(--medical-primary);">OB POCUS — Scanning Technique &amp; 3-2-1 Rule</h1>
   <p class="text-muted mb-4">Test your knowledge of OB POCUS scanning technique, the 3-2-1 rule for IUP confirmation, and common pitfalls.</p>
+  <a href="{% static 'pdfs/OBs.pdf' %}" class="btn btn-sm btn-outline-secondary mb-4" download><i class="fas fa-file-pdf me-1"></i>Download OB POCUS Reference PDF</a>
 
   {% if score is not None %}
   <div class="alert alert-info mb-4">
