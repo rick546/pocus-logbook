@@ -274,6 +274,59 @@
       </div>
     </div>
 
+    <!-- Quiz 6 - First Trimester Ultrasound -->
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="dashboard-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="dashboard-card-icon" style="background: linear-gradient(135deg, #D97706, #92400E);">
+            <i class="fas fa-baby"></i>
+          </div>
+          {% if 6 in user_best_scores %}
+            {% if user_best_scores.6.passed %}
+              <span class="competency-badge competency-advanced">Passed</span>
+            {% else %}
+              <span class="competency-badge competency-intermediate">Attempted</span>
+            {% endif %}
+          {% else %}
+            <span class="competency-badge" style="background-color: #DBEAFE; color: #1E40AF;">Available</span>
+          {% endif %}
+        </div>
+
+        <div class="dashboard-card-title">Quiz 6</div>
+        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">First Trimester Ultrasound</h5>
+        <p class="text-muted mb-3" style="font-size: 0.875rem;">
+          Test your knowledge of IUP confirmation, ectopic pregnancy, pregnancy failure, blighted ovum, and molar pregnancy.
+        </p>
+
+        {% if 6 in user_best_scores %}
+        <div class="mb-3 p-2" style="background-color: var(--bg-main); border-radius: 8px;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">
+              <i class="fas fa-trophy me-1" style="color: var(--medical-secondary);"></i>
+              Best Score: <strong>{{ user_best_scores.6.best_score }}/{{ user_best_scores.6.total }}</strong> ({{ user_best_scores.6.percentage }}%)
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">
+              {{ user_best_scores.6.attempts }} attempt{{ user_best_scores.6.attempts|pluralize }}
+            </span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-question-circle me-1"></i> 40 Questions
+          </span>
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-clock me-1"></i> ~45 min
+          </span>
+        </div>
+
+        <a class="dashboard-card-link" href="{% url 'quiz_detail' 6 %}">
+          {% if 6 in user_best_scores %}Retake Quiz{% else %}Start Quiz{% endif %} <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
   </div>
 
   <!-- Learning Progress Section -->
