@@ -20,7 +20,7 @@ from .models import Scan
 User = get_user_model()
 
 # Total number of quizzes available in the curriculum
-TOTAL_QUIZZES = 3
+TOTAL_QUIZZES = 5
 
 # Quiz data
 QUIZZES = {
@@ -189,6 +189,64 @@ QUIZZES = {
                 ),
             },
         },
+    },
+    4: {
+        "title": "Ocular POCUS — Anatomy & Biosafety",
+        "template": "logbook/quiz_4.html",
+        "questions": {
+            "q1": "C",
+            "q2": "B",
+            "q3": "B",
+            "q4": "B",
+            "q5": "B",
+            "q6": "B",
+            "q7": "B",
+            "q8": "B",
+            "q9": "C",
+            "q10": "B",
+        },
+        "question_labels": {
+            "q1": "Ocular probe selection and depth",
+            "q2": "Globe pressure safety",
+            "q3": "Anterior chamber thermal risk",
+            "q4": "Safe TI and MI thresholds",
+            "q5": "MSK preset safety concern",
+            "q6": "Eye movement purpose during scan",
+            "q7": "Optic nerve sonographic appearance",
+            "q8": "Indications for ocular POCUS",
+            "q9": "Gain management technique",
+            "q10": "Pupillary response assessment technique",
+        },
+        "short_answers": {},
+    },
+    5: {
+        "title": "Ocular Emergencies",
+        "template": "logbook/quiz_5.html",
+        "questions": {
+            "q1": "B",
+            "q2": "C",
+            "q3": "C",
+            "q4": "C",
+            "q5": "B",
+            "q6": "B",
+            "q7": "B",
+            "q8": "B",
+            "q9": "B",
+            "q10": "B",
+        },
+        "question_labels": {
+            "q1": "Retinal detachment appearance",
+            "q2": "Retinal vs vitreous detachment",
+            "q3": "MAC off — macula involvement",
+            "q4": "Vitreous hemorrhage in diabetics",
+            "q5": "Combined retinal + choroidal detachment",
+            "q6": "ONSD for elevated ICP",
+            "q7": "Hyphema management",
+            "q8": "Vitreous detachment features",
+            "q9": "Ocular foreign body — gold standard",
+            "q10": "Lens dislocation mechanism",
+        },
+        "short_answers": {},
     },
 }
 
@@ -531,6 +589,7 @@ def quiz_detail(request, quiz_id):
             'text': q.question_text,
             'choices': q.get_choices(),
             'correct': q.correct_answer,
+            'explanation': q.explanation,
             'image_url': q.image_url,
             'section_heading': q.section_heading,
             'user_answer': user_answer,

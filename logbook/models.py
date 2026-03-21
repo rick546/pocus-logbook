@@ -301,7 +301,7 @@ class POCUSProtocol(models.Model):
 
 
 class QuizQuestion(models.Model):
-    quiz_id = models.PositiveIntegerField(db_index=True, help_text="Which quiz this question belongs to: 1 = E-FAST + CVC Basics, 2 = POCUS Session #1, 3 = Focused Echo")
+    quiz_id = models.PositiveIntegerField(db_index=True, help_text="Which quiz this question belongs to: 1 = E-FAST + CVC Basics, 2 = POCUS Session #1, 3 = Focused Echo, 4 = Ocular Anatomy & Biosafety, 5 = Ocular Emergencies")
     key = models.CharField(max_length=10, help_text="Unique identifier within the quiz (e.g. q1, q2, q3). New questions should continue the sequence — if the quiz has q1-q5, use q6.")
     order = models.PositiveIntegerField(default=0, help_text="Display position in the quiz. 1 = shown first. New questions should use the next available number (e.g. if quiz has 5 questions, enter 6).")
     section_heading = models.CharField(max_length=200, blank=True, help_text="Optional section heading shown before this question (e.g. 'Ultrasound Physics Questions')")
@@ -312,6 +312,7 @@ class QuizQuestion(models.Model):
     choice_d = models.CharField(max_length=500, blank=True)
     choice_e = models.CharField(max_length=500, blank=True)
     correct_answer = models.CharField(max_length=1, help_text="A, B, C, D, or E")
+    explanation = models.TextField(blank=True, help_text="Shown to learners after they submit the quiz to explain the correct answer")
     image_url = models.URLField(blank=True, help_text="Optional POCUS image URL displayed above this question")
     label = models.CharField(max_length=200, blank=True, help_text="Short topic label used in analytics")
 
@@ -333,7 +334,7 @@ class QuizQuestion(models.Model):
 
 
 class QuizShortAnswer(models.Model):
-    quiz_id = models.PositiveIntegerField(db_index=True, help_text="Which quiz this question belongs to: 1 = E-FAST + CVC Basics, 2 = POCUS Session #1, 3 = Focused Echo")
+    quiz_id = models.PositiveIntegerField(db_index=True, help_text="Which quiz this question belongs to: 1 = E-FAST + CVC Basics, 2 = POCUS Session #1, 3 = Focused Echo, 4 = Ocular Anatomy & Biosafety, 5 = Ocular Emergencies")
     key = models.CharField(max_length=10, help_text="Unique identifier within the quiz (e.g. sa1, sa2, sa3). New questions should continue the sequence.")
     order = models.PositiveIntegerField(default=0, help_text="Display position in the quiz. 1 = shown first. New questions should use the next available number.")
     prompt = models.TextField()
