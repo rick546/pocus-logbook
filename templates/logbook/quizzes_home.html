@@ -327,6 +327,218 @@
       </div>
     </div>
 
+    <!-- Quiz 7 - Abdominal Aortic Aneurysm -->
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="dashboard-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="dashboard-card-icon" style="background: linear-gradient(135deg, #0891B2, #164E63);">
+            <i class="fas fa-circle-notch"></i>
+          </div>
+          {% if 7 in user_best_scores %}
+            {% if user_best_scores.7.passed %}
+              <span class="competency-badge competency-advanced">Passed</span>
+            {% else %}
+              <span class="competency-badge competency-intermediate">Attempted</span>
+            {% endif %}
+          {% else %}
+            <span class="competency-badge" style="background-color: #DBEAFE; color: #1E40AF;">Available</span>
+          {% endif %}
+        </div>
+
+        <div class="dashboard-card-title">Quiz 7</div>
+        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">Abdominal Aortic Aneurysm (AAA)</h5>
+        <p class="text-muted mb-3" style="font-size: 0.875rem;">
+          Test your knowledge of AAA POCUS — probe selection, scanning technique, aortic measurement, and interpretation.
+        </p>
+
+        {% if 7 in user_best_scores %}
+        <div class="mb-3 p-2" style="background-color: var(--bg-main); border-radius: 8px;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">
+              <i class="fas fa-trophy me-1" style="color: var(--medical-secondary);"></i>
+              Best Score: <strong>{{ user_best_scores.7.best_score }}/{{ user_best_scores.7.total }}</strong> ({{ user_best_scores.7.percentage }}%)
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">
+              {{ user_best_scores.7.attempts }} attempt{{ user_best_scores.7.attempts|pluralize }}
+            </span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-question-circle me-1"></i> 15 Questions
+          </span>
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-clock me-1"></i> ~20 min
+          </span>
+        </div>
+
+        <a class="dashboard-card-link" href="{% url 'quiz_detail' 7 %}">
+          {% if 7 in user_best_scores %}Retake Quiz{% else %}Start Quiz{% endif %} <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quiz 8 - Abdominal FAST Exam -->
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="dashboard-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="dashboard-card-icon" style="background: linear-gradient(135deg, #059669, #064E3B);">
+            <i class="fas fa-search"></i>
+          </div>
+          {% if 8 in user_best_scores %}
+            {% if user_best_scores.8.passed %}
+              <span class="competency-badge competency-advanced">Passed</span>
+            {% else %}
+              <span class="competency-badge competency-intermediate">Attempted</span>
+            {% endif %}
+          {% else %}
+            <span class="competency-badge" style="background-color: #DBEAFE; color: #1E40AF;">Available</span>
+          {% endif %}
+        </div>
+
+        <div class="dashboard-card-title">Quiz 8</div>
+        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">Abdominal FAST Exam</h5>
+        <p class="text-muted mb-3" style="font-size: 0.875rem;">
+          Test your knowledge of FAST technique — probe selection, areas of interest, free fluid detection, and pitfalls.
+        </p>
+
+        {% if 8 in user_best_scores %}
+        <div class="mb-3 p-2" style="background-color: var(--bg-main); border-radius: 8px;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">
+              <i class="fas fa-trophy me-1" style="color: var(--medical-secondary);"></i>
+              Best Score: <strong>{{ user_best_scores.8.best_score }}/{{ user_best_scores.8.total }}</strong> ({{ user_best_scores.8.percentage }}%)
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">
+              {{ user_best_scores.8.attempts }} attempt{{ user_best_scores.8.attempts|pluralize }}
+            </span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-question-circle me-1"></i> 14 Questions
+          </span>
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-clock me-1"></i> ~20 min
+          </span>
+        </div>
+
+        <a class="dashboard-card-link" href="{% url 'quiz_detail' 8 %}">
+          {% if 8 in user_best_scores %}Retake Quiz{% else %}Start Quiz{% endif %} <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quiz 9 - OB POCUS Scanning Technique -->
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="dashboard-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="dashboard-card-icon" style="background: linear-gradient(135deg, #9333EA, #581C87);">
+            <i class="fas fa-baby-carriage"></i>
+          </div>
+          {% if 9 in user_best_scores %}
+            {% if user_best_scores.9.passed %}
+              <span class="competency-badge competency-advanced">Passed</span>
+            {% else %}
+              <span class="competency-badge competency-intermediate">Attempted</span>
+            {% endif %}
+          {% else %}
+            <span class="competency-badge" style="background-color: #DBEAFE; color: #1E40AF;">Available</span>
+          {% endif %}
+        </div>
+
+        <div class="dashboard-card-title">Quiz 9</div>
+        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">OB POCUS — Scanning Technique &amp; 3-2-1 Rule</h5>
+        <p class="text-muted mb-3" style="font-size: 0.875rem;">
+          Test your knowledge of OB POCUS scanning technique, the 3-2-1 rule for IUP confirmation, and clinical integration.
+        </p>
+
+        {% if 9 in user_best_scores %}
+        <div class="mb-3 p-2" style="background-color: var(--bg-main); border-radius: 8px;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">
+              <i class="fas fa-trophy me-1" style="color: var(--medical-secondary);"></i>
+              Best Score: <strong>{{ user_best_scores.9.best_score }}/{{ user_best_scores.9.total }}</strong> ({{ user_best_scores.9.percentage }}%)
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">
+              {{ user_best_scores.9.attempts }} attempt{{ user_best_scores.9.attempts|pluralize }}
+            </span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-question-circle me-1"></i> 15 Questions
+          </span>
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-clock me-1"></i> ~20 min
+          </span>
+        </div>
+
+        <a class="dashboard-card-link" href="{% url 'quiz_detail' 9 %}">
+          {% if 9 in user_best_scores %}Retake Quiz{% else %}Start Quiz{% endif %} <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quiz 10 - Pneumothorax POCUS -->
+    <div class="col-xl-4 col-md-6 mb-4">
+      <div class="dashboard-card">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div class="dashboard-card-icon" style="background: linear-gradient(135deg, #DC2626, #7F1D1D);">
+            <i class="fas fa-lungs"></i>
+          </div>
+          {% if 10 in user_best_scores %}
+            {% if user_best_scores.10.passed %}
+              <span class="competency-badge competency-advanced">Passed</span>
+            {% else %}
+              <span class="competency-badge competency-intermediate">Attempted</span>
+            {% endif %}
+          {% else %}
+            <span class="competency-badge" style="background-color: #DBEAFE; color: #1E40AF;">Available</span>
+          {% endif %}
+        </div>
+
+        <div class="dashboard-card-title">Quiz 10</div>
+        <h5 class="mb-2" style="color: var(--text-primary); font-weight: 600;">Pneumothorax POCUS</h5>
+        <p class="text-muted mb-3" style="font-size: 0.875rem;">
+          Test your knowledge of lung POCUS for pneumothorax — lung sliding, lung point, B-lines, M-mode patterns, and false positives.
+        </p>
+
+        {% if 10 in user_best_scores %}
+        <div class="mb-3 p-2" style="background-color: var(--bg-main); border-radius: 8px;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">
+              <i class="fas fa-trophy me-1" style="color: var(--medical-secondary);"></i>
+              Best Score: <strong>{{ user_best_scores.10.best_score }}/{{ user_best_scores.10.total }}</strong> ({{ user_best_scores.10.percentage }}%)
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">
+              {{ user_best_scores.10.attempts }} attempt{{ user_best_scores.10.attempts|pluralize }}
+            </span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-question-circle me-1"></i> 15 Questions
+          </span>
+          <span class="text-muted" style="font-size: 0.875rem;">
+            <i class="fas fa-clock me-1"></i> ~20 min
+          </span>
+        </div>
+
+        <a class="dashboard-card-link" href="{% url 'quiz_detail' 10 %}">
+          {% if 10 in user_best_scores %}Retake Quiz{% else %}Start Quiz{% endif %} <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
   </div>
 
   <!-- Learning Progress Section -->

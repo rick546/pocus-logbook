@@ -20,7 +20,7 @@ from .models import Scan
 User = get_user_model()
 
 # Total number of quizzes available in the curriculum
-TOTAL_QUIZZES = 6
+TOTAL_QUIZZES = 10
 
 # Quiz data
 QUIZZES = {
@@ -309,6 +309,250 @@ QUIZZES = {
             "q40": "Empty uterus + bleeding/cramping",
         },
         "short_answers": {},
+    },
+    7: {
+        "title": "Abdominal Aortic Aneurysm (AAA)",
+        "template": "logbook/quiz_7.html",
+        "questions": {
+            "q1": "C", "q2": "D", "q3": "B", "q4": "C",
+            "q5": "C", "q6": "B", "q7": "B", "q8": "B",
+            "q9": "C", "q10": "B", "q11": "B", "q12": "C",
+        },
+        "question_labels": {
+            "q1": "AAA probe selection",
+            "q2": "AAA scan depth",
+            "q3": "Normal aortic diameter",
+            "q4": "External landmark for AAA",
+            "q5": "Internal landmark for AAA",
+            "q6": "Aorta vs IVC position",
+            "q7": "Aorta vs IVC differentiation",
+            "q8": "Determinant negative AAA scan",
+            "q9": "Chronic thrombus measurement",
+            "q10": "Most common AAA shape",
+            "q11": "Bowel gas troubleshooting",
+            "q12": "Probe angle importance",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": "In one sentence, describe how the aorta and IVC can be differentiated on POCUS.",
+                "keywords": [
+                    "non-compressible", "compressible", "left", "right", "pulsatile",
+                    "thick walls", "respiratory", "IVC", "aorta",
+                ],
+                "min_keywords": 3,
+                "sample_answer": (
+                    "The aorta is non-compressible, pulsatile, has thicker walls, and lies on the patient's left anterior to the spine, "
+                    "while the IVC is compressible, shows respiratory variability, and lies on the patient's right."
+                ),
+            },
+            "sa2": {
+                "prompt": "In one sentence, define an indeterminate AAA scan.",
+                "keywords": [
+                    "cannot visualize", "entire aorta", "xiphoid", "bifurcation",
+                    "bowel gas", "obesity", "indeterminate",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "An indeterminate scan occurs when the entire abdominal aorta from the xiphoid process to the iliac bifurcation "
+                    "cannot be fully visualized, most commonly due to bowel gas or obesity."
+                ),
+            },
+            "sa3": {
+                "prompt": "In one sentence, describe the key pitfall when measuring an AAA with chronic thrombus.",
+                "keywords": [
+                    "outer wall", "thrombus", "false lumen", "underestimate",
+                    "measure", "echogenic", "true lumen",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "When chronic thrombus is present, the diameter must be measured from outer wall to outer wall — "
+                    "including the thrombus — not just the patent lumen, which would underestimate the true aortic size."
+                ),
+            },
+        },
+    },
+    8: {
+        "title": "Abdominal FAST Exam",
+        "template": "logbook/quiz_8.html",
+        "questions": {
+            "q1": "C", "q2": "C", "q3": "C", "q4": "C",
+            "q5": "B", "q6": "B", "q7": "C", "q8": "C",
+            "q9": "B", "q10": "C", "q11": "B",
+        },
+        "question_labels": {
+            "q1": "FAST probe selection",
+            "q2": "FAST scan depth",
+            "q3": "Most sensitive free fluid location",
+            "q4": "Free fluid location in LUQ",
+            "q5": "Upper quadrant probe position",
+            "q6": "Minimum fluid volume detectable",
+            "q7": "Negative FAST limitations",
+            "q8": "Upper quadrant internal landmark",
+            "q9": "Pelvic AOI in males",
+            "q10": "Trendelenburg position indication",
+            "q11": "FAST interpretation pitfall",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": "In one sentence, state what a negative FAST exam can and cannot rule out.",
+                "keywords": [
+                    "hemoperitoneum", "250", "solid organ", "hollow viscus",
+                    "cannot", "rule out", "one point in time", "vascular",
+                ],
+                "min_keywords": 3,
+                "sample_answer": (
+                    "A negative FAST can only rule out significant hemoperitoneum (>250 mL) at that moment in time — "
+                    "it cannot exclude solid organ, hollow viscus, or vascular injury."
+                ),
+            },
+            "sa2": {
+                "prompt": "In one sentence, explain why the caudal tip of the liver is the most sensitive location for free fluid on FAST.",
+                "keywords": [
+                    "dependent", "gravity", "caudal tip", "hepatorenal", "Morrison",
+                    "accumulate", "collect", "sensitive",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "The caudal tip of the liver in the hepatorenal space (Morrison's pouch) is the most gravity-dependent "
+                    "region in a supine patient, making it the first place free fluid accumulates in the RUQ."
+                ),
+            },
+            "sa3": {
+                "prompt": "In one sentence, name one structure in the pelvis that can be mistaken for free fluid on FAST.",
+                "keywords": [
+                    "seminal vesicles", "prostate", "bladder", "bowel",
+                    "ovarian cyst", "physiologic fluid", "mistaken",
+                ],
+                "min_keywords": 1,
+                "sample_answer": (
+                    "The seminal vesicles in males can be mistaken for free fluid as they appear hypoechoic with a "
+                    "characteristic bow-tie shape posterior to the bladder."
+                ),
+            },
+        },
+    },
+    9: {
+        "title": "OB POCUS — Scanning Technique & 3-2-1 Rule",
+        "template": "logbook/quiz_9.html",
+        "questions": {
+            "q1": "C", "q2": "B", "q3": "C", "q4": "B",
+            "q5": "B", "q6": "B", "q7": "C", "q8": "B",
+            "q9": "B", "q10": "B", "q11": "B", "q12": "C",
+        },
+        "question_labels": {
+            "q1": "Number of pregnancy criteria in 3-2-1 rule",
+            "q2": "Decidual reaction timing",
+            "q3": "Earliest definitive IUP sign",
+            "q4": "Yolk sac visibility by TVUS",
+            "q5": "Fetal pole visibility by TVUS",
+            "q6": "Minimum FHR for good outcome",
+            "q7": "Discriminatory β-hCG (transabdominal)",
+            "q8": "Pregnancy failure criterion",
+            "q9": "Minimum myometrial mantle",
+            "q10": "Endometrial stripe in transverse view",
+            "q11": "Bladder-uterine juxtaposition",
+            "q12": "OB POCUS probe (transabdominal)",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": "In one sentence, summarize the 3-2-1 rule for confirming IUP.",
+                "keywords": [
+                    "decidual reaction", "gestational sac", "yolk sac", "fetal pole",
+                    "bladder-uterine", "vaginal-uterine", "myometrial mantle", "5mm",
+                ],
+                "min_keywords": 3,
+                "sample_answer": (
+                    "The 3-2-1 rule requires 3 pregnancy criteria (decidual reaction, gestational sac, yolk sac or fetal pole), "
+                    "2 intrauterine criteria (bladder-uterine juxtaposition and vaginal-uterine continuity), "
+                    "and 1 safety criterion (myometrial mantle ≥5 mm)."
+                ),
+            },
+            "sa2": {
+                "prompt": "In one sentence, describe vaginal-uterine continuity and why it is required.",
+                "keywords": [
+                    "longitudinal", "vagina", "uterine tissue", "continuity",
+                    "cervix", "intrauterine", "transition",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "In the longitudinal view, the vagina must be shown to transition directly into uterine tissue, "
+                    "confirming the gestational sac is within the uterus and not in the cervix or elsewhere."
+                ),
+            },
+            "sa3": {
+                "prompt": "In one sentence, state the most critical clinical integration pitfall in OB POCUS.",
+                "keywords": [
+                    "3-2-1", "not fulfilled", "assuming IUP", "ectopic", "heterotopic",
+                    "confirmed", "criteria", "pitfall",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "The most critical pitfall is assuming a confirmed IUP when the 3-2-1 rule criteria have not been "
+                    "fully met, which risks falsely reassuring in the setting of an ectopic or heterotopic pregnancy."
+                ),
+            },
+        },
+    },
+    10: {
+        "title": "Pneumothorax POCUS",
+        "template": "logbook/quiz_10.html",
+        "questions": {
+            "q1": "C", "q2": "B", "q3": "C", "q4": "B",
+            "q5": "B", "q6": "C", "q7": "B", "q8": "C",
+            "q9": "D", "q10": "B", "q11": "B", "q12": "B",
+        },
+        "question_labels": {
+            "q1": "Best probe for pneumothorax",
+            "q2": "AOI for pneumothorax",
+            "q3": "Lung sliding definition",
+            "q4": "Comet tail origin",
+            "q5": "True lung point specificity",
+            "q6": "Number of pleural spaces to evaluate",
+            "q7": "Determinate negative scan",
+            "q8": "Starting point for lung point search",
+            "q9": "Large pneumothorax lung point location",
+            "q10": "False positive cause",
+            "q11": "Lung pulse definition",
+            "q12": "Unstable patient management",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": "In one sentence, describe what lung sliding looks like and what it represents.",
+                "keywords": [
+                    "visceral", "parietal", "pleura", "respiration", "ants",
+                    "sliding", "log", "movement", "breathing",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "Lung sliding is the to-and-fro movement of the visceral and parietal pleura against each other "
+                    "with respiration, described as looking like ants sliding on a log."
+                ),
+            },
+            "sa2": {
+                "prompt": "In one sentence, explain why the true lung point is 100% specific for pneumothorax.",
+                "keywords": [
+                    "sliding", "no sliding", "adjacent", "specific", "100%",
+                    "pathologic", "pneumothorax", "transition",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "The true lung point is 100% specific because it represents the exact transition point where "
+                    "lung sliding is seen adjacent to complete absence of sliding — a finding only possible with pneumothorax."
+                ),
+            },
+            "sa3": {
+                "prompt": "In one sentence, name one cause of a false positive pneumothorax on lung POCUS.",
+                "keywords": [
+                    "mainstem intubation", "esophageal intubation", "ARDS", "pleurodesis",
+                    "phrenic nerve palsy", "pulmonary fibrosis", "COPD", "contusion",
+                ],
+                "min_keywords": 1,
+                "sample_answer": (
+                    "Right mainstem intubation causes a false positive pneumothorax on the left side because the left "
+                    "lung is not ventilated and therefore shows no lung sliding."
+                ),
+            },
+        },
     },
 }
 
