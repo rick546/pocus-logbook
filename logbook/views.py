@@ -25,167 +25,206 @@ TOTAL_QUIZZES = 10
 # Quiz data
 QUIZZES = {
     1: {
-        "title": "E-FAST + US-Guided CVC Basics",
+        "title": "Focused Cardiac Ultrasound — Introduction",
         "template": "logbook/quiz_1.html",
         "questions": {
-            "q1": "C",
-            "q2": "B",
-            "q3": "C",
-            "q4": "B",
-            "q5": "B",
+            "q1": "C", "q2": "B", "q3": "C", "q4": "C", "q5": "D",
+            "q6": "B", "q7": "D", "q8": "C", "q9": "B", "q10": "C",
         },
         "question_labels": {
-            "q1": "Primary purpose of E-FAST in trauma",
-            "q2": "Most sensitive E-FAST area for free fluid",
-            "q3": "Key advantage of US-guided CVC",
-            "q4": "Risk of short-axis needle advancement",
-            "q5": "True statement about POCUS",
-        },
-        "short_answers": {
-            "sa1": {
-                "prompt": "Briefly describe the E-FAST exam: what does it stand for and which body cavities does it assess?",
-                "keywords": [
-                    "extended", "focused", "assessment", "sonography", "trauma",
-                    "peritoneal", "pericardial", "pleural", "thorax", "lung",
-                    "pneumothorax", "hemothorax", "free fluid", "abdominal",
-                ],
-                "min_keywords": 3,
-                "sample_answer": (
-                    "E-FAST stands for Extended Focused Assessment with Sonography in Trauma. "
-                    "It assesses the peritoneal cavity (for free fluid/hemoperitoneum), "
-                    "the pericardial space (for tamponade), and bilateral pleural cavities "
-                    "(for pneumothorax and hemothorax)."
-                ),
-            }
-        },
-    },
-    2: {
-        "title": "POCUS Session #1 - Pre-Session Quiz",
-        "template": "logbook/quiz_2.html",
-        "questions": {
-            "q1": "B",
-            "q2": "B",
-            "q3": "B",
-            "q4": "B",
-            "q5": "B",
-            "q6": "A",
-            "q7": "A",
-            "q8": "B",
-            "q9": "B",
-            "q10": "A",
-        },
-        "question_labels": {
-            "q1": "Ultrasound wave property",
-            "q2": "Probe frequency and penetration",
-            "q3": "Aorta normal diameter",
-            "q4": "AAA definition",
-            "q5": "Aorta measurement technique",
-            "q6": "B-line characteristics",
-            "q7": "Lung sliding significance",
-            "q8": "Pleural effusion appearance",
-            "q9": "IVC and volume status",
-            "q10": "POCUS limitation",
-        },
-        "short_answers": {
-            "sa1": {
-                "prompt": "Describe what ultrasound findings would be most concerning for an abdominal aortic aneurysm (AAA) and what measurement threshold is used.",
-                "keywords": [
-                    "aneurysm", "dilation", "dilated", "widened", "enlargement",
-                    "3cm", "3 cm", "greater than 3", ">3", "diameter",
-                    "anteroposterior", "AP", "outer wall", "transverse",
-                    "rupture", "free fluid", "hematoma",
-                ],
-                "min_keywords": 2,
-                "sample_answer": (
-                    "An AAA is defined as aortic diameter >3 cm (outer wall to outer wall). "
-                    "Concerning POCUS findings include an aorta measuring ≥3 cm in transverse "
-                    "or anteroposterior diameter. Free fluid around the aorta suggests rupture "
-                    "and is a surgical emergency."
-                ),
-            }
-        },
-    },
-    3: {
-        "title": "Focused Echo Pre-Session Quiz",
-        "template": "logbook/quiz_3.html",
-        "questions": {
-            "q1": "D",
-            "q2": "B",
-            "q3": "B",
-            "q4": "D",
-            "q5": "C",
-        },
-        "question_labels": {
-            "q1": "Chamber not visible in PLAX",
-            "q2": "Apical 4-chamber probe position",
-            "q3": "Differentiating pleural vs pericardial space",
-            "q4": "Valve visibility in PSAX",
-            "q5": "Fifth chamber on A4C tilt",
+            "q1": "Definition of a window",
+            "q2": "Number of FOCUS windows",
+            "q3": "Apical window view",
+            "q4": "Subcostal window location",
+            "q5": "Patient positioning for parasternal/apical",
+            "q6": "Nature of the focused exam",
+            "q7": "Item NOT assessed on FOCUS",
+            "q8": "Intentional practice",
+            "q9": "Parasternal window location",
+            "q10": "Lung volumes in ventilated patients",
         },
         "short_answers": {
             "sa1": {
                 "prompt": (
-                    "Case A \u2014 New Onset Cardiomyopathy (PLAX view): "
-                    "The EPSS measured on this scan is 23.7 mm. "
-                    "What does EPSS measure, and what threshold suggests impaired LV systolic function?"
+                    "In one sentence, list all four cardiac domains assessed by focused cardiac "
+                    "ultrasound as stated in the lecture."
                 ),
                 "keywords": [
-                    "E-point", "E point", "septal separation", "anterior leaflet", "mitral",
-                    "interventricular septum", "septum", "systolic function", "ejection fraction",
-                    "EF", "7mm", "7 mm", ">7", "reduced", "impaired", "dysfunction",
+                    "chamber size", "biventricular", "systolic function", "valvular",
+                    "pericardial effusion", "volume status",
                 ],
                 "min_keywords": 3,
                 "sample_answer": (
-                    "EPSS measures the distance between the anterior mitral valve leaflet at its "
-                    "E-point (peak early diastolic opening) and the interventricular septum. "
-                    "Normal EPSS is <7 mm. An EPSS >7 mm suggests reduced LV systolic function. "
-                    "An EPSS of 23.7 mm indicates severely reduced EF, consistent with EF <20%."
+                    "Focused cardiac ultrasound assesses relative chamber size, global biventricular "
+                    "systolic function, evidence of gross valvular abnormalities, pericardial effusion, "
+                    "and general concepts of volume status."
                 ),
             },
             "sa2": {
                 "prompt": (
-                    "Case A \u2014 New Onset Cardiomyopathy (PLAX view): "
-                    "Describe the key sonographic features visible on this PLAX image that are "
-                    "consistent with dilated cardiomyopathy with severely reduced ejection fraction."
+                    "In one sentence, name all three FOCUS windows and the specific view(s) obtained "
+                    "from each, as described in the lecture."
                 ),
                 "keywords": [
-                    "dilated", "enlarged", "LV", "left ventricle", "dilation",
-                    "hypokinesis", "poor contractility", "systolic dysfunction",
-                    "cardiomyopathy", "globular", "EPSS", "mitral valve", "reduced",
-                    "wall motion",
+                    "parasternal", "long axis", "short axis", "apical", "four chamber",
+                    "subcostal", "IVC",
                 ],
-                "min_keywords": 3,
+                "min_keywords": 4,
                 "sample_answer": (
-                    "PLAX findings of dilated cardiomyopathy with reduced EF include: "
-                    "(1) Markedly dilated LV cavity \u2014 globular rather than oval. "
-                    "(2) Global hypokinesis \u2014 reduced wall motion throughout. "
-                    "(3) Elevated EPSS (>7 mm) reflecting poor LV contractility and reduced mitral valve opening. "
-                    "In this case the LV is grossly dilated with an EPSS of 23.7 mm, correlating with EF <20%."
+                    "The three windows are: parasternal (long axis and mid papillary short axis), "
+                    "apical (four-chamber), and subcostal (four-chamber and IVC long axis)."
                 ),
             },
             "sa3": {
                 "prompt": (
-                    "Case A \u2014 New Onset Cardiomyopathy: "
-                    "This 47-year-old male has dyspnea and bilateral leg swelling. "
-                    "Formal echo confirmed EF <20% with dilation of the LA, RA, and RV. "
-                    "Explain how severely reduced LV function leads to these multi-chamber findings "
-                    "and symptoms. What is the clinical term for this condition?"
+                    "In one sentence, describe what 'intentional practice' means as defined in the lecture."
                 ),
                 "keywords": [
-                    "biventricular", "heart failure", "HFrEF", "congestion",
-                    "pulmonary edema", "pulmonary hypertension", "right heart failure",
-                    "peripheral edema", "venous congestion", "reduced ejection fraction",
-                    "LA", "RV", "right ventricle", "dilation", "backward failure",
-                    "left atrium", "forward failure",
+                    "good image", "bad", "specific way", "correct", "back",
+                    "probe motion", "practice",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "Intentional practice means taking a good image, deliberately making it bad in "
+                    "a specific way, then correcting it back to normal to build understanding of how "
+                    "each probe motion affects the image."
+                ),
+            },
+        },
+    },
+    2: {
+        "title": "Focused Cardiac Ultrasound — Parasternal Long Axis",
+        "template": "logbook/quiz_2.html",
+        "questions": {
+            "q1": "C", "q2": "B", "q3": "C", "q4": "D", "q5": "B",
+            "q6": "C", "q7": "D", "q8": "C", "q9": "B", "q10": "D",
+        },
+        "question_labels": {
+            "q1": "PLAX indicator direction",
+            "q2": "Effect of abdominal vs cardiac preset",
+            "q3": "Rock motion definition",
+            "q4": "Tilt motion definition",
+            "q5": "Tilting tail toward left shoulder",
+            "q6": "Window shopping definition",
+            "q7": "Breath hold for parasternal window",
+            "q8": "Relative size of RVOT, aortic root, LA",
+            "q9": "Aortic annulus vs wall thickness ratio",
+            "q10": "Sliding definition",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": (
+                    "In one sentence, describe the structures visible from top to bottom in a "
+                    "normal parasternal long axis view."
+                ),
+                "keywords": [
+                    "RVOT", "aortic valve", "ascending aorta", "left atrium",
+                    "mitral valve", "left ventricle",
+                ],
+                "min_keywords": 4,
+                "sample_answer": (
+                    "From top to bottom in the PLAX, you assess the RVOT, aortic valve and "
+                    "ascending aorta, left atrium, mitral valve, and left ventricle."
+                ),
+            },
+            "sa2": {
+                "prompt": (
+                    "In one sentence, describe the 1-2-4 qualitative size ratio for the PLAX "
+                    "as explained in the lecture."
+                ),
+                "keywords": [
+                    "wall thickness", "aortic annulus", "LV chamber", "one", "two", "four",
+                    "qualitative", "hypertrophy",
                 ],
                 "min_keywords": 3,
                 "sample_answer": (
-                    "Severely reduced LV EF (<20%) causes: "
-                    "(1) Elevated LV filling pressures back up into the LA \u2014 LA dilation and pulmonary "
-                    "venous hypertension \u2014 pulmonary edema \u2014 dyspnea. "
-                    "(2) Chronic pulmonary hypertension increases RV afterload \u2014 RV dilation and failure \u2014 "
-                    "systemic venous congestion \u2014 RA dilation and peripheral leg edema. "
-                    "This cascade is biventricular failure (HFrEF). All four chambers become involved."
+                    "As a rough qualitative guide, wall thickness is 1 unit, the aortic annulus "
+                    "is 2 units, and the LV chamber is 4 units; wall thickness approaching the "
+                    "size of the aortic annulus suggests significant hypertrophy."
+                ),
+            },
+            "sa3": {
+                "prompt": (
+                    "In one sentence, explain what the lecture says happens when you tilt the "
+                    "probe in opposite directions from the PLAX position."
+                ),
+                "keywords": [
+                    "left shoulder", "RV inflow", "tricuspid", "right hip", "RVOT",
+                    "pulmonic", "tilt",
+                ],
+                "min_keywords": 3,
+                "sample_answer": (
+                    "Tilting the tail toward the patient's left shoulder from the PLAX reveals "
+                    "the parasternal RV inflow (tricuspid valve and right ventricle), while "
+                    "tilting toward the right hip reveals the RVOT and pulmonic valve."
+                ),
+            },
+        },
+    },
+    3: {
+        "title": "Focused Cardiac Ultrasound — Parasternal Short Axis",
+        "template": "logbook/quiz_3.html",
+        "questions": {
+            "q1": "B", "q2": "C", "q3": "B", "q4": "D", "q5": "B",
+            "q6": "C", "q7": "C", "q8": "C", "q9": "B", "q10": "D",
+        },
+        "question_labels": {
+            "q1": "PSAX indicator direction",
+            "q2": "Standard FOCUS PSAX level",
+            "q3": "Tilt range in PSAX",
+            "q4": "Septal flattening significance",
+            "q5": "Coronary territories in PSAX",
+            "q6": "Number of mid-level LV segments",
+            "q7": "Most anterior tilt view",
+            "q8": "Angled PLAX effect on PSAX",
+            "q9": "Two septal segment names",
+            "q10": "Probe barely over rib edge",
+        },
+        "short_answers": {
+            "sa1": {
+                "prompt": (
+                    "In one sentence, name all six mid-level LV segments visible in the "
+                    "parasternal short axis at the papillary muscle level."
+                ),
+                "keywords": [
+                    "anteroseptal", "anterior", "anterolateral", "inferolateral",
+                    "inferior", "inferoseptal",
+                ],
+                "min_keywords": 4,
+                "sample_answer": (
+                    "The six mid-level segments are: anteroseptal, anterior, anterolateral, "
+                    "inferolateral, inferior, and inferoseptal."
+                ),
+            },
+            "sa2": {
+                "prompt": (
+                    "In one sentence, explain the significance of interventricular septal "
+                    "position in the PSAX view as described in the lecture."
+                ),
+                "keywords": [
+                    "flattening", "circular", "right heart", "concern", "septum",
+                    "position", "bowing",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "In a normal PSAX the LV should appear circular; significant flattening of "
+                    "the interventricular septum is a concern for right heart pathology."
+                ),
+            },
+            "sa3": {
+                "prompt": (
+                    "In one sentence, describe the view obtained when tilting the probe to "
+                    "the most anterior/basal position from the mid-papillary PSAX."
+                ),
+                "keywords": [
+                    "aortic valve", "short axis", "RVOT", "tricuspid", "pulmonic",
+                    "right ventricular", "inflow", "outflow",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "Tilting all the way anteriorly/basally from the mid-papillary PSAX reveals "
+                    "the aortic valve short axis, also showing the right ventricular inflow "
+                    "and outflow tract with tricuspid and pulmonic valves."
                 ),
             },
         },
