@@ -314,59 +314,58 @@ QUIZZES = {
         "title": "Abdominal Aortic Aneurysm (AAA)",
         "template": "logbook/quiz_7.html",
         "questions": {
-            "q1": "C", "q2": "D", "q3": "B", "q4": "C",
-            "q5": "C", "q6": "B", "q7": "B", "q8": "B",
-            "q9": "C", "q10": "B", "q11": "B", "q12": "C",
+            "q1": "C", "q2": "D", "q3": "C", "q4": "B",
+            "q5": "B", "q6": "C", "q7": "B", "q8": "C",
+            "q9": "C", "q10": "C", "q11": "B", "q12": "C",
         },
         "question_labels": {
-            "q1": "AAA probe selection",
-            "q2": "AAA scan depth",
-            "q3": "Normal aortic diameter",
-            "q4": "External landmark for AAA",
-            "q5": "Internal landmark for AAA",
-            "q6": "Aorta vs IVC position",
-            "q7": "Aorta vs IVC differentiation",
-            "q8": "Determinant negative AAA scan",
+            "q1": "AAA probe",
+            "q2": "AAA depth",
+            "q3": "AAA external landmark",
+            "q4": "AAA internal landmark",
+            "q5": "Aorta position vs IVC",
+            "q6": "Aorta non-compressibility",
+            "q7": "Normal aortic calibre",
+            "q8": "Probe angle pitfall",
             "q9": "Chronic thrombus measurement",
-            "q10": "Most common AAA shape",
-            "q11": "Bowel gas troubleshooting",
-            "q12": "Probe angle importance",
+            "q10": "Indeterminate scan definition",
+            "q11": "Clinical integration pitfall",
+            "q12": "Determinant positive — AAA shape",
         },
         "short_answers": {
             "sa1": {
-                "prompt": "In one sentence, describe how the aorta and IVC can be differentiated on POCUS.",
+                "prompt": "In one sentence, state what defines a determinant negative AAA scan.",
                 "keywords": [
-                    "non-compressible", "compressible", "left", "right", "pulsatile",
-                    "thick walls", "respiratory", "IVC", "aorta",
+                    "outer wall", "xiphoid", "iliac bifurcation", "3cm", "exceeds",
+                    "entire", "visualized", "evaluation",
                 ],
                 "min_keywords": 3,
                 "sample_answer": (
-                    "The aorta is non-compressible, pulsatile, has thicker walls, and lies on the patient's left anterior to the spine, "
-                    "while the IVC is compressible, shows respiratory variability, and lies on the patient's right."
+                    "A determinant negative scan is evaluation of the outer wall of the abdominal aorta "
+                    "from the xiphoid process to the iliac bifurcation where at no point the outer wall exceeds 3cm."
                 ),
             },
             "sa2": {
-                "prompt": "In one sentence, define an indeterminate AAA scan.",
+                "prompt": "In one sentence, name two troubleshooting manoeuvres from the document for when bowel gas obstructs aortic visualization.",
                 "keywords": [
-                    "cannot visualize", "entire aorta", "xiphoid", "bifurcation",
-                    "bowel gas", "obesity", "indeterminate",
+                    "flex", "hips", "knees", "firm", "probe", "pressure",
+                    "breath", "deep", "slide", "laterally", "heel", "medially",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "An indeterminate scan occurs when the entire abdominal aorta from the xiphoid process to the iliac bifurcation "
-                    "cannot be fully visualized, most commonly due to bowel gas or obesity."
+                    "Troubleshooting options include flexing the patient's hips and knees, using firm probe pressure "
+                    "and hold, asking the patient to take a deep breath in and hold it or exhale, and sliding "
+                    "laterally while heeling medially to move around loops of bowel."
                 ),
             },
             "sa3": {
-                "prompt": "In one sentence, describe the key pitfall when measuring an AAA with chronic thrombus.",
+                "prompt": "In one sentence, describe the clinical integration pitfall about AAA size and rupture risk stated in the document.",
                 "keywords": [
-                    "outer wall", "thrombus", "false lumen", "underestimate",
-                    "measure", "echogenic", "true lumen",
+                    "5cm", "rupture", "cannot", "assume", "less than",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "When chronic thrombus is present, the diameter must be measured from outer wall to outer wall — "
-                    "including the thrombus — not just the patent lumen, which would underestimate the true aortic size."
+                    "A clinical integration pitfall is assuming a AAA less than 5cm cannot rupture."
                 ),
             },
         },
@@ -375,58 +374,54 @@ QUIZZES = {
         "title": "Abdominal FAST Exam",
         "template": "logbook/quiz_8.html",
         "questions": {
-            "q1": "C", "q2": "C", "q3": "C", "q4": "C",
-            "q5": "B", "q6": "B", "q7": "C", "q8": "C",
-            "q9": "B", "q10": "C", "q11": "B",
+            "q1": "C", "q2": "C", "q3": "B", "q4": "C",
+            "q5": "C", "q6": "B", "q7": "D", "q8": "C",
+            "q9": "B", "q10": "B", "q11": "B",
         },
         "question_labels": {
-            "q1": "FAST probe selection",
-            "q2": "FAST scan depth",
-            "q3": "Most sensitive free fluid location",
-            "q4": "Free fluid location in LUQ",
-            "q5": "Upper quadrant probe position",
-            "q6": "Minimum fluid volume detectable",
-            "q7": "Negative FAST limitations",
-            "q8": "Upper quadrant internal landmark",
+            "q1": "FAST probe",
+            "q2": "FAST depth",
+            "q3": "Upper quadrant internal landmark",
+            "q4": "Upper quadrant probe plane",
+            "q5": "Most sensitive free fluid site",
+            "q6": "Most likely LUQ free fluid site",
+            "q7": "Minimum hemoperitoneum ruled out",
+            "q8": "Male pelvic false positive structure",
             "q9": "Pelvic AOI in males",
-            "q10": "Trendelenburg position indication",
-            "q11": "FAST interpretation pitfall",
+            "q10": "Trendelenberg tip",
+            "q11": "Clinical integration pitfall",
         },
         "short_answers": {
             "sa1": {
-                "prompt": "In one sentence, state what a negative FAST exam can and cannot rule out.",
+                "prompt": "In one sentence, state what a negative FAST exam can only rule out, as stated in the document.",
                 "keywords": [
-                    "hemoperitoneum", "250", "solid organ", "hollow viscus",
-                    "cannot", "rule out", "one point in time", "vascular",
-                ],
-                "min_keywords": 3,
-                "sample_answer": (
-                    "A negative FAST can only rule out significant hemoperitoneum (>250 mL) at that moment in time — "
-                    "it cannot exclude solid organ, hollow viscus, or vascular injury."
-                ),
-            },
-            "sa2": {
-                "prompt": "In one sentence, explain why the caudal tip of the liver is the most sensitive location for free fluid on FAST.",
-                "keywords": [
-                    "dependent", "gravity", "caudal tip", "hepatorenal", "Morrison",
-                    "accumulate", "collect", "sensitive",
+                    "hemoperitoneum", "250ml", "moment", "time", "significant", "one specific",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "The caudal tip of the liver in the hepatorenal space (Morrison's pouch) is the most gravity-dependent "
-                    "region in a supine patient, making it the first place free fluid accumulates in the RUQ."
+                    "A negative FAST can only rule out significant hemoperitoneum (greater than 250ml of fluid) "
+                    "in one specific moment in time."
+                ),
+            },
+            "sa2": {
+                "prompt": "In one sentence, identify the most sensitive location for free fluid on the FAST exam as stated in the document.",
+                "keywords": [
+                    "caudal tip", "liver", "sensitive", "most", "free fluid",
+                ],
+                "min_keywords": 2,
+                "sample_answer": (
+                    "The caudal tip of the liver is the most sensitive place to identify free fluid on the FAST exam."
                 ),
             },
             "sa3": {
-                "prompt": "In one sentence, name one structure in the pelvis that can be mistaken for free fluid on FAST.",
+                "prompt": "In one sentence, name two pelvic structures in males that can be misidentified as free fluid on FAST, as listed in the document.",
                 "keywords": [
-                    "seminal vesicles", "prostate", "bladder", "bowel",
-                    "ovarian cyst", "physiologic fluid", "mistaken",
+                    "seminal vesicles", "prostate", "bow-tie", "misidentified",
                 ],
-                "min_keywords": 1,
+                "min_keywords": 2,
                 "sample_answer": (
-                    "The seminal vesicles in males can be mistaken for free fluid as they appear hypoechoic with a "
-                    "characteristic bow-tie shape posterior to the bladder."
+                    "In males, the seminal vesicles — which have a bow-tie appearance — and the prostate "
+                    "can be misidentified as free fluid on the pelvic FAST view."
                 ),
             },
         },
@@ -435,60 +430,56 @@ QUIZZES = {
         "title": "OB POCUS — Scanning Technique & 3-2-1 Rule",
         "template": "logbook/quiz_9.html",
         "questions": {
-            "q1": "C", "q2": "B", "q3": "C", "q4": "B",
-            "q5": "B", "q6": "B", "q7": "C", "q8": "B",
-            "q9": "B", "q10": "B", "q11": "B", "q12": "C",
+            "q1": "B", "q2": "C", "q3": "B", "q4": "C",
+            "q5": "C", "q6": "B", "q7": "C", "q8": "B",
+            "q9": "B", "q10": "C", "q11": "B", "q12": "C",
         },
         "question_labels": {
-            "q1": "Number of pregnancy criteria in 3-2-1 rule",
-            "q2": "Decidual reaction timing",
-            "q3": "Earliest definitive IUP sign",
-            "q4": "Yolk sac visibility by TVUS",
-            "q5": "Fetal pole visibility by TVUS",
-            "q6": "Minimum FHR for good outcome",
-            "q7": "Discriminatory β-hCG (transabdominal)",
-            "q8": "Pregnancy failure criterion",
-            "q9": "Minimum myometrial mantle",
-            "q10": "Endometrial stripe in transverse view",
-            "q11": "Bladder-uterine juxtaposition",
-            "q12": "OB POCUS probe (transabdominal)",
+            "q1": "Primary goal of OB POCUS",
+            "q2": "Number of pregnancy criteria",
+            "q3": "Double ring sign",
+            "q4": "Yolk sac — TVUS timing",
+            "q5": "Minimum FHR for good outcome",
+            "q6": "Minimum myometrial mantle",
+            "q7": "Pregnancy failure — CRL criterion",
+            "q8": "Bladder-uterine juxtaposition",
+            "q9": "Full bladder reason",
+            "q10": "OB probe",
+            "q11": "Vaginal uterine continuity",
+            "q12": "Clinical integration pitfall",
         },
         "short_answers": {
             "sa1": {
-                "prompt": "In one sentence, summarize the 3-2-1 rule for confirming IUP.",
+                "prompt": "In one sentence, describe what the double ring sign represents and its clinical significance, as stated in the document.",
                 "keywords": [
-                    "decidual reaction", "gestational sac", "yolk sac", "fetal pole",
-                    "bladder-uterine", "vaginal-uterine", "myometrial mantle", "5mm",
+                    "yolk sac", "gestational sac", "earliest", "definitive", "IUP", "double ring",
                 ],
                 "min_keywords": 3,
                 "sample_answer": (
-                    "The 3-2-1 rule requires 3 pregnancy criteria (decidual reaction, gestational sac, yolk sac or fetal pole), "
-                    "2 intrauterine criteria (bladder-uterine juxtaposition and vaginal-uterine continuity), "
-                    "and 1 safety criterion (myometrial mantle ≥5 mm)."
+                    "The double ring sign — the yolk sac within the gestational sac — is the earliest sign "
+                    "of a definitive intrauterine pregnancy."
                 ),
             },
             "sa2": {
-                "prompt": "In one sentence, describe vaginal-uterine continuity and why it is required.",
+                "prompt": "In one sentence, state the safety criterion of the 3-2-1 rule and the specific measurement required.",
                 "keywords": [
-                    "longitudinal", "vagina", "uterine tissue", "continuity",
-                    "cervix", "intrauterine", "transition",
+                    "myometrial mantle", "5mm", "inner edge", "gestational sac",
+                    "outer edge", "uterus", "safety",
                 ],
-                "min_keywords": 2,
+                "min_keywords": 3,
                 "sample_answer": (
-                    "In the longitudinal view, the vagina must be shown to transition directly into uterine tissue, "
-                    "confirming the gestational sac is within the uterus and not in the cervix or elsewhere."
+                    "The safety criterion requires an adequate myometrial mantle — the shortest distance between "
+                    "the inner edge of the gestational sac and the outer edge of the uterus must be at least 5mm."
                 ),
             },
             "sa3": {
-                "prompt": "In one sentence, state the most critical clinical integration pitfall in OB POCUS.",
+                "prompt": "In one sentence, state what OB POCUS can and cannot conclude about ectopic pregnancy, as stated in the document.",
                 "keywords": [
-                    "3-2-1", "not fulfilled", "assuming IUP", "ectopic", "heterotopic",
-                    "confirmed", "criteria", "pitfall",
+                    "rule in", "intrauterine", "cannot", "rule out", "ectopic", "absolutely",
                 ],
                 "min_keywords": 2,
                 "sample_answer": (
-                    "The most critical pitfall is assuming a confirmed IUP when the 3-2-1 rule criteria have not been "
-                    "fully met, which risks falsely reassuring in the setting of an ectopic or heterotopic pregnancy."
+                    "OB POCUS can rule in an intrauterine pregnancy but cannot absolutely rule out an ectopic pregnancy."
                 ),
             },
         },
@@ -498,58 +489,59 @@ QUIZZES = {
         "template": "logbook/quiz_10.html",
         "questions": {
             "q1": "C", "q2": "B", "q3": "C", "q4": "B",
-            "q5": "B", "q6": "C", "q7": "B", "q8": "C",
-            "q9": "D", "q10": "B", "q11": "B", "q12": "B",
+            "q5": "B", "q6": "B", "q7": "C", "q8": "C",
+            "q9": "C", "q10": "C", "q11": "B", "q12": "C",
         },
         "question_labels": {
-            "q1": "Best probe for pneumothorax",
-            "q2": "AOI for pneumothorax",
-            "q3": "Lung sliding definition",
-            "q4": "Comet tail origin",
-            "q5": "True lung point specificity",
-            "q6": "Number of pleural spaces to evaluate",
-            "q7": "Determinate negative scan",
-            "q8": "Starting point for lung point search",
-            "q9": "Large pneumothorax lung point location",
-            "q10": "False positive cause",
-            "q11": "Lung pulse definition",
-            "q12": "Unstable patient management",
+            "q1": "Best image quality probe",
+            "q2": "PTX starting depth",
+            "q3": "External landmark",
+            "q4": "Lung sliding definition",
+            "q5": "Lung pulse definition",
+            "q6": "True lung point",
+            "q7": "Number of pleural spaces",
+            "q8": "Determinate negative scan",
+            "q9": "Stable patient — lung point protocol",
+            "q10": "Large PTX — lung point location",
+            "q11": "False positive — right mainstem",
+            "q12": "Small PTX clinical pitfall",
         },
         "short_answers": {
             "sa1": {
-                "prompt": "In one sentence, describe what lung sliding looks like and what it represents.",
+                "prompt": "In one sentence, define lung sliding as described in the document, including the visual description.",
                 "keywords": [
                     "visceral", "parietal", "pleura", "respiration", "ants",
-                    "sliding", "log", "movement", "breathing",
+                    "sliding", "log",
                 ],
-                "min_keywords": 2,
+                "min_keywords": 3,
                 "sample_answer": (
-                    "Lung sliding is the to-and-fro movement of the visceral and parietal pleura against each other "
-                    "with respiration, described as looking like ants sliding on a log."
+                    "Lung sliding is the visceral and parietal pleura moving against each other with respiration, "
+                    "described as looking like ants sliding on a log."
                 ),
             },
             "sa2": {
-                "prompt": "In one sentence, explain why the true lung point is 100% specific for pneumothorax.",
+                "prompt": "In one sentence, describe what defines a determinate negative pneumothorax scan.",
                 "keywords": [
-                    "sliding", "no sliding", "adjacent", "specific", "100%",
-                    "pathologic", "pneumothorax", "transition",
+                    "lung sliding", "lung pulse", "comet tails", "B-lines",
+                    "OR", "anterior", "rib space", "present",
                 ],
-                "min_keywords": 2,
+                "min_keywords": 3,
                 "sample_answer": (
-                    "The true lung point is 100% specific because it represents the exact transition point where "
-                    "lung sliding is seen adjacent to complete absence of sliding — a finding only possible with pneumothorax."
+                    "A determinate negative scan requires lung sliding OR lung pulse OR comet tails/B-lines "
+                    "to be present in the most anterior rib space."
                 ),
             },
             "sa3": {
-                "prompt": "In one sentence, name one cause of a false positive pneumothorax on lung POCUS.",
+                "prompt": "In one sentence, describe how a physiologic lung point differs from a true pathological lung point.",
                 "keywords": [
-                    "mainstem intubation", "esophageal intubation", "ARDS", "pleurodesis",
-                    "phrenic nerve palsy", "pulmonary fibrosis", "COPD", "contusion",
+                    "sliding", "physiologic", "cardiac", "liver", "spleen", "gastric",
+                    "true", "pathological", "no sliding", "100%", "specific",
                 ],
-                "min_keywords": 1,
+                "min_keywords": 3,
                 "sample_answer": (
-                    "Right mainstem intubation causes a false positive pneumothorax on the left side because the left "
-                    "lung is not ventilated and therefore shows no lung sliding."
+                    "A physiologic lung point is sliding next to something else that is also sliding (cardiac, liver, "
+                    "spleen, or gastric), while the true pathological lung point is sliding next to no sliding "
+                    "and is 100% specific for pneumothorax."
                 ),
             },
         },
