@@ -30,7 +30,7 @@ urlpatterns = [
     path("badges/", views.badges, name="badges"),
     path("admin/scans/", views.scan_totals, name="scan_totals"),
     path("admin/quiz-analytics/", views.quiz_analytics, name="quiz_analytics"),
-    path("admin/cohort-archive/", views.cohort_archive, name="cohort_archive"),
+    path("staff/cohort-archive/", views.cohort_archive, name="cohort_archive"),
     path("profile/", views.profile, name="profile"),
 ]
 
