@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}Cohort Archive — POCUS Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+  <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+    <div>
+      <h1 style="color: var(--medical-primary);">
+        <i class="fas fa-archive me-2"></i>Cohort Scan Archive
+      </h1>
+      <p class="text-muted mb-0">Download CCFP-EM cohort POCUS scans as a PDF for record keeping.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'scan_totals' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-chart-bar me-1"></i> Scan Totals
+      </a>
+      <a href="{% url 'quiz_analytics' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-chart-line me-1"></i> Quiz Analytics
+      </a>
+    </div>
+  </div>
+
+  <!-- Year Selector -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header" style="background: var(--medical-primary); color: white;">
+      <strong><i class="fas fa-calendar me-1"></i> Select Academic Year</strong>
+    </div>
+    <div class="card-body">
+      <form method="get" class="row g-3 align-items-end">
+        <div class="col-auto">
+          <label class="form-label fw-bold">Academic Year (July 1 – June 30)</label>
+          <select name="start_year" class="form-select">
+            {% for y in available_years %}
+            <option value="{{ y }}" {% if y == start_year %}selected{% endif %}>
+              {{ y }}-{{ y|add:1 }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-filter me-1"></i> Load Year
+          </button>
+        </div>
+        <div class="col-auto">
+          <a href="?start_year={{ start_year }}&format=pdf"
+             class="btn btn-success" target="_blank">
+            <i class="fas fa-file-pdf me-1"></i> Download as PDF
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <div class="fs-3 fw-bold" style="color: var(--medical-primary);">{{ year_label }}</div>
+          <div class="text-muted small">Academic Year</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <div class="fs-3 fw-bold" style="color: var(--medical-secondary);">{{ total_users }}</div>
+          <div class="text-muted small">Residents</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <div class="fs-3 fw-bold text-info">{{ total_scans }}</div>
+          <div class="text-muted small">Total Scans</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <a href="?start_year={{ start_year }}&format=pdf"
+             class="btn btn-lg btn-success w-100" target="_blank">
+            <i class="fas fa-file-pdf me-1"></i> PDF
+          </a>
+          <div class="text-muted small mt-1">Print / Save as PDF</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if not user_data %}
+  <div class="alert alert-info">
+    <i class="fas fa-info-circle me-2"></i>
+    No scans found for the {{ year_label }} academic year.
+  </div>
+  {% endif %}
+
+  <!-- Per-Resident Cards -->
+  {% for ud in user_data %}
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center"
+         style="background: var(--medical-primary); color: white;">
+      <strong>
+        <i class="fas fa-user-md me-1"></i>
+        {{ ud.user.get_full_name|default:ud.user.username }}
+      </strong>
+      <span>
+        <span class="badge bg-light text-dark me-1">{{ ud.total }} scan{{ ud.total|pluralize }}</span>
+        <span class="badge bg-info text-dark me-1">{{ ud.academic }} academic</span>
+        <span class="badge bg-success">{{ ud.self_logged }} self</span>
+      </span>
+    </div>
+    <div class="card-body">
+      <p class="text-muted small mb-3">
+        {{ ud.user.email|default:"No email" }}
+      </p>
+
+      <!-- Scan counts by exam type -->
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered mb-3">
+          <thead class="table-light">
+            <tr>
+              {% for code, label, count in ud.type_counts %}
+              <th class="text-center small">{{ label }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for code, label, count in ud.type_counts %}
+              <td class="text-center fw-bold">{{ count }}</td>
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Scan detail table -->
+      {% if ud.scans %}
+      <details>
+        <summary class="fw-bold mb-2" style="cursor:pointer; color: var(--medical-primary);">
+          <i class="fas fa-list me-1"></i> View individual scans ({{ ud.total }})
+        </summary>
+        <div class="table-responsive">
+          <table class="table table-sm table-striped table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>Date</th>
+                <th>Exam Type</th>
+                <th>Context</th>
+                <th>Finding</th>
+                <th>Indication</th>
+                <th>Supervisor</th>
+                <th>Confidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for scan in ud.scans %}
+              <tr>
+                <td>{{ scan.performed_at }}</td>
+                <td>{{ scan.get_exam_type_display }}</td>
+                <td>
+                  {% if scan.scan_context == "ACADEMIC" %}
+                  <span class="badge bg-primary">Academic</span>
+                  {% else %}
+                  <span class="badge bg-success">Self</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if scan.finding == "NORMAL" %}
+                  <span class="text-success">Normal</span>
+                  {% elif scan.finding == "ABNORMAL" %}
+                  <span class="text-danger">Abnormal</span>
+                  {% else %}
+                  <span class="text-warning">Indeterminate</span>
+                  {% endif %}
+                </td>
+                <td>{{ scan.indication|default:"—" }}</td>
+                <td>
+                  {% if scan.supervisor_present %}
+                  {{ scan.supervisor_name|default:"Yes" }}
+                  {% else %}
+                  —
+                  {% endif %}
+                </td>
+                <td class="text-center">{{ scan.confidence|default:"—" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </details>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+
+</div>
+{% endblock %}

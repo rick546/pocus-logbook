@@ -8,6 +8,7 @@ from .forms import CustomUserCreationForm, UserProfileForm
 from django.contrib.auth import login
 from django.db import models
 from django.db.models import Count, Avg, F, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from django.contrib import messages
@@ -1723,3 +1724,206 @@ def quiz_analytics(request):
     return render(request, "logbook/quiz_analytics.html", {
         "quiz_stats": quiz_stats,
     })
+
+
+# ---------------------------------------------------------------------------
+# Admin: Cohort Archive (PDF export of all scans for an academic year)
+# ---------------------------------------------------------------------------
+@staff_member_required
+def cohort_archive(request):
+    import datetime
+    import html as html_module
+
+    current_year = datetime.date.today().year
+    current_month = datetime.date.today().month
+    if current_month >= 7:
+        default_start_year = current_year
+    else:
+        default_start_year = current_year - 1
+
+    start_year = request.GET.get("start_year", str(default_start_year))
+    try:
+        start_year = int(start_year)
+    except (ValueError, TypeError):
+        start_year = default_start_year
+
+    year_start = datetime.date(start_year, 7, 1)
+    year_end = datetime.date(start_year + 1, 6, 30)
+    year_label = f"{start_year}-{start_year + 1}"
+
+    year_scans = Scan.objects.filter(
+        performed_at__gte=year_start,
+        performed_at__lte=year_end,
+    ).select_related("user").order_by("user__last_name", "user__first_name", "performed_at")
+
+    users_with_scans = (
+        User.objects.filter(scans__performed_at__gte=year_start, scans__performed_at__lte=year_end)
+        .distinct()
+        .order_by("last_name", "first_name", "username")
+    )
+
+    exam_types = [code for code, label in Scan.EXAM_CHOICES]
+    exam_labels = {code: label for code, label in Scan.EXAM_CHOICES}
+
+    user_data = []
+    for u in users_with_scans:
+        u_scans = year_scans.filter(user=u)
+        total = u_scans.count()
+        academic = u_scans.filter(scan_context="ACADEMIC").count()
+        self_logged = u_scans.filter(scan_context="SELF").count()
+        by_type = {}
+        for et in exam_types:
+            by_type[et] = u_scans.filter(exam_type=et).count()
+
+        type_counts = [(et, exam_labels[et], by_type[et]) for et in exam_types]
+
+        user_data.append({
+            "user": u,
+            "total": total,
+            "academic": academic,
+            "self_logged": self_logged,
+            "by_type": by_type,
+            "type_counts": type_counts,
+            "scans": u_scans,
+        })
+
+    if request.GET.get("format") == "pdf":
+        return _cohort_archive_pdf(request, user_data, year_label, year_start, year_end, exam_types, exam_labels)
+
+    available_years = list(range(2024, current_year + 2))
+
+    return render(request, "logbook/cohort_archive.html", {
+        "year_label": year_label,
+        "start_year": start_year,
+        "available_years": available_years,
+        "user_data": user_data,
+        "exam_types": exam_types,
+        "exam_labels": exam_labels,
+        "total_scans": year_scans.count(),
+        "total_users": len(user_data),
+    })
+
+
+def _cohort_archive_pdf(request, user_data, year_label, year_start, year_end, exam_types, exam_labels):
+    import html as html_module
+
+    generated = timezone.now().strftime("%Y-%m-%d %H:%M UTC")
+    total_scans = sum(ud["total"] for ud in user_data)
+
+    rows_html = ""
+    for ud in user_data:
+        u = ud["user"]
+        display_name = u.get_full_name() or u.username
+
+        rows_html += f"""
+<div class="resident">
+  <div class="resident-header">{html_module.escape(display_name)}</div>
+  <div class="resident-meta">
+    Email: {html_module.escape(u.email or '—')} &nbsp;|&nbsp;
+    Total Scans: {ud['total']} &nbsp;|&nbsp;
+    Academic: {ud['academic']} &nbsp;|&nbsp;
+    Self-Logged: {ud['self_logged']}
+  </div>
+
+  <table>
+    <thead><tr><th>Exam Type</th><th>Count</th></tr></thead>
+    <tbody>
+"""
+        for et in exam_types:
+            count = ud["by_type"].get(et, 0)
+            rows_html += f"      <tr><td>{html_module.escape(exam_labels[et])}</td><td class='center'>{count}</td></tr>\n"
+
+        rows_html += "    </tbody>\n  </table>\n"
+
+        rows_html += """
+  <table class="detail-table">
+    <thead><tr><th>Date</th><th>Exam Type</th><th>Context</th><th>Finding</th><th>Indication</th><th>Supervisor</th><th>Confidence</th></tr></thead>
+    <tbody>
+"""
+        for scan in ud["scans"]:
+            supervisor = html_module.escape(scan.supervisor_name) if scan.supervisor_present and scan.supervisor_name else ("Yes" if scan.supervisor_present else "—")
+            rows_html += f"""      <tr>
+        <td>{scan.performed_at}</td>
+        <td>{html_module.escape(scan.get_exam_type_display())}</td>
+        <td>{html_module.escape(scan.get_scan_context_display())}</td>
+        <td>{html_module.escape(scan.get_finding_display())}</td>
+        <td>{html_module.escape(scan.indication or '—')}</td>
+        <td>{supervisor}</td>
+        <td class="center">{scan.confidence or '—'}</td>
+      </tr>\n"""
+
+        iq_scans = [s for s in ud["scans"] if s.iq_total_score is not None]
+        if iq_scans:
+            rows_html += """
+    </tbody>
+  </table>
+
+  <table class="detail-table">
+    <thead><tr><th>Date</th><th>Exam</th><th>Probe</th><th>Depth</th><th>Gain</th><th>Control</th><th>Anatomy</th><th>Label</th><th>Complete</th><th>IQ Total</th></tr></thead>
+    <tbody>
+"""
+            for scan in iq_scans:
+                def _iq(val):
+                    return str(val) if val is not None else "—"
+                rows_html += f"""      <tr>
+        <td>{scan.performed_at}</td>
+        <td>{html_module.escape(scan.get_exam_type_display())}</td>
+        <td class="center">{_iq(scan.iq_probe_choice)}</td>
+        <td class="center">{_iq(scan.iq_depth)}</td>
+        <td class="center">{_iq(scan.iq_gain_presets)}</td>
+        <td class="center">{_iq(scan.iq_probe_control)}</td>
+        <td class="center">{_iq(scan.iq_anatomy_landmarks)}</td>
+        <td class="center">{_iq(scan.iq_labelling)}</td>
+        <td class="center">{_iq(scan.iq_completeness)}</td>
+        <td class="center">{scan.iq_total_score}/{scan.iq_max_score}</td>
+      </tr>\n"""
+
+        rows_html += "    </tbody>\n  </table>\n</div>\n<hr>\n"
+
+    html_out = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>POCUS Portal &mdash; Cohort Archive: {year_label}</title>
+<style>
+  body {{ font-family: Arial, sans-serif; font-size: 11px; color: #111; margin: 24px; }}
+  h1 {{ font-size: 18px; color: #1a3c5e; margin-bottom: 2px; }}
+  .meta {{ font-size: 10px; color: #555; margin-bottom: 16px; }}
+  .resident {{ margin-bottom: 18px; page-break-inside: avoid; }}
+  .resident-header {{ font-size: 14px; font-weight: bold; color: #1a3c5e; margin-bottom: 4px; }}
+  .resident-meta {{ font-size: 10px; color: #555; margin-bottom: 8px; }}
+  table {{ width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 10px; }}
+  th {{ background: #1a3c5e; color: #fff; padding: 4px 6px; text-align: left; }}
+  td {{ padding: 3px 6px; border-bottom: 1px solid #e2e8f0; }}
+  tr:nth-child(even) td {{ background: #f8fafc; }}
+  .center {{ text-align: center; }}
+  .detail-table {{ font-size: 9px; }}
+  .detail-table td {{ padding: 2px 4px; }}
+  hr {{ border: none; border-top: 1px solid #cbd5e1; margin: 14px 0; }}
+  @media print {{
+    body {{ margin: 0; }}
+    .no-print {{ display: none; }}
+    .resident {{ page-break-inside: avoid; }}
+  }}
+</style>
+</head>
+<body>
+<div class="no-print" style="margin-bottom:16px;">
+  <button onclick="window.print()" style="padding:8px 18px;font-size:14px;cursor:pointer;background:#1a3c5e;color:white;border:none;border-radius:4px;">
+    &#128438; Print / Save as PDF
+  </button>
+  <a href="javascript:history.back()" style="margin-left:12px;font-size:13px;">← Back to Archive</a>
+</div>
+<h1>POCUS Portal &mdash; CCFP-EM Cohort Scan Archive</h1>
+<div class="meta">
+  Academic Year: {year_label} ({year_start} to {year_end}) &nbsp;|&nbsp;
+  Generated: {generated} &nbsp;|&nbsp;
+  {len(user_data)} resident(s) &nbsp;|&nbsp;
+  {total_scans} total scan(s)
+</div>
+<hr>
+{rows_html}
+</body>
+</html>"""
+
+    return HttpResponse(html_out, content_type="text/html; charset=utf-8")
