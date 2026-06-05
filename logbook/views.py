@@ -1241,6 +1241,10 @@ def protocols(request):
     return render(request, "logbook/protocols.html", {"db_protocols": protocols_qs})
 
 
+def about(request):
+    return render(request, "logbook/about.html")
+
+
 @login_required
 def faculty_evaluation(request):
     return render(request, "logbook/faculty_evaluation.html")
